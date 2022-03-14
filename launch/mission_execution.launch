@@ -1,0 +1,20 @@
+<launch>
+    <arg name="mission_file" default="2022_2_27_212558" /> 
+    <arg name="able_tracker_ugv" default="false" /> 
+    <arg name="able_tracker_uav" default="true" /> 
+    <arg name="ugv_base_frame" default="arco/base_link" /> 
+    <arg name="uav_base_frame" default="ardrone/base_link" /> 
+    <arg name="ugv_odom_frame" default="arco/odom" /> 
+    <arg name="uav_odom_frame" default="ardrone/odom" /> 
+
+    <node name="mission_interface" pkg="mission_interface" type="mission_interface_node" output="screen">
+        <param name="path_file" value="$(find mission_interface)/cfg/optimized_path/optimized_path_$(arg mission_file).yaml"/> 
+        <param name="able_tracker_ugv" value="$(arg able_tracker_ugv)"/> 
+        <param name="able_tracker_uav" value="$(arg able_tracker_uav)"/> 
+        <param name="ugv_base_frame" value="$(arg ugv_base_frame)"/> 
+        <param name="uav_base_frame" value="$(arg uav_base_frame)"/> 
+        <param name="ugv_odom_frame" value="$(arg ugv_odom_frame)"/> 
+        <param name="uav_odom_frame" value="$(arg uav_odom_frame)"/> 
+    </node>
+
+</launch>
