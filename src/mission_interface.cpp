@@ -38,6 +38,7 @@ MissionInterface::MissionInterface(std::string node_name_)
     configTopics();
     configServices();
     readWayPoints();
+    markerPoints(trajectory);
 
     for (size_t i =0; i < trajectory.points.size(); i++ ){
         printf("[%lu] UGV[%f %f %f][%f %f %f %f] UAV[%f %f %f][%f %f %f %f]\n",i,trajectory.points.at(i).transforms[0].translation.x,trajectory.points.at(i).transforms[0].translation.y,trajectory.points.at(i).transforms[0].translation.z,
@@ -87,6 +88,8 @@ void MissionInterface::configTopics()
     start_mission_sub_ = nh->subscribe<std_msgs::Bool>("start_mission", 1, &MissionInterface::startMissionCB, this);
     start_mission_sub_ = nh->subscribe<std_msgs::Bool>("start_mission", 1, &MissionInterface::startMissionCB, this);
 	gps_sub_ = nh->subscribe<sensor_msgs::NavSatFix>("gps", 1, &MissionInterface::gpsCB, this);
+  	traj_ugv_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_ugv", 100);
+   	traj_uav_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_uav", 100);
 }
 
 void MissionInterface::ugvReadyForMissionCB(const std_msgs::BoolConstPtr &msg)
@@ -159,7 +162,7 @@ void MissionInterface::executeMission()
             }
 
             while(take_off || !uav_in_on_ground_){
-                printf("\t\tUAV Take off - ready to execute trajectory: sending WP %i\n",num_wp);
+                printf("\t\tUAV Take off - ready to execute trajectory: Sending WP %i\n",num_wp);
                 ros::Duration(1.0).sleep();
 
                 // if(num_wp >= size_){
@@ -200,41 +203,49 @@ void MissionInterface::executeMission()
                     uav_goal3D.global_goal.pose.orientation.w = trajectory.points.at(num_wp).transforms[1].rotation.w;
                 }
 
-                ROS_INFO_COND(debug, "Sendig new WayPoint to tracker");
                 if(able_tracker_ugv){
+                    ROS_INFO_COND(debug, "Sendig new WayPoint UGV to tracker: goal[%f %f %f]",ugv_goal3D.global_goal.pose.position.x ,ugv_goal3D.global_goal.pose.position.y ,ugv_goal3D.global_goal.pose.position.z);
                     ugvNavigation3DClient->sendGoal(ugv_goal3D);
-                    ROS_INFO_COND(debug, "Sent WayPoint for UGV ... waiting for maneuver");
+                    ROS_INFO_COND(debug, "Sent WayPoint for UGV ... Waiting for finishing maneuver");
                 }
                 if(able_tracker_uav){
+                    ROS_INFO_COND(debug, "Sendig new WayPoint UAV to tracker: goal[%f %f %f]",uav_goal3D.global_goal.pose.position.x ,uav_goal3D.global_goal.pose.position.y ,uav_goal3D.global_goal.pose.position.z);
                     uavNavigation3DClient->sendGoal(uav_goal3D);
-                    ROS_INFO_COND(debug, "Sent WayPoint for UAV ... waiting for maneuver");
+                    ROS_INFO_COND(debug, "Sent WayPoint for UAV ... Waiting for finishing maneuver");
                 }
-
 
                 if(!able_tracker_ugv)   // To force continue with execution if tracker is not able for UGV
                     is_ugv_in_waypoint=true; 
                 if(!able_tracker_uav)   // To force continue with execution if tracker is not able for UAV
                     is_uav_in_waypoint=true; 
 
-
-
 	            ros::Time start_time = ros::Time::now();
-                while ( (ros::Time::now().toSec() - start_time.toSec() < 20.0) && !(is_ugv_in_waypoint && is_uav_in_waypoint)){
-                    printf("ros::Time = %f , is_ugv_in_waypoint = %s  , is_uav_in_waypoint = %s----- \r", ros::Time::now().toSec() - start_time.toSec(), is_ugv_in_waypoint?"true":"false", is_uav_in_waypoint?"true":"false");
+                // while ( (ros::Time::now().toSec() - start_time.toSec() < 20.0) && !(is_ugv_in_waypoint && is_uav_in_waypoint)){
+                // bool uav_get_wp = true;
+
+                // while (uav_get_wp){
+                    // printf(" ros::Time = %f , is_ugv_in_waypoint = %s  , is_uav_in_waypoint = %s----- \r", ros::Time::now().toSec() - start_time.toSec(), is_ugv_in_waypoint?"true":"false", is_uav_in_waypoint?"true":"false");
+                    uavNavigation3DClient->waitForResult(ros::Duration(20.0));
+                    // if (!uavNavigation3DClient->waitForResult(ros::Duration(20.0)))
+                        // uav_get_wp = false;
+
                     if(able_tracker_ugv){
-                        state.reset(new actionlib::SimpleClientGoalState(ugvNavigation3DClient->getState()));
-                        if (*state == actionlib::SimpleClientGoalState::SUCCEEDED)
+                        // state.reset(new actionlib::SimpleClientGoalState(ugvNavigation3DClient->getState()));
+                        // if (*state == actionlib::SimpleClientGoalState::SUCCEEDED)
+                        if(ugvNavigation3DClient->getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
                         {
                             is_ugv_in_waypoint = true;
-                            ROS_INFO("UGV Path Tracker: Goal [%i/%i] achieved",num_wp,size_);
+                            ROS_INFO("UGV Path Tracker: Goal [%i/%i] Achieved",num_wp,size_);
                         }
-                        else if (*state == actionlib::SimpleClientGoalState::ABORTED)
+                        // else if (*state == actionlib::SimpleClientGoalState::ABORTED)
+                        else if (ugvNavigation3DClient->getState() == actionlib::SimpleClientGoalState::ABORTED)
                         {
                             ROS_INFO_COND(debug, "Goal aborted by path tracker");
                             resetFlags();
                             return;
                         }
-                        else if (*state == actionlib::SimpleClientGoalState::PREEMPTED)
+                        // else if (*state == actionlib::SimpleClientGoalState::PREEMPTED)
+                        else if (ugvNavigation3DClient->getState()== actionlib::SimpleClientGoalState::PREEMPTED)
                         {
                             ROS_INFO_COND(debug, "Goal preempted by path tracker");
                             resetFlags();
@@ -242,33 +253,45 @@ void MissionInterface::executeMission()
                         }
                     }
                     if(able_tracker_uav){
-                        state.reset(new actionlib::SimpleClientGoalState(uavNavigation3DClient->getState()));
-                        if (*state == actionlib::SimpleClientGoalState::SUCCEEDED)
+                        // state.reset(new actionlib::SimpleClientGoalState(uavNavigation3DClient->getState()));
+                        // if (*state == actionlib::SimpleClientGoalState::SUCCEEDED)
+                        if(uavNavigation3DClient->getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
                         {
                             is_uav_in_waypoint = true;
-                            ROS_INFO("UAV Path Tracker: Goal [%i/%i] achieved",num_wp,size_);
+                            ROS_INFO("UAV Path Tracker: Goal [%i/%i] Achieved",num_wp,size_);
                         }
-                        else if (*state == actionlib::SimpleClientGoalState::ABORTED)
+                        // else if (*state == actionlib::SimpleClientGoalState::ABORTED)
+                        else if (uavNavigation3DClient->getState() == actionlib::SimpleClientGoalState::ABORTED)
                         {
                             ROS_INFO_COND(debug, "Goal aborted by path tracker");
                             resetFlags();
                             return;
                         }
-                        else if (*state == actionlib::SimpleClientGoalState::PREEMPTED)
+                        // else if (*state == actionlib::SimpleClientGoalState::PREEMPTED)
+                        else if (uavNavigation3DClient->getState() == actionlib::SimpleClientGoalState::PREEMPTED)
                         {
                             ROS_INFO_COND(debug, "Goal preempted by path tracker");
                             resetFlags();
                             return;
                         }
                     }
-                }
+                // }
                 
                 if(is_ugv_in_waypoint && is_uav_in_waypoint) {
-                    printf("\n\t\tSuccessfully achived WayPoint [%i/%i]",num_wp,size_);
+                    std::cout <<" " << std::endl;
+                    printf("\t\tSuccessfully achived WayPoint [%i/%i]\n",num_wp,size_);
                     num_wp++;
                 }
                 else{
-                    ROS_ERROR("\n\t\tNot Possible to achived WayPoint [%i/%i] - Check robot system",num_wp,size_);
+                    std::cout <<" " << std::endl;
+                    ROS_ERROR("\t\tNot Possible to achived WayPoint [%i/%i] - Check robot system",num_wp,size_);
+                    resetFlags();
+                    break;
+                }
+                if (num_wp == size_){
+                    printf("\n\tWell Done !!!\n");
+                    printf("\n\tMission Finished: WPs achived\n");
+                    printf("\n\tInitializing flags !!\n");
                     resetFlags();
                     break;
                 }
@@ -333,7 +356,7 @@ void MissionInterface::readWayPoints()
             init_uav_pose.orientation.z = file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["z"].as<double>();
             init_uav_pose.orientation.w = file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["w"].as<double>();
         }
-        else{
+        // else{
             ugv_pos_x = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["x"].as<double>();
             ugv_pos_y = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["y"].as<double>();
             ugv_pos_z = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["z"].as<double>();
@@ -341,9 +364,9 @@ void MissionInterface::readWayPoints()
             ugv_rot_y = file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["y"].as<double>();
             ugv_rot_z = file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["z"].as<double>();
             ugv_rot_w = file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["w"].as<double>();
-            uav_pos_x = file["marsupial_uav"][uav_pos_data]["pose"]["position"]["x"].as<double>();
-            uav_pos_y = file["marsupial_uav"][uav_pos_data]["pose"]["position"]["y"].as<double>();
-            uav_pos_z = file["marsupial_uav"][uav_pos_data]["pose"]["position"]["z"].as<double>();
+            uav_pos_x = file["marsupial_uav"][uav_pos_data]["pose"]["position"]["x"].as<double>()+ offset_map_dll_x;
+            uav_pos_y = file["marsupial_uav"][uav_pos_data]["pose"]["position"]["y"].as<double>()+ offset_map_dll_y;
+            uav_pos_z = file["marsupial_uav"][uav_pos_data]["pose"]["position"]["z"].as<double>()+ offset_map_dll_z;
             uav_rot_x = file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["x"].as<double>();
             uav_rot_y = file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["y"].as<double>();
             uav_rot_z = file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["z"].as<double>();
@@ -376,7 +399,7 @@ void MissionInterface::readWayPoints()
             traj_marsupial_.accelerations[1].linear.z = 0.0;
             traj_marsupial_.time_from_start = ros::Duration(0.5);
             trajectory.points.push_back(traj_marsupial_);
-        }
+        // }
     }
 
     if ((size_- 1) == trajectory.points.size()){
@@ -450,4 +473,67 @@ bool MissionInterface::UAVisOnTheGround()
         return false;
     else    
         return true;
+}
+
+void MissionInterface::markerPoints(trajectory_msgs::MultiDOFJointTrajectory _traj)
+{
+    visualization_msgs::MarkerArray _marker_ugv, _marker_uav; 
+
+    _marker_ugv.markers.resize(_traj.points.size());
+    _marker_uav.markers.resize(_traj.points.size());
+
+    for (size_t i = 0; i < _traj.points.size(); ++i){
+        //For UGV
+        _marker_ugv.markers[i].header.frame_id = "world";
+        _marker_ugv.markers[i].header.stamp = ros::Time::now();
+        _marker_ugv.markers[i].ns = "traj_ugv";
+        _marker_ugv.markers[i].id = i+1;
+        _marker_ugv.markers[i].action = visualization_msgs::Marker::ADD;
+        if (i % 5 == 0)
+            _marker_ugv.markers[i].type = visualization_msgs::Marker::CUBE;
+        else
+            _marker_ugv.markers[i].type = visualization_msgs::Marker::SPHERE;
+        _marker_ugv.markers[i].lifetime = ros::Duration(0);
+        _marker_ugv.markers[i].pose.position.x = _traj.points.at(i).transforms[0].translation.x;
+        _marker_ugv.markers[i].pose.position.y = _traj.points.at(i).transforms[0].translation.y; 
+        _marker_ugv.markers[i].pose.position.z = _traj.points.at(i).transforms[0].translation.z;
+        _marker_ugv.markers[i].pose.orientation.x = 0.0;
+        _marker_ugv.markers[i].pose.orientation.y = 0.0;
+        _marker_ugv.markers[i].pose.orientation.z = 0.0;
+        _marker_ugv.markers[i].pose.orientation.w = 1.0;
+        _marker_ugv.markers[i].scale.x = 0.1;
+        _marker_ugv.markers[i].scale.y = 0.1;
+        _marker_ugv.markers[i].scale.z = 0.1;
+        _marker_ugv.markers[i].color.a = 1.0;
+        _marker_ugv.markers[i].color.r = 0.1;
+        _marker_ugv.markers[i].color.g = 1.0;
+        _marker_ugv.markers[i].color.b = 0.1;
+        //FOR UAV
+        _marker_uav.markers[i].header.frame_id = "world";
+        _marker_uav.markers[i].header.stamp = ros::Time::now();
+        _marker_uav.markers[i].ns = "traj_uav";
+        _marker_uav.markers[i].id = i+1;
+        _marker_uav.markers[i].action = visualization_msgs::Marker::ADD;
+        if (i % 5 == 0)
+            _marker_uav.markers[i].type = visualization_msgs::Marker::CUBE;
+        else
+            _marker_uav.markers[i].type = visualization_msgs::Marker::SPHERE;
+        _marker_uav.markers[i].lifetime = ros::Duration(0);
+        _marker_uav.markers[i].pose.position.x = _traj.points.at(i).transforms[1].translation.x;
+        _marker_uav.markers[i].pose.position.y = _traj.points.at(i).transforms[1].translation.y; 
+        _marker_uav.markers[i].pose.position.z = _traj.points.at(i).transforms[1].translation.z;
+        _marker_uav.markers[i].pose.orientation.x = 0.0;
+        _marker_uav.markers[i].pose.orientation.y = 0.0;
+        _marker_uav.markers[i].pose.orientation.z = 0.0;
+        _marker_uav.markers[i].pose.orientation.w = 1.0;
+        _marker_uav.markers[i].scale.x = 0.1;
+        _marker_uav.markers[i].scale.y = 0.1;
+        _marker_uav.markers[i].scale.z = 0.1;
+        _marker_uav.markers[i].color.a = 1.0;
+        _marker_uav.markers[i].color.r = 0.1;
+        _marker_uav.markers[i].color.g = 0.1;
+        _marker_uav.markers[i].color.b = 1.0;
+    }	
+    traj_ugv_pub_.publish(_marker_ugv);
+    traj_uav_pub_.publish(_marker_uav);
 }

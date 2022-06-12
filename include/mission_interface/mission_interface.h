@@ -29,6 +29,7 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/Vector3.h>
 #include <visualization_msgs/Marker.h>
+#include <visualization_msgs/MarkerArray.h>
 #include <trajectory_msgs/MultiDOFJointTrajectory.h>
 #include <tf2_ros/transform_listener.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
@@ -71,10 +72,9 @@ public:
     void startMissionCB(const std_msgs::BoolConstPtr &msg);
     bool isInitialPose();
     bool UAVisOnTheGround();
-
+    void markerPoints(trajectory_msgs::MultiDOFJointTrajectory _traj);
 
     ros::Subscriber ugv_state_mission_sub_, uav_state_mission_sub_, start_mission_sub_, gps_sub_;
-    ros::Publisher traj_pub;
     geometry_msgs::Pose init_uav_pose, init_ugv_pose;
     geometry_msgs::Vector3 initial_pose;
     float takeoff_height;
@@ -89,6 +89,7 @@ private:
     upo_actions::ExecutePathResult action_result;
     
     trajectory_msgs::MultiDOFJointTrajectory trajectory;
+    ros::Publisher traj_uav_pub_, traj_ugv_pub_;
 
     std::string path_file, ros_node_name;
     std::string ugv_base_frame, uav_base_frame, ugv_odom_frame, uav_odom_frame, world_frame; 
