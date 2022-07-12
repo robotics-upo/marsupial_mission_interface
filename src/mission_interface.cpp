@@ -329,6 +329,8 @@ void MissionInterface::resetFlags()
   start_mission = false;
 }
 
+
+// Todo: let the user enter them with external files
 void MissionInterface::readWayPoints()
 {
   YAML::Node file = YAML::LoadFile(path_file);

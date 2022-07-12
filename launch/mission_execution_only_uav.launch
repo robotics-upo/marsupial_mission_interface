@@ -1,0 +1,25 @@
+<launch>
+    <arg name="map_name" default="stage_5" /> 
+
+    <arg name="ugv_name" default="arco" /> 
+    <arg name="mission_file" default="2022_3_15_23540" /> 
+    <arg name="ugv_base_frame" default="base_link" /> 
+    <arg name="ugv_odom_frame" default="odom" /> 
+    <arg name="uav_base_frame" default="base_link" /> 
+    <arg name="uav_odom_frame" default="odom" /> 
+    <arg name="uav_takeoff_height" default="1.5" /> 
+
+    <node name="mission_interface" pkg="marsupial_mission_interface" type="mission_interface_node" output="screen">
+        <rosparam command="load" file="$(find marsupial_mission_interface)/cfg/offset_maps_dll/offset_maps_dll_$(arg map_name).yaml"/>
+        <param name="path_file" value="$(find marsupial_mission_interface)/cfg/optimized_path/optimized_path_$(arg mission_file).yaml"/> 
+        <param name="map_name" value="$(arg map_name)"/> 
+        <param name="able_tracker_ugv" value="false"/> 
+        <param name="able_tracker_uav" value="true"/> 
+        <param name="ugv_base_frame" value="$(arg ugv_name)/$(arg ugv_base_frame)"/> 
+        <param name="ugv_odom_frame" value="$(arg ugv_name)/$(arg ugv_odom_frame)"/> 
+        <param name="uav_base_frame" value="$(arg uav_base_frame)"/> 
+        <param name="uav_odom_frame" value="$(arg uav_odom_frame)"/> 
+        <param name="takeoff_height" value="$(arg uav_takeoff_height)"/> 
+    </node>
+
+</launch>

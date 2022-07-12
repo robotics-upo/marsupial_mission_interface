@@ -2,12 +2,12 @@ marsupial_ugv:
   header: marsupial_ugv
   seq: 1
   stamp: 212558
-  frame_id: ugv
+  frame_id: world
   size: 44
   poses0:
     header: ugv0
     seq: 0
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 8.5
@@ -21,7 +21,7 @@ marsupial_ugv:
   poses1:
     header: ugv1
     seq: 1
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 8.5
@@ -35,7 +35,7 @@ marsupial_ugv:
   poses2:
     header: ugv2
     seq: 2
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 8.5
@@ -49,7 +49,7 @@ marsupial_ugv:
   poses3:
     header: ugv3
     seq: 3
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 8.449999809265137
@@ -63,7 +63,7 @@ marsupial_ugv:
   poses4:
     header: ugv4
     seq: 4
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 8.324999809265137
@@ -77,7 +77,7 @@ marsupial_ugv:
   poses5:
     header: ugv5
     seq: 5
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 8.199999809265137
@@ -91,7 +91,7 @@ marsupial_ugv:
   poses6:
     header: ugv6
     seq: 6
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 8.024999856948853
@@ -105,7 +105,7 @@ marsupial_ugv:
   poses7:
     header: ugv7
     seq: 7
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 7.849999904632568
@@ -119,7 +119,7 @@ marsupial_ugv:
   poses8:
     header: ugv8
     seq: 8
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 7.5
@@ -133,7 +133,7 @@ marsupial_ugv:
   poses9:
     header: ugv9
     seq: 9
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 7.099999904632568
@@ -147,7 +147,7 @@ marsupial_ugv:
   poses10:
     header: ugv10
     seq: 10
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 6.700000286102295
@@ -161,7 +161,7 @@ marsupial_ugv:
   poses11:
     header: ugv11
     seq: 11
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 6.300000190734863
@@ -175,7 +175,7 @@ marsupial_ugv:
   poses12:
     header: ugv12
     seq: 12
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 5.950000286102295
@@ -189,7 +189,7 @@ marsupial_ugv:
   poses13:
     header: ugv13
     seq: 13
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 5.910000276565552
@@ -203,7 +203,7 @@ marsupial_ugv:
   poses14:
     header: ugv14
     seq: 14
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 5.870000267028809
@@ -217,7 +217,7 @@ marsupial_ugv:
   poses15:
     header: ugv15
     seq: 15
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 5.830000257492065
@@ -231,7 +231,7 @@ marsupial_ugv:
   poses16:
     header: ugv16
     seq: 16
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 5.790000247955322
@@ -245,7 +245,7 @@ marsupial_ugv:
   poses17:
     header: ugv17
     seq: 17
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 5.750000238418579
@@ -259,7 +259,7 @@ marsupial_ugv:
   poses18:
     header: ugv18
     seq: 18
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 5.710000228881836
@@ -273,7 +273,7 @@ marsupial_ugv:
   poses19:
     header: ugv19
     seq: 19
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 5.670000219345093
@@ -287,7 +287,7 @@ marsupial_ugv:
   poses20:
     header: ugv20
     seq: 20
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 5.630000209808349
@@ -301,7 +301,7 @@ marsupial_ugv:
   poses21:
     header: ugv21
     seq: 21
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 5.590000200271606
@@ -315,7 +315,7 @@ marsupial_ugv:
   poses22:
     header: ugv22
     seq: 22
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 5.550000190734863
@@ -329,7 +329,7 @@ marsupial_ugv:
   poses23:
     header: ugv23
     seq: 23
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 5.526666863759359
@@ -343,7 +343,7 @@ marsupial_ugv:
   poses24:
     header: ugv24
     seq: 24
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 5.503333536783854
@@ -357,7 +357,7 @@ marsupial_ugv:
   poses25:
     header: ugv25
     seq: 25
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 5.48000020980835
@@ -371,7 +371,7 @@ marsupial_ugv:
   poses26:
     header: ugv26
     seq: 26
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 5.456666882832845
@@ -385,7 +385,7 @@ marsupial_ugv:
   poses27:
     header: ugv27
     seq: 27
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 5.433333555857341
@@ -399,7 +399,7 @@ marsupial_ugv:
   poses28:
     header: ugv28
     seq: 28
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 5.410000228881836
@@ -413,7 +413,7 @@ marsupial_ugv:
   poses29:
     header: ugv29
     seq: 29
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 5.386666901906332
@@ -427,7 +427,7 @@ marsupial_ugv:
   poses30:
     header: ugv30
     seq: 30
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 5.363333574930826
@@ -441,7 +441,7 @@ marsupial_ugv:
   poses31:
     header: ugv31
     seq: 31
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 5.340000247955322
@@ -455,7 +455,7 @@ marsupial_ugv:
   poses32:
     header: ugv32
     seq: 32
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 5.316666920979817
@@ -469,7 +469,7 @@ marsupial_ugv:
   poses33:
     header: ugv33
     seq: 33
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 5.293333594004313
@@ -483,7 +483,7 @@ marsupial_ugv:
   poses34:
     header: ugv34
     seq: 34
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 5.270000267028808
@@ -497,7 +497,7 @@ marsupial_ugv:
   poses35:
     header: ugv35
     seq: 35
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 5.246666940053304
@@ -511,7 +511,7 @@ marsupial_ugv:
   poses36:
     header: ugv36
     seq: 36
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 5.223333613077799
@@ -525,7 +525,7 @@ marsupial_ugv:
   poses37:
     header: ugv37
     seq: 37
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 5.200000286102295
@@ -539,7 +539,7 @@ marsupial_ugv:
   poses38:
     header: ugv38
     seq: 38
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 5.100000222524007
@@ -553,7 +553,7 @@ marsupial_ugv:
   poses39:
     header: ugv39
     seq: 39
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 5.00000015894572
@@ -567,7 +567,7 @@ marsupial_ugv:
   poses40:
     header: ugv40
     seq: 40
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 4.900000095367432
@@ -581,7 +581,7 @@ marsupial_ugv:
   poses41:
     header: ugv41
     seq: 41
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 4.700000047683716
@@ -595,7 +595,7 @@ marsupial_ugv:
   poses42:
     header: ugv42
     seq: 42
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 4.700000047683716
@@ -609,7 +609,7 @@ marsupial_ugv:
   poses43:
     header: ugv43
     seq: 43
-    frame_id: ugv
+    frame_id: world
     pose:
       position:
         x: 4.5
@@ -625,12 +625,12 @@ marsupial_uav:
   header: marsupial_uav
   seq: 1
   stamp: 212558
-  frame_id: uav
+  frame_id: world
   size: 44
   poses0:
     header: uav0
     seq: 0
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 8.5
@@ -644,7 +644,7 @@ marsupial_uav:
   poses1:
     header: uav1
     seq: 1
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 8.199999809265137
@@ -658,7 +658,7 @@ marsupial_uav:
   poses2:
     header: uav2
     seq: 2
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 8.100000381469727
@@ -672,7 +672,7 @@ marsupial_uav:
   poses3:
     header: uav3
     seq: 3
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 8
@@ -686,7 +686,7 @@ marsupial_uav:
   poses4:
     header: uav4
     seq: 4
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 8.050000190734863
@@ -700,7 +700,7 @@ marsupial_uav:
   poses5:
     header: uav5
     seq: 5
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 8.100000381469727
@@ -714,7 +714,7 @@ marsupial_uav:
   poses6:
     header: uav6
     seq: 6
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 8.100000381469727
@@ -728,7 +728,7 @@ marsupial_uav:
   poses7:
     header: uav7
     seq: 7
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 7.750000238418579
@@ -742,7 +742,7 @@ marsupial_uav:
   poses8:
     header: uav8
     seq: 8
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 7.400000095367432
@@ -756,7 +756,7 @@ marsupial_uav:
   poses9:
     header: uav9
     seq: 9
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 7
@@ -770,7 +770,7 @@ marsupial_uav:
   poses10:
     header: uav10
     seq: 10
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 6.599999904632568
@@ -784,7 +784,7 @@ marsupial_uav:
   poses11:
     header: uav11
     seq: 11
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 6.200000286102295
@@ -798,7 +798,7 @@ marsupial_uav:
   poses12:
     header: uav12
     seq: 12
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 5.950000286102295
@@ -812,7 +812,7 @@ marsupial_uav:
   poses13:
     header: uav13
     seq: 13
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 5.599999904632568
@@ -826,7 +826,7 @@ marsupial_uav:
   poses14:
     header: uav14
     seq: 14
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 5.200000286102295
@@ -840,7 +840,7 @@ marsupial_uav:
   poses15:
     header: uav15
     seq: 15
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 4.800000190734863
@@ -854,7 +854,7 @@ marsupial_uav:
   poses16:
     header: uav16
     seq: 16
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 4.400000095367432
@@ -868,7 +868,7 @@ marsupial_uav:
   poses17:
     header: uav17
     seq: 17
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 4
@@ -882,7 +882,7 @@ marsupial_uav:
   poses18:
     header: uav18
     seq: 18
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 3.600000143051147
@@ -896,7 +896,7 @@ marsupial_uav:
   poses19:
     header: uav19
     seq: 19
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 3.549999952316284
@@ -910,7 +910,7 @@ marsupial_uav:
   poses20:
     header: uav20
     seq: 20
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 3.150000095367432
@@ -924,7 +924,7 @@ marsupial_uav:
   poses21:
     header: uav21
     seq: 21
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 2.75
@@ -938,7 +938,7 @@ marsupial_uav:
   poses22:
     header: uav22
     seq: 22
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 2.350000143051147
@@ -952,7 +952,7 @@ marsupial_uav:
   poses23:
     header: uav23
     seq: 23
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 1.950000047683716
@@ -966,7 +966,7 @@ marsupial_uav:
   poses24:
     header: uav24
     seq: 24
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 1.600000023841858
@@ -980,7 +980,7 @@ marsupial_uav:
   poses25:
     header: uav25
     seq: 25
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 1.350000023841858
@@ -994,7 +994,7 @@ marsupial_uav:
   poses26:
     header: uav26
     seq: 26
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 1.300000071525574
@@ -1008,7 +1008,7 @@ marsupial_uav:
   poses27:
     header: uav27
     seq: 27
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 1.050000071525574
@@ -1022,7 +1022,7 @@ marsupial_uav:
   poses28:
     header: uav28
     seq: 28
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 0.699999988079071
@@ -1036,7 +1036,7 @@ marsupial_uav:
   poses29:
     header: uav29
     seq: 29
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 0.699999988079071
@@ -1050,7 +1050,7 @@ marsupial_uav:
   poses30:
     header: uav30
     seq: 30
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 0.699999988079071
@@ -1064,7 +1064,7 @@ marsupial_uav:
   poses31:
     header: uav31
     seq: 31
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 0.4500000178813934
@@ -1078,7 +1078,7 @@ marsupial_uav:
   poses32:
     header: uav32
     seq: 32
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 0.05000000074505806
@@ -1092,7 +1092,7 @@ marsupial_uav:
   poses33:
     header: uav33
     seq: 33
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: -0.25
@@ -1106,7 +1106,7 @@ marsupial_uav:
   poses34:
     header: uav34
     seq: 34
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: -0.1000000014901161
@@ -1120,7 +1120,7 @@ marsupial_uav:
   poses35:
     header: uav35
     seq: 35
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 0
@@ -1134,7 +1134,7 @@ marsupial_uav:
   poses36:
     header: uav36
     seq: 36
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 0.3499999940395355
@@ -1148,7 +1148,7 @@ marsupial_uav:
   poses37:
     header: uav37
     seq: 37
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 0.550000011920929
@@ -1162,7 +1162,7 @@ marsupial_uav:
   poses38:
     header: uav38
     seq: 38
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 0.6000000238418579
@@ -1176,7 +1176,7 @@ marsupial_uav:
   poses39:
     header: uav39
     seq: 39
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 0.6500000357627869
@@ -1190,7 +1190,7 @@ marsupial_uav:
   poses40:
     header: uav40
     seq: 40
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 0.5
@@ -1204,7 +1204,7 @@ marsupial_uav:
   poses41:
     header: uav41
     seq: 41
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 0.550000011920929
@@ -1218,7 +1218,7 @@ marsupial_uav:
   poses42:
     header: uav42
     seq: 42
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 0.6500000357627869
@@ -1232,7 +1232,7 @@ marsupial_uav:
   poses43:
     header: uav43
     seq: 43
-    frame_id: uav
+    frame_id: world
     pose:
       position:
         x: 0.6500000357627869
