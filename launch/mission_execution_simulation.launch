@@ -13,8 +13,9 @@
     <arg name="uav_odom_frame" default="odom" /> 
     <arg name="uav_takeoff_height" default="1" /> 
 
-    <node name="mission_interface" pkg="marsupial_mission_interface" type="mission_interface_node" output="screen">
-        <rosparam command="load" file="$(find marsupial_mission_interface)/cfg/offset_maps_dll/offset_maps_dll_$(arg map_name).yaml"/>
+    <node name="mission_interface" pkg="marsupial_mission_interface"
+    type="mission_interface_node" output="screen">
+	<rosparam command="load" file="$(find marsupial_mission_interface)/cfg/offset_maps_dll/offset_maps_dll_$(arg map_name).yaml"/>
         <param name="path_file" value="$(find marsupial_mission_interface)/cfg/optimized_path/optimized_path_$(arg mission_file).yaml"/> 
         <param name="map_name" value="$(arg map_name)"/> 
         <param name="able_tracker_ugv" value="$(arg able_tracker_ugv)"/> 

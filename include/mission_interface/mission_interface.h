@@ -73,16 +73,16 @@ public:
     bool isInitialPose();
     bool UAVisOnTheGround();
     void markerPoints(trajectory_msgs::MultiDOFJointTrajectory _traj);
-
+  
+private:
+  
     ros::Subscriber ugv_state_mission_sub_, uav_state_mission_sub_, start_mission_sub_, gps_sub_;
     geometry_msgs::Pose init_uav_pose, init_ugv_pose;
     geometry_msgs::Vector3 initial_pose;
     float takeoff_height;
     bool take_off;
-    double height , flaying_height;
+    double height , flying_height;
     double received_initial_pose;
-
-private:
 
     trajectory_msgs::MultiDOFJointTrajectory globalTrajectory;
     upo_actions::Navigate3DGoal ugv_goal3D, uav_goal3D;
