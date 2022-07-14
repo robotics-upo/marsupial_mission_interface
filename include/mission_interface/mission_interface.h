@@ -92,7 +92,7 @@ private:
     ros::Publisher traj_uav_pub_, traj_ugv_pub_;
 
     std::string path_file, ros_node_name;
-    std::string ugv_base_frame, uav_base_frame, ugv_odom_frame, uav_odom_frame, world_frame; 
+    std::string ugv_base_frame, uav_base_frame, ugv_odom_frame, world_frame; 
     double offset_map_dll_x ,offset_map_dll_y ,offset_map_dll_z;
     std::string map_name;
     bool debug;
