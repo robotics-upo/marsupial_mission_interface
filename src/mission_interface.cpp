@@ -31,15 +31,9 @@ MissionInterface::MissionInterface(std::string node_name_)
   received_initial_pose = false;
 
   geometry_msgs::TransformStamped uav_tf_;
-   
-
-  resetFlags();
-  configTopics();
-  configServices();
   readWayPoints();
-  markerPoints(trajectory);
 
-  for (size_t i =0; i < trajectory.points.size(); i++ ){
+   for (size_t i =0; i < trajectory.points.size(); i++ ){
     printf("[%lu] UGV[%f %f %f][%f %f %f %f] UAV[%f %f %f][%f %f %f %f]\n",
 	   i, trajectory.points.at(i).transforms[0].translation.x,
 	   trajectory.points.at(i).transforms[0].translation.y,
@@ -57,6 +51,13 @@ MissionInterface::MissionInterface(std::string node_name_)
 	   trajectory.points.at(i).transforms[1].rotation.w);
   }
 
+
+  resetFlags();
+  configTopics();
+  configServices();
+  markerPoints(trajectory);
+
+ 
   try{
     uav_tf_ = tfBuffer->lookupTransform(world_frame, uav_base_frame, ros::Time(0));
     ROS_INFO("\tGot initial UAV position ");
@@ -343,6 +344,7 @@ void MissionInterface::readWayPoints()
     ugv_pos_data = "poses"+ std::to_string(i);
     uav_pos_data = "poses"+ std::to_string(i);
     if (i==0){
+      try {
       init_ugv_pose.position.x =
 	file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["x"].as<double>();
       init_ugv_pose.position.y =
@@ -374,53 +376,60 @@ void MissionInterface::readWayPoints()
 	file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["z"].as<double>();
       init_uav_pose.orientation.w =
 	file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["w"].as<double>();
+      }catch(std::exception &e) {
+        ROS_INFO("Skipping waypoint %d", i);
+      }
     }
     // else{
-    ugv_pos_x = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["x"].as<double>();
-    ugv_pos_y = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["y"].as<double>();
-    ugv_pos_z = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["z"].as<double>();
-    ugv_rot_x = file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["x"].as<double>();
-    ugv_rot_y = file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["y"].as<double>();
-    ugv_rot_z = file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["z"].as<double>();
-    ugv_rot_w = file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["w"].as<double>();
-    uav_pos_x = file["marsupial_uav"][uav_pos_data]["pose"]["position"]["x"].as<double>()
-      + offset_map_dll_x;
-    uav_pos_y = file["marsupial_uav"][uav_pos_data]["pose"]["position"]["y"].as<double>()+
-      offset_map_dll_y;
-    uav_pos_z = file["marsupial_uav"][uav_pos_data]["pose"]["position"]["z"].as<double>()+
-      offset_map_dll_z;
-    uav_rot_x = file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["x"].as<double>();
-    uav_rot_y = file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["y"].as<double>();
-    uav_rot_z = file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["z"].as<double>();
-    uav_rot_w = file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["w"].as<double>();
-    traj_marsupial_.transforms[0].translation.x = ugv_pos_x;
-    traj_marsupial_.transforms[0].translation.y = ugv_pos_y;
-    traj_marsupial_.transforms[0].translation.z = ugv_pos_z;
-    traj_marsupial_.transforms[0].rotation.x = ugv_rot_x;
-    traj_marsupial_.transforms[0].rotation.y = ugv_rot_y;
-    traj_marsupial_.transforms[0].rotation.z = ugv_rot_z;
-    traj_marsupial_.transforms[0].rotation.w = ugv_rot_w;
-    traj_marsupial_.velocities[0].linear.x = 0.0;
-    traj_marsupial_.velocities[0].linear.y = 0.0;
-    traj_marsupial_.velocities[0].linear.z = 0.0;
-    traj_marsupial_.accelerations[0].linear.x = 0.0;
-    traj_marsupial_.accelerations[0].linear.y = 0.0;
-    traj_marsupial_.accelerations[0].linear.z = 0.0;
-    traj_marsupial_.transforms[1].translation.x = uav_pos_x;
-    traj_marsupial_.transforms[1].translation.y = uav_pos_y;
-    traj_marsupial_.transforms[1].translation.z = uav_pos_z;
-    traj_marsupial_.transforms[1].rotation.x = uav_rot_x;
-    traj_marsupial_.transforms[1].rotation.y = uav_rot_y;
-    traj_marsupial_.transforms[1].rotation.z = uav_rot_z;
-    traj_marsupial_.transforms[1].rotation.w = uav_rot_w;
-    traj_marsupial_.velocities[1].linear.x = 0.0;
-    traj_marsupial_.velocities[1].linear.y = 0.0;
-    traj_marsupial_.velocities[1].linear.z = 0.0;
-    traj_marsupial_.accelerations[1].linear.x = 0.0;
-    traj_marsupial_.accelerations[1].linear.y = 0.0;
-    traj_marsupial_.accelerations[1].linear.z = 0.0;
-    traj_marsupial_.time_from_start = ros::Duration(0.5);
-    trajectory.points.push_back(traj_marsupial_);
+    try {
+      ugv_pos_x = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["x"].as<double>();
+      ugv_pos_y = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["y"].as<double>();
+      ugv_pos_z = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["z"].as<double>();
+      ugv_rot_x = file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["x"].as<double>();
+      ugv_rot_y = file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["y"].as<double>();
+      ugv_rot_z = file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["z"].as<double>();
+      ugv_rot_w = file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["w"].as<double>();
+      uav_pos_x = file["marsupial_uav"][uav_pos_data]["pose"]["position"]["x"].as<double>()
+        + offset_map_dll_x;
+      uav_pos_y = file["marsupial_uav"][uav_pos_data]["pose"]["position"]["y"].as<double>()+
+        offset_map_dll_y;
+      uav_pos_z = file["marsupial_uav"][uav_pos_data]["pose"]["position"]["z"].as<double>()+
+        offset_map_dll_z;
+      uav_rot_x = file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["x"].as<double>();
+      uav_rot_y = file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["y"].as<double>();
+      uav_rot_z = file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["z"].as<double>();
+      uav_rot_w = file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["w"].as<double>();
+      traj_marsupial_.transforms[0].translation.x = ugv_pos_x;
+      traj_marsupial_.transforms[0].translation.y = ugv_pos_y;
+      traj_marsupial_.transforms[0].translation.z = ugv_pos_z;
+      traj_marsupial_.transforms[0].rotation.x = ugv_rot_x;
+      traj_marsupial_.transforms[0].rotation.y = ugv_rot_y;
+      traj_marsupial_.transforms[0].rotation.z = ugv_rot_z;
+      traj_marsupial_.transforms[0].rotation.w = ugv_rot_w;
+      traj_marsupial_.velocities[0].linear.x = 0.0;
+      traj_marsupial_.velocities[0].linear.y = 0.0;
+      traj_marsupial_.velocities[0].linear.z = 0.0;
+      traj_marsupial_.accelerations[0].linear.x = 0.0;
+      traj_marsupial_.accelerations[0].linear.y = 0.0;
+      traj_marsupial_.accelerations[0].linear.z = 0.0;
+      traj_marsupial_.transforms[1].translation.x = uav_pos_x;
+      traj_marsupial_.transforms[1].translation.y = uav_pos_y;
+      traj_marsupial_.transforms[1].translation.z = uav_pos_z;
+      traj_marsupial_.transforms[1].rotation.x = uav_rot_x;
+      traj_marsupial_.transforms[1].rotation.y = uav_rot_y;
+      traj_marsupial_.transforms[1].rotation.z = uav_rot_z;
+      traj_marsupial_.transforms[1].rotation.w = uav_rot_w;
+      traj_marsupial_.velocities[1].linear.x = 0.0;
+      traj_marsupial_.velocities[1].linear.y = 0.0;
+      traj_marsupial_.velocities[1].linear.z = 0.0;
+      traj_marsupial_.accelerations[1].linear.x = 0.0;
+      traj_marsupial_.accelerations[1].linear.y = 0.0;
+      traj_marsupial_.accelerations[1].linear.z = 0.0;
+      traj_marsupial_.time_from_start = ros::Duration(0.5);
+      trajectory.points.push_back(traj_marsupial_);
+    } catch(std::exception &e) {
+      ROS_INFO("Skipping waypoint %d", i);
+    }
   }
 
   // It is substract -1 because first position it is the initial point
