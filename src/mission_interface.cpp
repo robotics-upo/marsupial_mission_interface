@@ -86,6 +86,9 @@ void MissionInterface::configServices()
         ugvNavigation3DClient.reset(new Navigate3DClient("/UGVNavigation3D", true));
         ugvNavigation3DClient->waitForServer();
     }
+    // Read another mission
+
+
 }
 
 void MissionInterface::configTopics()
@@ -340,7 +343,7 @@ void MissionInterface::readWayPoints()
   double ugv_pos_x, ugv_pos_y, ugv_pos_z, ugv_rot_x, ugv_rot_y, ugv_rot_z, ugv_rot_w;
   double uav_pos_x, uav_pos_y, uav_pos_z, uav_rot_x, uav_rot_y, uav_rot_z, uav_rot_w;
   printf("offset_map_dll=[%f %f %f]\n",offset_map_dll_x,offset_map_dll_y,offset_map_dll_z);
-  for (int i=0 ; i < size_; i++ ){ // It begin in 1 because first point is given as initial point.
+  for (int i = 0; i < size_; i++ ){ // It begin in 1 because first point is given as initial point.
     ugv_pos_data = "poses"+ std::to_string(i);
     uav_pos_data = "poses"+ std::to_string(i);
     if (i==0){
@@ -433,12 +436,8 @@ void MissionInterface::readWayPoints()
   }
 
   // It is substract -1 because first position it is the initial point
-  if ((size_- 1) == trajectory.points.size()){
-    std::cout << "YAML FILE successfully readed" << std::endl;
-    std::cout << "YAML FILE NAME: " << path_file << std::endl;
-  }
-  else
-    ROS_ERROR("DATA PROBLEM IN YAML_FILE !!!");
+  std::cout << "YAML FILE readed. YAML FILE NAME: " << path_file << std::endl;
+  std::cout << "Number of points: " << trajectory.points.size() << std::endl;
 }
 
 bool MissionInterface::isInitialPose()
