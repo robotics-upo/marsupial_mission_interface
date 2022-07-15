@@ -74,18 +74,21 @@ public:
   void loadMissionCB(const std_msgs::String &msg);
   void gpsCB(const sensor_msgs::NavSatFix::ConstPtr& msg);
   void startMissionCB(const std_msgs::BoolConstPtr &msg);
+  void lengthReachedCB(const std_msgs::BoolConstPtr &msg);
   bool isInitialPose();
   bool UAVisOnTheGround();
   void markerPoints();
 
+  void interpolate(float dist);
+
   bisectionCat BisCat;
   
   ros::Subscriber ugv_state_mission_sub_, uav_state_mission_sub_, start_mission_sub_, gps_sub_;
-  ros::Subscriber load_trajectory_sub_;
+  ros::Subscriber load_trajectory_sub_, length_reached_sub_;
   geometry_msgs::Pose init_uav_pose, init_ugv_pose;
   geometry_msgs::Vector3 initial_pose;
   float takeoff_height;
-  bool take_off;
+  bool take_off, length_reached;
   double height , flying_height;
   double received_initial_pose;
 
