@@ -58,6 +58,7 @@ MissionInterface::MissionInterface(std::string node_name_)
   }
   resetFlags();
   markerPoints();
+  ros::spinOnce();
   configServices();
 
   try{
