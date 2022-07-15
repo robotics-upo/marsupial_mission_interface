@@ -366,7 +366,7 @@ void MissionInterface::readWaypoints(const std::string &path_file)
   for (int i = 0; i < size_; i++ ){ // It begin in 1 because first point is given as initial point.
     ugv_pos_data = "poses" + std::to_string(i);
     uav_pos_data = "poses" + std::to_string(i);
-    tether_data = "tether" + std::to_string(i);
+    tether_data = "length" + std::to_string(i);
     try {
 
 	init_uav_pose.orientation.z =
@@ -435,7 +435,7 @@ void MissionInterface::readWaypoints(const std::string &path_file)
 
 	float length = 2.0;
 	try {
-	  length = file["tether"][tether_data].as<double>();
+	  length = file["tether"][tether_data]["length"].as<double>();
 	} catch (std::exception &e) {}
 	tether_length_vector.push_back(length); // TODO calculate the distance bw UAV and UGV
     } catch(std::exception &e) {
