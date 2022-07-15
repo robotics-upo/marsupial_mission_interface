@@ -4,14 +4,14 @@
     "mainwindow": {
       "keys": {
         "geometry": {
-          "repr(QByteArray.hex)": "QtCore.QByteArray(b'01d9d0cb0003000000000098000000cf0000077f000002f900000098000000f40000077f000002f90000000000000000078000000098000000f40000077f000002f9')",
+          "repr(QByteArray.hex)": "QtCore.QByteArray(b'01d9d0cb00030000000007c80000001b00000eff00000437000007c80000004000000eff0000043700000000000000000780000007c80000004000000eff00000437')",
           "type": "repr(QByteArray.hex)",
-          "pretty-print": "                                 "
+          "pretty-print": "           7   @   7        @   7"
         },
         "state": {
-          "repr(QByteArray.hex)": "QtCore.QByteArray(b'000000ff00000000fd0000000100000003000006e8000001dafc0100000002fc00000000000006e80000038200fffffffc0100000002fc00000000000002880000023d00fffffffc0200000002fb00000058007200710074005f007000750062006c00690073006800650072005f005f005000750062006c00690073006800650072005f005f0031005f005f005000750062006c0069007300680065007200570069006400670065007401000000160000012e0000008c00fffffffb00000058007200710074005f007000750062006c00690073006800650072005f005f005000750062006c00690073006800650072005f005f0032005f005f005000750062006c00690073006800650072005700690064006700650074010000014a000000a60000008c00fffffffb00000042007200710074005f0070006c006f0074005f005f0050006c006f0074005f005f0031005f005f00440061007400610050006c006f0074005700690064006700650074010000028e0000045a0000013f00fffffffb0000004c007200710074005f0074006f007000690063005f005f0054006f0070006900630050006c007500670069006e005f005f0031005f005f0054006f00700069006300570069006400670065007401000005d4000001140000000000000000000006e80000000000000004000000040000000800000008fc00000001000000030000000100000036004d0069006e0069006d0069007a006500640044006f0063006b00570069006400670065007400730054006f006f006c0062006100720000000000ffffffff0000000000000000')",
+          "repr(QByteArray.hex)": "QtCore.QByteArray(b'000000ff00000000fd000000010000000300000738000003ccfc0100000002fc00000000000007380000038200fffffffc0100000002fc00000000000002a50000023d00fffffffc0200000002fb00000058007200710074005f007000750062006c00690073006800650072005f005f005000750062006c00690073006800650072005f005f0031005f005f005000750062006c0069007300680065007200570069006400670065007401000000160000026f0000008c00fffffffb00000058007200710074005f007000750062006c00690073006800650072005f005f005000750062006c00690073006800650072005f005f0032005f005f005000750062006c00690073006800650072005700690064006700650074010000028b000001570000008c00fffffffb00000042007200710074005f0070006c006f0074005f005f0050006c006f0074005f005f0031005f005f00440061007400610050006c006f007400570069006400670065007401000002ab0000048d0000013f00fffffffb0000004c007200710074005f0074006f007000690063005f005f0054006f0070006900630050006c007500670069006e005f005f0031005f005f0054006f00700069006300570069006400670065007401000005d4000001140000000000000000000007380000000000000004000000040000000800000008fc00000001000000030000000100000036004d0069006e0069006d0069007a006500640044006f0063006b00570069006400670065007400730054006f006f006c0062006100720000000000ffffffff0000000000000000')",
           "type": "repr(QByteArray.hex)",
-          "pretty-print": "                                        Xrqt_publisher__Publisher__1__PublisherWidget          Xrqt_publisher__Publisher__2__PublisherWidget          Brqt_plot__Plot__1__DataPlotWidget          Lrqt_topic__TopicPlugin__1__TopicWidget                            6MinimizedDockWidgetsToolbar        "
+          "pretty-print": "                   8                    Xrqt_publisher__Publisher__1__PublisherWidget          Xrqt_publisher__Publisher__2__PublisherWidget          Brqt_plot__Plot__1__DataPlotWidget          Lrqt_topic__TopicPlugin__1__TopicWidget                            6MinimizedDockWidgetsToolbar        "
         }
       },
       "groups": {
@@ -65,15 +65,15 @@
                   "type": "repr"
                 },
                 "topics": {
-                  "repr": "['/control_tie/length_status/data', '/control_tie/set_length/data']",
+                  "repr": "['/tie_controller/length_status/data', '/tie_controller/set_length/data']",
                   "type": "repr"
                 },
                 "x_limits": {
-                  "repr": "[212.43558764457703, 222.43558764457703]",
+                  "repr": "[3816.701123714447, 3826.701123714447]",
                   "type": "repr"
                 },
                 "y_limits": {
-                  "repr": "[3.746860217276755e-37, 3.1780499232455055]",
+                  "repr": "[3.746860217276755e-37, 33.439735412597656]",
                   "type": "repr"
                 }
               },
@@ -104,7 +104,7 @@
             "plugin": {
               "keys": {
                 "publishers": {
-                  "repr": "\"[{'topic_name': '/control_tie/enable', 'type_name': 'std_msgs/Bool', 'rate': 1.0, 'enabled': False, 'publisher_id': 0, 'counter': 0, 'expressions': {'/control_tie/enable/data': 'True'}}, {'topic_name': '/control_tie/enable', 'type_name': 'std_msgs/Bool', 'rate': 3.0, 'enabled': False, 'publisher_id': 1, 'counter': 0, 'expressions': {}}, {'topic_name': '/control_tie/reverse', 'type_name': 'std_msgs/Bool', 'rate': 1.0, 'enabled': False, 'publisher_id': 2, 'counter': 0, 'expressions': {'/control_tie/reverse/data': 'False'}}, {'topic_name': '/control_tie/set_length', 'type_name': 'std_msgs/Float32', 'rate': 2.0, 'enabled': False, 'publisher_id': 3, 'counter': 220, 'expressions': {'/control_tie/set_length/data': '1.5'}}, {'topic_name': '/control_tie/reset_length_estimation', 'type_name': 'std_msgs/Float32', 'rate': 1.0, 'enabled': False, 'publisher_id': 4, 'counter': 0, 'expressions': {'/control_tie/reset_length_estimation/data': '1.6'}}]\"",
+                  "repr": "\"[{'topic_name': '/tie_controller/enable', 'type_name': 'std_msgs/Bool', 'rate': 1.0, 'enabled': False, 'publisher_id': 0, 'counter': 5, 'expressions': {'/tie_controller/enable/data': 'True'}}, {'topic_name': '/tie_controller/enable', 'type_name': 'std_msgs/Bool', 'rate': 3.0, 'enabled': False, 'publisher_id': 1, 'counter': 208, 'expressions': {}}, {'topic_name': '/tie_controller/reverse', 'type_name': 'std_msgs/Bool', 'rate': 1.0, 'enabled': False, 'publisher_id': 2, 'counter': 0, 'expressions': {'/tie_controller/reverse/data': 'False'}}, {'topic_name': '/tie_controller/set_length', 'type_name': 'std_msgs/Float32', 'rate': 2.0, 'enabled': False, 'publisher_id': 3, 'counter': 657, 'expressions': {'/tie_controller/set_length/data': '6.4'}}, {'topic_name': '/tie_controller/reset_length_estimation', 'type_name': 'std_msgs/Float32', 'rate': 1.0, 'enabled': False, 'publisher_id': 4, 'counter': 14, 'expressions': {'/tie_controller/reset_length_estimation/data': '7.5'}}, {'topic_name': '/tie_controller/one_way', 'type_name': 'std_msgs/Bool', 'rate': 1.0, 'enabled': False, 'publisher_id': 5, 'counter': 178, 'expressions': {'/tie_controller/one_way/data': 'True'}}]\"",
                   "type": "repr"
                 }
               },
@@ -135,7 +135,7 @@
             "plugin": {
               "keys": {
                 "publishers": {
-                  "repr": "\"[{'topic_name': '/mission_interface/start_mission', 'type_name': 'std_msgs/Bool', 'rate': 1.0, 'enabled': False, 'publisher_id': 0, 'counter': 0, 'expressions': {'/mission_interface/start_mission/data': 'True'}}, {'topic_name': '/mission_interface/uav_ready_for_mission', 'type_name': 'std_msgs/Bool', 'rate': 1.0, 'enabled': False, 'publisher_id': 1, 'counter': 0, 'expressions': {'/mission_interface/uav_ready_for_mission/data': 'True'}}]\"",
+                  "repr": "\"[{'topic_name': '/mission_interface/start_mission', 'type_name': 'std_msgs/Bool', 'rate': 1.0, 'enabled': False, 'publisher_id': 0, 'counter': 10, 'expressions': {'/mission_interface/start_mission/data': 'True'}}, {'topic_name': '/mission_interface/uav_ready_for_mission', 'type_name': 'std_msgs/Bool', 'rate': 1.0, 'enabled': False, 'publisher_id': 1, 'counter': 19, 'expressions': {'/mission_interface/uav_ready_for_mission/data': 'True'}}]\"",
                   "type": "repr"
                 }
               },
