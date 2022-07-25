@@ -8,6 +8,7 @@
 #include <time.h>
 #include <sys/timeb.h>
 #include <fstream>
+#include <vector>
 
 #include <actionlib/server/simple_action_server.h>
 #include <actionlib/client/simple_action_client.h>
@@ -39,8 +40,10 @@
 
 
 #include <yaml-cpp/yaml.h>
-
 #include <std_srvs/Trigger.h>
+
+#include "mission_interface/compute_catenary_3D.h"
+
 
 class MissionInterface
 {
@@ -72,7 +75,10 @@ public:
     void startMissionCB(const std_msgs::BoolConstPtr &msg);
     bool isInitialPose();
     bool UAVisOnTheGround();
-    void markerPoints(trajectory_msgs::MultiDOFJointTrajectory _traj);
+    void markerPoints();
+
+    bisectionCat BisCat;
+
   
 private:
   
@@ -89,7 +95,8 @@ private:
     upo_actions::ExecutePathResult action_result;
     
     trajectory_msgs::MultiDOFJointTrajectory trajectory;
-    ros::Publisher traj_uav_pub_, traj_ugv_pub_;
+    std::vector<double> length_tether;
+    ros::Publisher traj_uav_pub_, traj_ugv_pub_,traj_lines_ugv_pub_,traj_lines_uav_pub_, catenary_marker_pub_;
 
     std::string path_file, ros_node_name;
     std::string ugv_base_frame, uav_base_frame, ugv_odom_frame, world_frame; 
@@ -98,8 +105,9 @@ private:
     bool debug;
     int num_wp;
     bool ugv_ready, uav_ready, is_ugv_in_waypoint, is_uav_in_waypoint, start_mission;
-    bool able_tracker_uav, able_tracker_ugv; 
+    bool able_tracker_uav, able_tracker_ugv, able_tracker_tether; 
     std::unique_ptr<tf2_ros::TransformListener> tf2_list;
+
 
 };
 

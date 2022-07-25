@@ -127,9 +127,11 @@ include_directories(include/
   ${Boost_INCLUDE_DIRS}
 )
 
-add_executable(mission_interface_node src/mission_interface_node.cpp src/mission_interface.cpp)
+add_executable(mission_interface_node src/mission_interface_node.cpp src/mission_interface.cpp src/compute_catenary_3D.cpp)
 target_link_libraries(mission_interface_node ${catkin_LIBRARIES} ${EXTERNAL_LIBS} yaml-cpp)
 add_dependencies(mission_interface_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
