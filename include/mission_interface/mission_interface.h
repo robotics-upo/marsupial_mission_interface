@@ -8,6 +8,7 @@
 #include <time.h>
 #include <sys/timeb.h>
 #include <fstream>
+#include <vector>
 
 #include <actionlib/server/simple_action_server.h>
 #include <actionlib/client/simple_action_client.h>
@@ -40,6 +41,10 @@
 #include <yaml-cpp/yaml.h>
 #include <std_srvs/Trigger.h>
 
+#include "mission_interface/compute_catenary_3D.h"
+#include "marsupial_mission_interface/vector_float.h"
+
+
 class MissionInterface
 {
   typedef actionlib::SimpleActionClient<upo_actions::Navigate3DAction> Navigate3DClient;
@@ -71,9 +76,9 @@ public:
   void startMissionCB(const std_msgs::BoolConstPtr &msg);
   bool isInitialPose();
   bool UAVisOnTheGround();
-  void markerPoints(trajectory_msgs::MultiDOFJointTrajectory _traj);
-  
-private:
+  void markerPoints();
+
+  bisectionCat BisCat;
   
   ros::Subscriber ugv_state_mission_sub_, uav_state_mission_sub_, start_mission_sub_, gps_sub_;
   ros::Subscriber load_trajectory_sub_;
@@ -91,6 +96,8 @@ private:
     
   trajectory_msgs::MultiDOFJointTrajectory trajectory;
   ros::Publisher traj_uav_pub_, traj_ugv_pub_, catenary_length_pub_;
+  ros::Publisher traj_lines_ugv_pub_;
+  ros::Publisher traj_lines_uav_pub_, catenary_marker_pub_;
 
   std::string path_file, ros_node_name;
   std::string ugv_base_frame, uav_base_frame, ugv_odom_frame, world_frame; 

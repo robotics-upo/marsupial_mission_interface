@@ -12,9 +12,11 @@ int main(int argc, char **argv)
     MissionInterface mission(node_name);
 
 	ros::Rate loop_rate(5);
+
     while(ros::ok()){
 
         ros::spinOnce();
+        mission.markerPoints();
         mission.executeMission();
 
         loop_rate.sleep();
