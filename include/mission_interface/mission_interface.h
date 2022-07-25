@@ -43,6 +43,7 @@
 #include <std_srvs/Trigger.h>
 
 #include "mission_interface/compute_catenary_3D.h"
+#include "marsupial_mission_interface/vector_float.h"
 
 
 class MissionInterface
@@ -78,8 +79,8 @@ public:
     void markerPoints();
 
     bisectionCat BisCat;
-
-  
+    marsupial_mission_interface::vector_float cat_length;
+    
 private:
   
     ros::Subscriber ugv_state_mission_sub_, uav_state_mission_sub_, start_mission_sub_, gps_sub_;
@@ -96,7 +97,7 @@ private:
     
     trajectory_msgs::MultiDOFJointTrajectory trajectory;
     std::vector<double> length_tether;
-    ros::Publisher traj_uav_pub_, traj_ugv_pub_,traj_lines_ugv_pub_,traj_lines_uav_pub_, catenary_marker_pub_;
+    ros::Publisher traj_uav_pub_, traj_ugv_pub_,traj_lines_ugv_pub_,traj_lines_uav_pub_, catenary_marker_pub_, catenary_length_pub_;
 
     std::string path_file, ros_node_name;
     std::string ugv_base_frame, uav_base_frame, ugv_odom_frame, world_frame; 

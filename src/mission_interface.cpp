@@ -31,6 +31,7 @@ MissionInterface::MissionInterface(std::string node_name_)
   received_initial_pose = false;
 
   geometry_msgs::TransformStamped uav_tf_;
+  configTopics();
   readWayPoints();
 
    for (size_t i =0; i < trajectory.points.size(); i++ ){
@@ -53,20 +54,19 @@ MissionInterface::MissionInterface(std::string node_name_)
   }
 
   resetFlags();
-  configTopics();
   markerPoints();
-  configServices();
+  // configServices();
 
-  try{
-    uav_tf_ = tfBuffer->lookupTransform(world_frame, uav_base_frame, ros::Time(0));
-    ROS_INFO("\tGot initial UAV position ");
-    initial_pose  = uav_tf_.transform.translation;
-    received_initial_pose = true;
-  }    
-  catch (tf2::TransformException &ex){
-    ROS_WARN("Mission Interface: Couldn't get position initial UAV (base_frame: %s - odom_frame: %s), so not possible to set UAV start point; tf exception: %s",
-	     world_frame.c_str(),uav_base_frame.c_str(),ex.what());
-  }
+  // try{
+  //   uav_tf_ = tfBuffer->lookupTransform(world_frame, uav_base_frame, ros::Time(0));
+  //   ROS_INFO("\tGot initial UAV position ");
+  //   initial_pose  = uav_tf_.transform.translation;
+  //   received_initial_pose = true;
+  // }    
+  // catch (tf2::TransformException &ex){
+  //   ROS_WARN("Mission Interface: Couldn't get position initial UAV (base_frame: %s - odom_frame: %s), so not possible to set UAV start point; tf exception: %s",
+	//      world_frame.c_str(),uav_base_frame.c_str(),ex.what());
+  // }
 }
 
 //Config standard services and action lib servers and clients
@@ -108,7 +108,8 @@ void MissionInterface::configTopics()
   traj_uav_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_uav", 100);
   traj_lines_ugv_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_lines_ugv", 100);
   traj_lines_uav_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_lines_uav", 100);
-  catenary_marker_pub_= nh->advertise<visualization_msgs::MarkerArray>("catenary", 100);
+  catenary_marker_pub_= nh->advertise<visualization_msgs::MarkerArray>("trajectory_catenary", 100);
+  catenary_length_pub_= nh->advertise<marsupial_mission_interface::vector_float>("catenary_length",100);
 }
 
 void MissionInterface::ugvReadyForMissionCB(const std_msgs::BoolConstPtr &msg)
@@ -335,6 +336,7 @@ void MissionInterface::readWayPoints()
   YAML::Node file = YAML::LoadFile(path_file);
 
   trajectory_msgs::MultiDOFJointTrajectoryPoint traj_marsupial_;
+
   traj_marsupial_.transforms.resize(2);
   traj_marsupial_.velocities.resize(2);
   traj_marsupial_.accelerations.resize(2);
@@ -342,6 +344,9 @@ void MissionInterface::readWayPoints()
 
 
   int size_ = (file["marsupial_ugv"]["size"].as<int>()) ; 
+
+  cat_length.points.clear();
+
   std::string ugv_pos_data, uav_pos_data, length_tether_data ;
   double ugv_pos_x, ugv_pos_y, ugv_pos_z, ugv_rot_x, ugv_rot_y, ugv_rot_z, ugv_rot_w;
   double uav_pos_x, uav_pos_y, uav_pos_z, uav_rot_x, uav_rot_y, uav_rot_z, uav_rot_w;
@@ -417,11 +422,18 @@ void MissionInterface::readWayPoints()
       traj_marsupial_.time_from_start = ros::Duration(0.5);
       trajectory.points.push_back(traj_marsupial_);
       length_tether.push_back(l_tether);
+      std_msgs::Float32 l_t_;
+      l_t_.data = l_tether;
+      cat_length.points.push_back(l_t_);
 
     } catch(std::exception &e) {
       ROS_INFO("Skipping waypoint %d", i);
     }
   }
+  catenary_length_pub_.publish(cat_length);
+        ros::spinOnce();
+
+
 
   // It is substract -1 because first position it is the initial point
   std::cout << "YAML FILE readed. YAML FILE NAME: " << path_file << std::endl;

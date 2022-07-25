@@ -5,6 +5,8 @@ project(marsupial_mission_interface)
 # add_compile_options(-std=c++11)
 set(CMAKE_CXX_STANDARD 14)
 
+set(CMAKE_BUILD_TYPE Debug) #None, Debug, Release, RelWithDebInfo, MinSizeRel
+
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
@@ -14,6 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   upo_actions
   tf
+  message_generation
   # actionlib_msgs 
   # actionlib
 )
@@ -52,11 +55,12 @@ find_package(catkin REQUIRED COMPONENTS
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
+ add_message_files(
+   FILES
+   vector_float.msg
 #   Message1.msg
 #   Message2.msg
-# )
+ )
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -73,11 +77,12 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
+ generate_messages(
+   DEPENDENCIES
+   std_msgs
 #   actionlib   
 #   actionlib_msgs   
-# )
+ )
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -111,7 +116,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
  INCLUDE_DIRS include
  LIBRARIES ${EXTERNAL_LIBS}
- CATKIN_DEPENDS roscpp rospy std_msgs upo_actions
+ CATKIN_DEPENDS roscpp rospy std_msgs upo_actions message_runtime
 #  DEPENDS system_lib
 )
 
