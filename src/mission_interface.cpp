@@ -31,7 +31,7 @@ MissionInterface::MissionInterface(std::string node_name_)
   received_initial_pose = false;
 
   geometry_msgs::TransformStamped uav_tf_;
-  readWayPoints();
+  readWaypoints(path_file);
 
    for (size_t i =0; i < trajectory.points.size(); i++ ){
     printf("[%lu] UGV[%f %f %f][%f %f %f %f] UAV[%f %f %f][%f %f %f %f]\n",
@@ -86,8 +86,6 @@ void MissionInterface::configServices()
         ugvNavigation3DClient.reset(new Navigate3DClient("/UGVNavigation3D", true));
         ugvNavigation3DClient->waitForServer();
     }
-    // Read another mission
-
 
 }
 
@@ -107,6 +105,11 @@ void MissionInterface::configTopics()
   gps_sub_ = nh->subscribe<sensor_msgs::NavSatFix>("gps", 1, &MissionInterface::gpsCB, this);
   traj_ugv_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_ugv", 100);
   traj_uav_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_uav", 100);
+  catenary_length_pub_ = nh->advertise<std_msgs::Float32>("/set_length", 1);
+
+  load_trajectory_sub_ = nh->subscribe("load_mission", 1,
+							 &MissionInterface::loadMissionCB, this);
+  
 }
 
 void MissionInterface::ugvReadyForMissionCB(const std_msgs::BoolConstPtr &msg)
@@ -122,6 +125,17 @@ void MissionInterface::uavReadyForMissionCB(const std_msgs::BoolConstPtr &msg)
 void MissionInterface::startMissionCB(const std_msgs::BoolConstPtr &msg)
 {
 	start_mission = msg->data;
+}
+
+void MissionInterface::loadMissionCB(const std_msgs::String &msg)
+{
+  if (start_mission) {
+    ROS_ERROR("Ignored load mission petition: a mission is currently being executed");
+  } else {
+    ROS_INFO("Loading mission file: %s", msg.data.c_str());
+    readWaypoints(msg.data);
+    path_file = msg.data;
+  }
 }
 
 // GPS altitude callback
@@ -329,9 +343,11 @@ void MissionInterface::resetFlags()
 
 
 // Todo: let the user enter them with external files
-void MissionInterface::readWayPoints()
+void MissionInterface::readWaypoints(const std::string &path_file)
 {
   YAML::Node file = YAML::LoadFile(path_file);
+
+  trajectory.points.clear(); 
 
   trajectory_msgs::MultiDOFJointTrajectoryPoint traj_marsupial_;
   traj_marsupial_.transforms.resize(2);
@@ -339,52 +355,52 @@ void MissionInterface::readWayPoints()
   traj_marsupial_.accelerations.resize(2);
 
   int size_ = (file["marsupial_ugv"]["size"].as<int>()) ; 
-  std::string ugv_pos_data, uav_pos_data;
+  std::string ugv_pos_data, uav_pos_data, tether_data;
   double ugv_pos_x, ugv_pos_y, ugv_pos_z, ugv_rot_x, ugv_rot_y, ugv_rot_z, ugv_rot_w;
   double uav_pos_x, uav_pos_y, uav_pos_z, uav_rot_x, uav_rot_y, uav_rot_z, uav_rot_w;
   printf("offset_map_dll=[%f %f %f]\n",offset_map_dll_x,offset_map_dll_y,offset_map_dll_z);
   for (int i = 0; i < size_; i++ ){ // It begin in 1 because first point is given as initial point.
-    ugv_pos_data = "poses"+ std::to_string(i);
-    uav_pos_data = "poses"+ std::to_string(i);
-    if (i==0){
-      try {
-      init_ugv_pose.position.x =
-	file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["x"].as<double>();
-      init_ugv_pose.position.y =
-	file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["y"].as<double>();
-      init_ugv_pose.position.z =
-	file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["z"].as<double>();
-      init_ugv_pose.orientation.x =
-	file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["x"].as<double>();
-      init_ugv_pose.orientation.y =
-	file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["y"].as<double>();
-      init_ugv_pose.orientation.z =
-	file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["z"].as<double>();
-      init_ugv_pose.orientation.w =
-	file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["w"].as<double>();
-      init_uav_pose.position.x =
-	(file["marsupial_uav"][uav_pos_data]["pose"]["position"]["x"].as<double>()) +
-	offset_map_dll_x;
-      init_uav_pose.position.y =
-	(file["marsupial_uav"][uav_pos_data]["pose"]["position"]["y"].as<double>()) +
-	offset_map_dll_y;
-      init_uav_pose.position.z =
-	(file["marsupial_uav"][uav_pos_data]["pose"]["position"]["z"].as<double>()) +
-	offset_map_dll_z;
-      init_uav_pose.orientation.x =
-	file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["x"].as<double>();
-      init_uav_pose.orientation.y =
-	file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["y"].as<double>();
-      init_uav_pose.orientation.z =
-	file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["z"].as<double>();
-      init_uav_pose.orientation.w =
-	file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["w"].as<double>();
-      }catch(std::exception &e) {
-        ROS_INFO("Skipping waypoint %d", i);
-      }
-    }
-    // else{
+    ugv_pos_data = "poses" + std::to_string(i);
+    uav_pos_data = "poses" + std::to_string(i);
+    tether_data = "tether" + std::to_string(i);
     try {
+      if (i==0){
+      
+	init_ugv_pose.position.x =
+	  file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["x"].as<double>();
+	init_ugv_pose.position.y =
+	  file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["y"].as<double>();
+	init_ugv_pose.position.z =
+	  file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["z"].as<double>();
+	init_ugv_pose.orientation.x =
+	  file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["x"].as<double>();
+	init_ugv_pose.orientation.y =
+	  file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["y"].as<double>();
+	init_ugv_pose.orientation.z =
+	  file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["z"].as<double>();
+	init_ugv_pose.orientation.w =
+	  file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["w"].as<double>();
+	init_uav_pose.position.x =
+	  (file["marsupial_uav"][uav_pos_data]["pose"]["position"]["x"].as<double>()) +
+	  offset_map_dll_x;
+	init_uav_pose.position.y =
+	  (file["marsupial_uav"][uav_pos_data]["pose"]["position"]["y"].as<double>()) +
+	  offset_map_dll_y;
+	init_uav_pose.position.z =
+	  (file["marsupial_uav"][uav_pos_data]["pose"]["position"]["z"].as<double>()) +
+	  offset_map_dll_z;
+	init_uav_pose.orientation.x =
+	  file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["x"].as<double>();
+	init_uav_pose.orientation.y =
+	  file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["y"].as<double>();
+	init_uav_pose.orientation.z =
+	  file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["z"].as<double>();
+	init_uav_pose.orientation.w =
+	  file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["w"].as<double>();
+      }
+      
+    // else{
+    
       ugv_pos_x = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["x"].as<double>();
       ugv_pos_y = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["y"].as<double>();
       ugv_pos_z = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["z"].as<double>();
@@ -430,6 +446,8 @@ void MissionInterface::readWayPoints()
       traj_marsupial_.accelerations[1].linear.z = 0.0;
       traj_marsupial_.time_from_start = ros::Duration(0.5);
       trajectory.points.push_back(traj_marsupial_);
+
+      tether_length_vector.push_back(file["tether"][tether_data].as<double>());
     } catch(std::exception &e) {
       ROS_INFO("Skipping waypoint %d", i);
     }
