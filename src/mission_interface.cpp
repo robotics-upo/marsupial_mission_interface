@@ -55,18 +55,18 @@ MissionInterface::MissionInterface(std::string node_name_)
 
   resetFlags();
   markerPoints();
-  // configServices();
+  configServices();
 
-  // try{
-  //   uav_tf_ = tfBuffer->lookupTransform(world_frame, uav_base_frame, ros::Time(0));
-  //   ROS_INFO("\tGot initial UAV position ");
-  //   initial_pose  = uav_tf_.transform.translation;
-  //   received_initial_pose = true;
-  // }    
-  // catch (tf2::TransformException &ex){
-  //   ROS_WARN("Mission Interface: Couldn't get position initial UAV (base_frame: %s - odom_frame: %s), so not possible to set UAV start point; tf exception: %s",
-	//      world_frame.c_str(),uav_base_frame.c_str(),ex.what());
-  // }
+  try{
+    uav_tf_ = tfBuffer->lookupTransform(world_frame, uav_base_frame, ros::Time(0));
+    ROS_INFO("\tGot initial UAV position ");
+    initial_pose  = uav_tf_.transform.translation;
+    received_initial_pose = true;
+  }    
+  catch (tf2::TransformException &ex){
+    ROS_WARN("Mission Interface: Couldn't get position initial UAV (base_frame: %s - odom_frame: %s), so not possible to set UAV start point; tf exception: %s",
+	     world_frame.c_str(),uav_base_frame.c_str(),ex.what());
+  }
 }
 
 //Config standard services and action lib servers and clients
