@@ -33,7 +33,7 @@ MissionInterface::MissionInterface(std::string node_name_)
   readWaypoints(path_file);
   configTopics();
 
-   for (size_t i =0; i < trajectory.points.size(); i++ ){
+  for (size_t i =0; i < trajectory.points.size(); i++ ){
     printf("[%lu] UGV[%f %f %f][%f %f %f %f] UAV[%f %f %f][%f %f %f %f] TETHER[%f]\n",
 	   i, trajectory.points.at(i).transforms[0].translation.x,
 	   trajectory.points.at(i).transforms[0].translation.y,
@@ -103,7 +103,7 @@ void MissionInterface::configTopics()
   gps_sub_ = nh->subscribe<sensor_msgs::NavSatFix>("gps", 1, &MissionInterface::gpsCB, this);
   traj_ugv_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_ugv", 100);
   traj_uav_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_uav", 100);
-  catenary_length_pub_ = nh->advertise<std_msgs::Float32>("/set_length", 1);
+  catenary_length_pub_ = nh->advertise<std_msgs::Float32>("/control_tie/set_length", 1);
 
   load_trajectory_sub_ = nh->subscribe("load_mission", 1,
 							 &MissionInterface::loadMissionCB, this);
@@ -432,7 +432,12 @@ void MissionInterface::readWaypoints(const std::string &path_file)
 	traj_marsupial_.accelerations[1].linear.z = 0.0;
 	traj_marsupial_.time_from_start = ros::Duration(0.5);
 	trajectory.points.push_back(traj_marsupial_);
-	tether_length_vector.push_back(file["tether"][tether_data].as<double>());
+
+	float length = 2.0;
+	try {
+	  length = file["tether"][tether_data].as<double>();
+	} catch (std::exception &e) {}
+	tether_length_vector.push_back(length); // TODO calculate the distance bw UAV and UGV
     } catch(std::exception &e) {
       ROS_INFO("Skipping waypoint %d", i);
     }
