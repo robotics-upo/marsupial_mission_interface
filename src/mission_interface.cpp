@@ -21,7 +21,6 @@ MissionInterface::MissionInterface(std::string node_name_)
 
   nh->param<bool>("able_tracker_ugv",able_tracker_ugv, true);
   nh->param<bool>("able_tracker_uav",able_tracker_uav, true);
-  nh->param<bool>("able_tracker_tether",able_tracker_tether, true);
   nh->param("takeoff_height",takeoff_height, (float)1.0);
     
   ros_node_name = node_name_;
@@ -31,10 +30,10 @@ MissionInterface::MissionInterface(std::string node_name_)
   received_initial_pose = false;
 
   geometry_msgs::TransformStamped uav_tf_;
+  readWaypoints(path_file);
   configTopics();
-  readWayPoints();
 
-   for (size_t i =0; i < trajectory.points.size(); i++ ){
+  for (size_t i =0; i < trajectory.points.size(); i++ ){
     printf("[%lu] UGV[%f %f %f][%f %f %f %f] UAV[%f %f %f][%f %f %f %f] TETHER[%f]\n",
 	   i, trajectory.points.at(i).transforms[0].translation.x,
 	   trajectory.points.at(i).transforms[0].translation.y,
@@ -50,9 +49,8 @@ MissionInterface::MissionInterface(std::string node_name_)
 	   trajectory.points.at(i).transforms[1].rotation.y,
 	   trajectory.points.at(i).transforms[1].rotation.z,
 	   trajectory.points.at(i).transforms[1].rotation.w,
-     length_tether[i]);
+	   tether_length_vector[i]);
   }
-
   resetFlags();
   markerPoints();
   configServices();
@@ -85,8 +83,6 @@ void MissionInterface::configServices()
         ugvNavigation3DClient.reset(new Navigate3DClient("/UGVNavigation3D", true));
         ugvNavigation3DClient->waitForServer();
     }
-    // Read another mission
-
 
 }
 
@@ -106,33 +102,55 @@ void MissionInterface::configTopics()
   gps_sub_ = nh->subscribe<sensor_msgs::NavSatFix>("gps", 1, &MissionInterface::gpsCB, this);
   traj_ugv_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_ugv", 100);
   traj_uav_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_uav", 100);
+  catenary_length_pub_ = nh->advertise<std_msgs::Float32>("/tie_controller/set_length", 1);
+  length_reached_sub_ = nh->subscribe("/tie_controller/length_reached", 1,
+					&MissionInterface::lengthReachedCB, this);
+  load_trajectory_sub_ = nh->subscribe("load_mission", 1,
+				       &MissionInterface::loadMissionCB, this);
+  
   traj_lines_ugv_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_lines_ugv", 100);
   traj_lines_uav_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_lines_uav", 100);
   catenary_marker_pub_= nh->advertise<visualization_msgs::MarkerArray>("trajectory_catenary", 100);
-  catenary_length_pub_= nh->advertise<marsupial_mission_interface::vector_float>("catenary_length",100);
 }
 
 void MissionInterface::ugvReadyForMissionCB(const std_msgs::BoolConstPtr &msg)
 {
-	ugv_ready = msg->data;
+  ugv_ready = msg->data;
 }
 
 void MissionInterface::uavReadyForMissionCB(const std_msgs::BoolConstPtr &msg)
 {
-	uav_ready = msg->data;
+  uav_ready = msg->data;
 }
 
 void MissionInterface::startMissionCB(const std_msgs::BoolConstPtr &msg)
 {
-	start_mission = msg->data;
+  start_mission = msg->data;
+}
+
+void MissionInterface::lengthReachedCB(const std_msgs::BoolConstPtr &msg) {
+  length_reached = msg->data;
+}
+
+void MissionInterface::loadMissionCB(const std_msgs::String &msg)
+{
+  if (start_mission) {
+    ROS_ERROR("Ignored load mission petition: a mission is currently being executed");
+  } else {
+    ROS_INFO("Loading mission file: %s", msg.data.c_str());
+    readWaypoints(msg.data);
+    path_file = msg.data;
+  }
 }
 
 // GPS altitude callback
 void MissionInterface::gpsCB(const sensor_msgs::NavSatFix::ConstPtr& msg)
 {
-	std_msgs::Float64 height_msg; 
-	height = msg->altitude;
+  std_msgs::Float64 height_msg; 
+  height = msg->altitude;
 }
+
+// 
 
 void MissionInterface::executeMission()
 {
@@ -180,15 +198,17 @@ void MissionInterface::executeMission()
 	  }
 	}
 	else{
-	  printf("\tUAV is already take off - ready to perform maneuver to go first WP\n");
+	  printf("\tUAV already took off - ready to perform maneuver to go first WP\n");
 	}
 
-	while(ros::ok() && num_wp < size_){
+	while(ros::ok() && num_wp < size_) {
 	  printf("\t\tUAV Take off - ready to execute trajectory: Sending WP %i\n",num_wp + 1);
 	  ros::Duration(1.0).sleep();
 
 	  is_ugv_in_waypoint = !able_tracker_ugv;   // Reset variable after WayPoint reached
-	  is_uav_in_waypoint = !able_tracker_uav;  // To reset variable after waypoint WayPoint. If not able defaults to true
+	  // To reset variable after waypoint WayPoint. If not able defaults to true
+	  is_uav_in_waypoint = !able_tracker_uav;
+	  length_reached = false;
 
 	  if(able_tracker_ugv){
 	    ugv_goal3D.global_goal.pose.position.x =
@@ -222,6 +242,9 @@ void MissionInterface::executeMission()
 	    uav_goal3D.global_goal.pose.orientation.w =
 	      trajectory.points.at(num_wp).transforms[1].rotation.w;
 	  }
+	  std_msgs::Float32 catenary_msg;
+	  catenary_msg.data = tether_length_vector.at(num_wp);
+	  catenary_length_pub_.publish(catenary_msg);
 
 	  if(able_tracker_ugv){
 	    ROS_INFO_COND(debug, "Sending new WayPoint UGV to tracker: goal[%f %f %f]",
@@ -242,6 +265,7 @@ void MissionInterface::executeMission()
 
 	  ros::Time start_time = ros::Time::now();
 	  uavNavigation3DClient->waitForResult(ros::Duration(2000.0));
+	  // TODO: wait also for the UGV client
 	  if(able_tracker_ugv){
 	    if(ugvNavigation3DClient->getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
 	      {
@@ -263,7 +287,7 @@ void MissionInterface::executeMission()
 		return;
 	      }
 	  }
-	  if(able_tracker_uav){
+	  if(able_tracker_uav) {
 	    if(uavNavigation3DClient->getState() ==
 	       actionlib::SimpleClientGoalState::SUCCEEDED)
 	      {
@@ -285,7 +309,15 @@ void MissionInterface::executeMission()
 		return;
 	      }
 	  }
-	  if(is_ugv_in_waypoint && is_uav_in_waypoint) {
+
+	  // Wait for proper length
+	  ROS_INFO("Waiting for the cable system to get the commanded length");
+	  while (!length_reached && ros::ok()) {
+	    ros::Duration(0.5).sleep();
+	    ros::spinOnce();
+	  }
+	  
+	  if(is_ugv_in_waypoint && is_uav_in_waypoint && length_reached) {
 	    std::cout <<" " << std::endl;
 	    printf("\t\tSuccessfully achieved WayPoint [%i/%i]\n",num_wp + 1,size_);
 	    num_wp++;
@@ -328,114 +360,127 @@ void MissionInterface::resetFlags()
   is_ugv_in_waypoint = false;
   is_uav_in_waypoint = false;
   start_mission = false;
+  length_reached = false;
 }
 
 // Todo: let the user enter them with external files
-void MissionInterface::readWayPoints()
+void MissionInterface::readWaypoints(const std::string &path_file)
 {
   YAML::Node file = YAML::LoadFile(path_file);
+
+  trajectory.points.clear(); 
 
   trajectory_msgs::MultiDOFJointTrajectoryPoint traj_marsupial_;
 
   traj_marsupial_.transforms.resize(2);
   traj_marsupial_.velocities.resize(2);
   traj_marsupial_.accelerations.resize(2);
-  length_tether.clear();
-
 
   int size_ = (file["marsupial_ugv"]["size"].as<int>()) ; 
-
-  cat_length.points.clear();
-
-  std::string ugv_pos_data, uav_pos_data, length_tether_data ;
+  std::string ugv_pos_data, uav_pos_data, tether_data;
   double ugv_pos_x, ugv_pos_y, ugv_pos_z, ugv_rot_x, ugv_rot_y, ugv_rot_z, ugv_rot_w;
   double uav_pos_x, uav_pos_y, uav_pos_z, uav_rot_x, uav_rot_y, uav_rot_z, uav_rot_w;
-  double l_tether;
   printf("offset_map_dll=[%f %f %f]\n",offset_map_dll_x,offset_map_dll_y,offset_map_dll_z);
-  for (int i = 0; i < size_; i++ ){ // It begin in 1 because first point is given as initial point.
-    ugv_pos_data = "poses"+ std::to_string(i);
-    uav_pos_data = "poses"+ std::to_string(i);
-    length_tether_data = "length"+ std::to_string(i);
-    if (i==0){
-      try {
-      init_ugv_pose.position.x = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["x"].as<double>();
-      init_ugv_pose.position.y = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["y"].as<double>();
-      init_ugv_pose.position.z = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["z"].as<double>();
-      init_ugv_pose.orientation.x = file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["x"].as<double>();
-      init_ugv_pose.orientation.y =	file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["y"].as<double>();
-      init_ugv_pose.orientation.z =	file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["z"].as<double>();
-      init_ugv_pose.orientation.w =	file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["w"].as<double>();
-      init_uav_pose.position.x =	(file["marsupial_uav"][uav_pos_data]["pose"]["position"]["x"].as<double>()) +	offset_map_dll_x;
-      init_uav_pose.position.y =	(file["marsupial_uav"][uav_pos_data]["pose"]["position"]["y"].as<double>()) +	offset_map_dll_y;
-      init_uav_pose.position.z =	(file["marsupial_uav"][uav_pos_data]["pose"]["position"]["z"].as<double>()) +	offset_map_dll_z;
-      init_uav_pose.orientation.x =	file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["x"].as<double>();
-      init_uav_pose.orientation.y =	file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["y"].as<double>();
-      init_uav_pose.orientation.z =	file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["z"].as<double>();
-      init_uav_pose.orientation.w =	file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["w"].as<double>();
-      }catch(std::exception &e) {
-        ROS_INFO("Skipping waypoint %d", i);
-      }
-    }
-    // else{
+  for (int i = 0; i < size_; i++) {
+    // It begin in 1 because first point is given as initial point.
+    ugv_pos_data = "poses" + std::to_string(i);
+    uav_pos_data = "poses" + std::to_string(i);
+    tether_data = "tether" + std::to_string(i);
     try {
-      ugv_pos_x = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["x"].as<double>();
-      ugv_pos_y = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["y"].as<double>();
-      ugv_pos_z = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["z"].as<double>();
-      ugv_rot_x = file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["x"].as<double>();
-      ugv_rot_y = file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["y"].as<double>();
-      ugv_rot_z = file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["z"].as<double>();
-      ugv_rot_w = file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["w"].as<double>();
-      uav_pos_x = file["marsupial_uav"][uav_pos_data]["pose"]["position"]["x"].as<double>() + offset_map_dll_x;
-      uav_pos_y = file["marsupial_uav"][uav_pos_data]["pose"]["position"]["y"].as<double>() + offset_map_dll_y;
-      uav_pos_z = file["marsupial_uav"][uav_pos_data]["pose"]["position"]["z"].as<double>() + offset_map_dll_z;
-      uav_rot_x = file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["x"].as<double>();
-      uav_rot_y = file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["y"].as<double>();
-      uav_rot_z = file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["z"].as<double>();
-      uav_rot_w = file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["w"].as<double>();
-      l_tether = file["tether"][length_tether_data]["length"].as<double>();
-      traj_marsupial_.transforms[0].translation.x = ugv_pos_x;
-      traj_marsupial_.transforms[0].translation.y = ugv_pos_y;
-      traj_marsupial_.transforms[0].translation.z = ugv_pos_z;
-      traj_marsupial_.transforms[0].rotation.x = ugv_rot_x;
-      traj_marsupial_.transforms[0].rotation.y = ugv_rot_y;
-      traj_marsupial_.transforms[0].rotation.z = ugv_rot_z;
-      traj_marsupial_.transforms[0].rotation.w = ugv_rot_w;
-      traj_marsupial_.velocities[0].linear.x = 0.0;
-      traj_marsupial_.velocities[0].linear.y = 0.0;
-      traj_marsupial_.velocities[0].linear.z = 0.0;
-      traj_marsupial_.accelerations[0].linear.x = 0.0;
-      traj_marsupial_.accelerations[0].linear.y = 0.0;
-      traj_marsupial_.accelerations[0].linear.z = 0.0;
-      traj_marsupial_.transforms[1].translation.x = uav_pos_x;
-      traj_marsupial_.transforms[1].translation.y = uav_pos_y;
-      traj_marsupial_.transforms[1].translation.z = uav_pos_z;
-      traj_marsupial_.transforms[1].rotation.x = uav_rot_x;
-      traj_marsupial_.transforms[1].rotation.y = uav_rot_y;
-      traj_marsupial_.transforms[1].rotation.z = uav_rot_z;
-      traj_marsupial_.transforms[1].rotation.w = uav_rot_w;
-      traj_marsupial_.velocities[1].linear.x = 0.0;
-      traj_marsupial_.velocities[1].linear.y = 0.0;
-      traj_marsupial_.velocities[1].linear.z = 0.0;
-      traj_marsupial_.accelerations[1].linear.x = 0.0;
-      traj_marsupial_.accelerations[1].linear.y = 0.0;
-      traj_marsupial_.accelerations[1].linear.z = 0.0;
-      traj_marsupial_.time_from_start = ros::Duration(0.5);
-      trajectory.points.push_back(traj_marsupial_);
-      length_tether.push_back(l_tether);
-      std_msgs::Float32 l_t_;
-      l_t_.data = l_tether;
-      cat_length.points.push_back(l_t_);
+	init_uav_pose.orientation.z =
+	  file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["z"].as<double>();
+	init_uav_pose.orientation.w =
+	  file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["w"].as<double>();
+	if (i==0) {
+	    init_ugv_pose.position.x =
+	      file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["x"].as<double>();
+	    init_ugv_pose.position.y =
+	      file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["y"].as<double>();
+	    init_ugv_pose.position.z =
+	      file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["z"].as<double>();
+	    init_ugv_pose.orientation.x =
+	      file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["x"].as<double>();
+	    init_ugv_pose.orientation.y =
+	      file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["y"].as<double>();
+	    init_ugv_pose.orientation.z =
+	      file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["z"].as<double>();
+	    init_ugv_pose.orientation.w =
+	      file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["w"].as<double>();
+	    init_uav_pose.position.x =
+	      (file["marsupial_uav"][uav_pos_data]["pose"]["position"]["x"].as<double>()) +
+	      offset_map_dll_x;
+	    init_uav_pose.position.y =
+	      (file["marsupial_uav"][uav_pos_data]["pose"]["position"]["y"].as<double>()) +
+	      offset_map_dll_y;
+	    init_uav_pose.position.z =
+	      (file["marsupial_uav"][uav_pos_data]["pose"]["position"]["z"].as<double>()) +
+	      offset_map_dll_z;
+	    init_uav_pose.orientation.x =
+	      file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["x"].as<double>();
+	    init_uav_pose.orientation.y =
+	      file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["y"].as<double>();
+	    init_uav_pose.orientation.z =
+	      file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["z"].as<double>();
+	    init_uav_pose.orientation.w =
+	      file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["w"].as<double>();
+	}
+           
+	ugv_pos_x = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["x"].as<double>();
+	ugv_pos_y = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["y"].as<double>();
+	ugv_pos_z = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["z"].as<double>();
+	ugv_rot_x = file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["x"].as<double>();
+	ugv_rot_y = file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["y"].as<double>();
+	ugv_rot_z = file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["z"].as<double>();
+	ugv_rot_w = file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["w"].as<double>();
+	uav_pos_x = file["marsupial_uav"][uav_pos_data]["pose"]["position"]["x"].as<double>() +
+	  offset_map_dll_x;
+	uav_pos_y = file["marsupial_uav"][uav_pos_data]["pose"]["position"]["y"].as<double>() +
+	  offset_map_dll_y;
+	uav_pos_z = file["marsupial_uav"][uav_pos_data]["pose"]["position"]["z"].as<double>() +
+	  offset_map_dll_z;
+	uav_rot_x = file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["x"].as<double>();
+	uav_rot_y = file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["y"].as<double>();
+	uav_rot_z = file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["z"].as<double>();
+	uav_rot_w = file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["w"].as<double>();
+	
+	traj_marsupial_.transforms[0].translation.x = ugv_pos_x;
+	traj_marsupial_.transforms[0].translation.y = ugv_pos_y;
+	traj_marsupial_.transforms[0].translation.z = ugv_pos_z;
+	traj_marsupial_.transforms[0].rotation.x = ugv_rot_x;
+	traj_marsupial_.transforms[0].rotation.y = ugv_rot_y;
+	traj_marsupial_.transforms[0].rotation.z = ugv_rot_z;
+	traj_marsupial_.transforms[0].rotation.w = ugv_rot_w;
+	traj_marsupial_.velocities[0].linear.x = 0.0;
+	traj_marsupial_.velocities[0].linear.y = 0.0;
+	traj_marsupial_.velocities[0].linear.z = 0.0;
+	traj_marsupial_.accelerations[0].linear.x = 0.0;
+	traj_marsupial_.accelerations[0].linear.y = 0.0;
+	traj_marsupial_.accelerations[0].linear.z = 0.0;
+	traj_marsupial_.transforms[1].translation.x = uav_pos_x;
+	traj_marsupial_.transforms[1].translation.y = uav_pos_y;
+	traj_marsupial_.transforms[1].translation.z = uav_pos_z;
+	traj_marsupial_.transforms[1].rotation.x = uav_rot_x;
+	traj_marsupial_.transforms[1].rotation.y = uav_rot_y;
+	traj_marsupial_.transforms[1].rotation.z = uav_rot_z;
+	traj_marsupial_.transforms[1].rotation.w = uav_rot_w;
+	traj_marsupial_.velocities[1].linear.x = 0.0;
+	traj_marsupial_.velocities[1].linear.y = 0.0;
+	traj_marsupial_.velocities[1].linear.z = 0.0;
+	traj_marsupial_.accelerations[1].linear.x = 0.0;
+	traj_marsupial_.accelerations[1].linear.y = 0.0;
+	traj_marsupial_.accelerations[1].linear.z = 0.0;
+	traj_marsupial_.time_from_start = ros::Duration(0.5);
+	trajectory.points.push_back(traj_marsupial_);
 
+	float length = 2.0;
+	try {
+	  length = file["tether"][tether_data].as<double>();
+	} catch (std::exception &e) {}
+	tether_length_vector.push_back(length); // TODO calculate the distance bw UAV and UGV
     } catch(std::exception &e) {
       ROS_INFO("Skipping waypoint %d", i);
     }
   }
-  catenary_length_pub_.publish(cat_length);
-        ros::spinOnce();
-
-
-
-  // It is substract -1 because first position it is the initial point
   std::cout << "YAML FILE readed. YAML FILE NAME: " << path_file << std::endl;
   std::cout << "Number of points: " << trajectory.points.size() << std::endl;
 }
@@ -579,7 +624,7 @@ void MissionInterface::markerPoints()
     _marker_uav.markers[i].color.g = 0.1;
     _marker_uav.markers[i].color.b = 1.0;
 
-    if(i>0){
+    if (i > 0) {
       _p1.x = _traj.points.at(i-1).transforms[0].translation.x;
       _p1.y = _traj.points.at(i-1).transforms[0].translation.y;
       _p1.z = _traj.points.at(i-1).transforms[0].translation.z;
@@ -638,40 +683,44 @@ void MissionInterface::markerPoints()
 
   std::vector<geometry_msgs::Point> points_catenary_final;
   for (size_t i = 0; i < _traj.points.size(); ++i){
-		points_catenary_final.clear();
-    BisCat.configBisection(length_tether[i], 
-              _marker_ugv.markers[i].pose.position.x, _marker_ugv.markers[i].pose.position.y, _marker_ugv.markers[i].pose.position.z+0.4, 
-							_marker_uav.markers[i].pose.position.x, _marker_uav.markers[i].pose.position.y, _marker_uav.markers[i].pose.position.z);
-		BisCat.getPointCatenary3D(points_catenary_final);
+    points_catenary_final.clear();
+    BisCat.configBisection(tether_length_vector[i], 
+			   _marker_ugv.markers[i].pose.position.x,
+			   _marker_ugv.markers[i].pose.position.y,
+			   _marker_ugv.markers[i].pose.position.z + 0.4, 
+			   _marker_uav.markers[i].pose.position.x,
+			   _marker_uav.markers[i].pose.position.y,
+			   _marker_uav.markers[i].pose.position.z);
+    BisCat.getPointCatenary3D(points_catenary_final);
 
     _cat_marker.markers.resize(points_catenary_final.size());
             
     for (size_t j = 0; j < points_catenary_final.size(); ++j){
-        _cat_marker.markers[j].header.frame_id = "world";
-        _cat_marker.markers[j].header.stamp = ros::Time::now();
-        _cat_marker.markers[j].ns = "cat_marker";
-        _cat_marker.markers[j].id = i*1000+j;
-        _cat_marker.markers[j].action = visualization_msgs::Marker::ADD;
-        if (j % 5 == 0 )
-           _cat_marker.markers[j].type = visualization_msgs::Marker::CUBE;
-        else
-            _cat_marker.markers[j].type = visualization_msgs::Marker::SPHERE;
-        _cat_marker.markers[j].lifetime = ros::Duration(0);
-        _cat_marker.markers[j].pose.position.x = points_catenary_final[j].x; 
-        _cat_marker.markers[j].pose.position.y = points_catenary_final[j].y; 
-        _cat_marker.markers[j].pose.position.z = points_catenary_final[j].z;
+      _cat_marker.markers[j].header.frame_id = "world";
+      _cat_marker.markers[j].header.stamp = ros::Time::now();
+      _cat_marker.markers[j].ns = "cat_marker";
+      _cat_marker.markers[j].id = i*1000+j;
+      _cat_marker.markers[j].action = visualization_msgs::Marker::ADD;
+      if (j % 5 == 0 )
+	_cat_marker.markers[j].type = visualization_msgs::Marker::CUBE;
+      else
+	_cat_marker.markers[j].type = visualization_msgs::Marker::SPHERE;
+      _cat_marker.markers[j].lifetime = ros::Duration(0);
+      _cat_marker.markers[j].pose.position.x = points_catenary_final[j].x; 
+      _cat_marker.markers[j].pose.position.y = points_catenary_final[j].y; 
+      _cat_marker.markers[j].pose.position.z = points_catenary_final[j].z;
 
-        _cat_marker.markers[j].pose.orientation.x = 0.0;
-        _cat_marker.markers[j].pose.orientation.y = 0.0;
-        _cat_marker.markers[j].pose.orientation.z = 0.0;
-        _cat_marker.markers[j].pose.orientation.w = 1.0;
-        _cat_marker.markers[j].scale.x = 0.1;
-        _cat_marker.markers[j].scale.y = 0.1;
-        _cat_marker.markers[j].scale.z = 0.1;
-        _cat_marker.markers[j].color.a = 1.0;
-        _cat_marker.markers[j].color.r = 1.0 - i/_traj.points.size();
-        _cat_marker.markers[j].color.g = i/_traj.points.size();
-        _cat_marker.markers[j].color.b = i/_traj.points.size();
+      _cat_marker.markers[j].pose.orientation.x = 0.0;
+      _cat_marker.markers[j].pose.orientation.y = 0.0;
+      _cat_marker.markers[j].pose.orientation.z = 0.0;
+      _cat_marker.markers[j].pose.orientation.w = 1.0;
+      _cat_marker.markers[j].scale.x = 0.1;
+      _cat_marker.markers[j].scale.y = 0.1;
+      _cat_marker.markers[j].scale.z = 0.1;
+      _cat_marker.markers[j].color.a = 1.0;
+      _cat_marker.markers[j].color.r = 1.0 - i/_traj.points.size();
+      _cat_marker.markers[j].color.g = i/_traj.points.size();
+      _cat_marker.markers[j].color.b = i/_traj.points.size();
     }	
     catenary_marker_pub_.publish(_cat_marker);
   }

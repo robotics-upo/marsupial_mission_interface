@@ -38,7 +38,6 @@
 #include <std_msgs/Bool.h>
 #include <sensor_msgs/NavSatFix.h>
 
-
 #include <yaml-cpp/yaml.h>
 #include <std_srvs/Trigger.h>
 
@@ -48,68 +47,68 @@
 
 class MissionInterface
 {
-    typedef actionlib::SimpleActionClient<upo_actions::Navigate3DAction> Navigate3DClient;
-    typedef actionlib::SimpleActionClient<upo_actions::TakeOffAction> TakeOffClient;
+  typedef actionlib::SimpleActionClient<upo_actions::Navigate3DAction> Navigate3DClient;
+  typedef actionlib::SimpleActionClient<upo_actions::TakeOffAction> TakeOffClient;
 
 public:
-    MissionInterface(std::string node_name_);
-    // ~MissionInterface();
-    ros::NodeHandlePtr nh;
-    std::shared_ptr<tf2_ros::Buffer> tfBuffer;
+  MissionInterface(std::string node_name_);
+  // ~MissionInterface();
+  ros::NodeHandlePtr nh;
+  std::shared_ptr<tf2_ros::Buffer> tfBuffer;
 
-    std::unique_ptr<actionlib::SimpleClientGoalState> state;
-    std::unique_ptr<Navigate3DClient> uavNavigation3DClient;
-    std::unique_ptr<Navigate3DClient> ugvNavigation3DClient;
-    std::unique_ptr<TakeOffClient> takeOffClient;
-    std::unique_ptr<tf::TransformListener> tf_list_ptr;
+  std::unique_ptr<actionlib::SimpleClientGoalState> state;
+  std::unique_ptr<Navigate3DClient> uavNavigation3DClient;
+  std::unique_ptr<Navigate3DClient> ugvNavigation3DClient;
+  std::unique_ptr<TakeOffClient> takeOffClient;
+  std::unique_ptr<tf::TransformListener> tf_list_ptr;
 
-    void executeMission();
+  void executeMission();
 
-    void resetFlags();
-    void configTopics();
-    void configServices();
-    void readWayPoints();
+  void resetFlags();
+  void configTopics();
+  void configServices();
+  void readWaypoints(const std::string &path_file);
 
-    void uavReadyForMissionCB(const std_msgs::BoolConstPtr &msg);
-    void ugvReadyForMissionCB(const std_msgs::BoolConstPtr &msg);
-    void gpsCB(const sensor_msgs::NavSatFix::ConstPtr& msg);
-    void startMissionCB(const std_msgs::BoolConstPtr &msg);
-    bool isInitialPose();
-    bool UAVisOnTheGround();
-    void markerPoints();
+  void uavReadyForMissionCB(const std_msgs::BoolConstPtr &msg);
+  void ugvReadyForMissionCB(const std_msgs::BoolConstPtr &msg);
+  void loadMissionCB(const std_msgs::String &msg);
+  void gpsCB(const sensor_msgs::NavSatFix::ConstPtr& msg);
+  void startMissionCB(const std_msgs::BoolConstPtr &msg);
+  void lengthReachedCB(const std_msgs::BoolConstPtr &msg);
+  bool isInitialPose();
+  bool UAVisOnTheGround();
+  void markerPoints();
 
-    bisectionCat BisCat;
-    marsupial_mission_interface::vector_float cat_length;
-    
-private:
+  bisectionCat BisCat;
   
-    ros::Subscriber ugv_state_mission_sub_, uav_state_mission_sub_, start_mission_sub_, gps_sub_;
-    geometry_msgs::Pose init_uav_pose, init_ugv_pose;
-    geometry_msgs::Vector3 initial_pose;
-    float takeoff_height;
-    bool take_off;
-    double height , flying_height;
-    double received_initial_pose;
+  ros::Subscriber ugv_state_mission_sub_, uav_state_mission_sub_, start_mission_sub_, gps_sub_;
+  ros::Subscriber load_trajectory_sub_, length_reached_sub_;
+  geometry_msgs::Pose init_uav_pose, init_ugv_pose;
+  geometry_msgs::Vector3 initial_pose;
+  float takeoff_height;
+  bool take_off, length_reached;
+  double height , flying_height;
+  double received_initial_pose;
 
-    trajectory_msgs::MultiDOFJointTrajectory globalTrajectory;
-    upo_actions::Navigate3DGoal ugv_goal3D, uav_goal3D;
-    upo_actions::ExecutePathResult action_result;
+  trajectory_msgs::MultiDOFJointTrajectory globalTrajectory;
+  std::vector<float> tether_length_vector;
+  upo_actions::Navigate3DGoal ugv_goal3D, uav_goal3D;
+  upo_actions::ExecutePathResult action_result;
     
-    trajectory_msgs::MultiDOFJointTrajectory trajectory;
-    std::vector<double> length_tether;
-    ros::Publisher traj_uav_pub_, traj_ugv_pub_,traj_lines_ugv_pub_,traj_lines_uav_pub_, catenary_marker_pub_, catenary_length_pub_;
+  trajectory_msgs::MultiDOFJointTrajectory trajectory;
+  ros::Publisher traj_uav_pub_, traj_ugv_pub_, catenary_length_pub_;
+  ros::Publisher traj_lines_ugv_pub_;
+  ros::Publisher traj_lines_uav_pub_, catenary_marker_pub_;
 
-    std::string path_file, ros_node_name;
-    std::string ugv_base_frame, uav_base_frame, ugv_odom_frame, world_frame; 
-    double offset_map_dll_x ,offset_map_dll_y ,offset_map_dll_z;
-    std::string map_name;
-    bool debug;
-    int num_wp;
-    bool ugv_ready, uav_ready, is_ugv_in_waypoint, is_uav_in_waypoint, start_mission;
-    bool able_tracker_uav, able_tracker_ugv, able_tracker_tether; 
-    std::unique_ptr<tf2_ros::TransformListener> tf2_list;
-
-
+  std::string path_file, ros_node_name;
+  std::string ugv_base_frame, uav_base_frame, ugv_odom_frame, world_frame; 
+  double offset_map_dll_x ,offset_map_dll_y ,offset_map_dll_z;
+  std::string map_name;
+  bool debug;
+  int num_wp;
+  bool ugv_ready, uav_ready, is_ugv_in_waypoint, is_uav_in_waypoint, start_mission;
+  bool able_tracker_uav, able_tracker_ugv; 
+  std::unique_ptr<tf2_ros::TransformListener> tf2_list;
 };
 
 #endif
