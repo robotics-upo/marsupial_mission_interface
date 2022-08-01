@@ -79,6 +79,8 @@ public:
   bool UAVisOnTheGround();
   void markerPoints();
 
+  void interpolate(float dist);
+
   bisectionCat BisCat;
   
   ros::Subscriber ugv_state_mission_sub_, uav_state_mission_sub_, start_mission_sub_, gps_sub_;
