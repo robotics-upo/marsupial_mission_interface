@@ -32,6 +32,10 @@ MissionInterface::MissionInterface(std::string node_name_)
 
   geometry_msgs::TransformStamped uav_tf_;
   readWaypoints(path_file);
+
+  float interpolation_dist;
+  nh->param<float>("interpolation_distance", interpolation_dist, 0.2);
+  interpolate(interpolation_dist);
   configTopics();
 
   for (size_t i =0; i < trajectory.points.size(); i++ ){
@@ -71,7 +75,9 @@ MissionInterface::MissionInterface(std::string node_name_)
 void MissionInterface::interpolate(float dist) {
   trajectory_msgs::MultiDOFJointTrajectory new_trajectory;
   std::vector<float> new_length_vector;
-
+  
+  
+  
   if (trajectory.points.size() < 2)
     return;
   new_trajectory.points.push_back(trajectory.points.at(0));
@@ -86,6 +92,11 @@ void MissionInterface::interpolate(float dist) {
   quaternionMsgToTF(trajectory.points.at(0).transforms[1].rotation, uav_q0);
   quaternionMsgToTF(trajectory.points.at(0).transforms[0].rotation, ugv_q0);
 
+  trajectory_msgs::MultiDOFJointTrajectoryPoint marsupial_point_;
+  marsupial_point_.transforms.resize(2);
+  marsupial_point_.velocities.resize(2);
+  marsupial_point_.accelerations.resize(2);
+
   for (size_t i = 1; i < trajectory.points.size(); i++ ) {
     length1 = tether_length_vector.at(i);
     vector3MsgToTF(trajectory.points.at(i).transforms[1].translation, uav_p1);
@@ -99,7 +110,7 @@ void MissionInterface::interpolate(float dist) {
     float delta_length = (length1 - length0)/n;
     float delta = 1.0 / (float) n;
     for (int j = 1; j <= n; j++) {
-      trajectory_msgs::MultiDOFJointTrajectoryPoint marsupial_point_;
+      
       curr_length = length0 + delta_length * j;
       ugv_curr_p.setInterpolate3( ugv_p0, ugv_p1, delta * j);
       uav_curr_p.setInterpolate3( uav_p0, uav_p1, delta * j);
@@ -120,6 +131,7 @@ void MissionInterface::interpolate(float dist) {
     uav_q0 = uav_q1;
     ugv_p0 = ugv_p1;
     ugv_q0 = ugv_q1;
+    length0 = length1;
   }
   new_trajectory.header = trajectory.header;
   tether_length_vector = new_length_vector;
