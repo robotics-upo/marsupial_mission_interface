@@ -1,5 +1,6 @@
 
 #include <mission_interface/mission_interface.h>
+#include <tf/transform_datatypes.h>
 
 MissionInterface::MissionInterface(std::string node_name_)
 {
@@ -31,6 +32,10 @@ MissionInterface::MissionInterface(std::string node_name_)
 
   geometry_msgs::TransformStamped uav_tf_;
   readWaypoints(path_file);
+
+  float interpolation_dist;
+  nh->param<float>("interpolation_distance", interpolation_dist, 0.2);
+  interpolate(interpolation_dist);
   configTopics();
 
   for (size_t i =0; i < trajectory.points.size(); i++ ){
@@ -53,6 +58,7 @@ MissionInterface::MissionInterface(std::string node_name_)
   }
   resetFlags();
   markerPoints();
+  ros::spinOnce();
   configServices();
 
   try{
@@ -65,6 +71,75 @@ MissionInterface::MissionInterface(std::string node_name_)
     ROS_WARN("Mission Interface: Couldn't get position initial UAV (base_frame: %s - odom_frame: %s), so not possible to set UAV start point; tf exception: %s",
 	     world_frame.c_str(),uav_base_frame.c_str(),ex.what());
   }
+}
+
+void MissionInterface::interpolate(float dist) {
+  trajectory_msgs::MultiDOFJointTrajectory new_trajectory;
+  std::vector<float> new_length_vector;
+  
+  
+  
+  if (trajectory.points.size() < 2)
+    return;
+  new_trajectory.points.push_back(trajectory.points.at(0));
+  new_length_vector.push_back(tether_length_vector.at(0));
+
+  tf::Vector3 uav_p0, uav_p1, ugv_p0, ugv_p1, uav_curr_p, ugv_curr_p;
+  tf::Quaternion uav_q0, uav_q1, ugv_q0, ugv_q1, uav_curr_q, ugv_curr_q;
+  float length0, length1, curr_length;
+  length0 = tether_length_vector.at(0);
+  vector3MsgToTF(trajectory.points.at(0).transforms[1].translation, uav_p0);
+  vector3MsgToTF(trajectory.points.at(0).transforms[0].translation, ugv_p0);
+  quaternionMsgToTF(trajectory.points.at(0).transforms[1].rotation, uav_q0);
+  quaternionMsgToTF(trajectory.points.at(0).transforms[0].rotation, ugv_q0);
+
+  trajectory_msgs::MultiDOFJointTrajectoryPoint marsupial_point_;
+  marsupial_point_.transforms.resize(2);
+  marsupial_point_.velocities.resize(2);
+  marsupial_point_.accelerations.resize(2);
+
+  for (size_t i = 1; i < trajectory.points.size(); i++ ) {
+    length1 = tether_length_vector.at(i);
+    vector3MsgToTF(trajectory.points.at(i).transforms[1].translation, uav_p1);
+    vector3MsgToTF(trajectory.points.at(i).transforms[0].translation, ugv_p1);
+    quaternionMsgToTF(trajectory.points.at(i).transforms[1].rotation, uav_q1);
+    quaternionMsgToTF(trajectory.points.at(i).transforms[0].rotation, ugv_q1);
+    
+    float dist_uav = uav_p1.distance(uav_p0);
+    float dist_ugv = ugv_p1.distance(ugv_p0);
+    int n = (int)ceil(dist_uav/dist);
+    float delta_length = (length1 - length0)/n;
+    float delta = 1.0 / (float) n;
+    for (int j = 1; j <= n; j++) {
+      
+      curr_length = length0 + delta_length * j;
+      ugv_curr_p.setInterpolate3( ugv_p0, ugv_p1, delta * j);
+      uav_curr_p.setInterpolate3( uav_p0, uav_p1, delta * j);
+      uav_curr_q = uav_q0;
+      uav_curr_q.slerp(uav_q1, delta * j);
+      ugv_curr_q = ugv_q0;
+      ugv_curr_q.slerp(ugv_q1, delta * j);
+
+      vector3TFToMsg(ugv_curr_p, marsupial_point_.transforms[0].translation);
+      quaternionTFToMsg(ugv_curr_q, marsupial_point_.transforms[0].rotation);
+      vector3TFToMsg(uav_curr_p, marsupial_point_.transforms[1].translation);
+      quaternionTFToMsg(uav_curr_q, marsupial_point_.transforms[1].rotation);
+
+      new_trajectory.points.push_back(marsupial_point_);
+      new_length_vector.push_back(curr_length);
+    }
+    uav_p0 = uav_p1;
+    uav_q0 = uav_q1;
+    ugv_p0 = ugv_p1;
+    ugv_q0 = ugv_q1;
+    length0 = length1;
+  }
+  new_trajectory.header = trajectory.header;
+  tether_length_vector = new_length_vector;
+  trajectory = new_trajectory;
+
+  ROS_INFO("Interpolated trajectory. New points: %lu", new_length_vector.size());
+  
 }
 
 //Config standard services and action lib servers and clients
@@ -363,6 +438,8 @@ void MissionInterface::resetFlags()
   length_reached = false;
 }
 
+
+
 // Todo: let the user enter them with external files
 void MissionInterface::readWaypoints(const std::string &path_file)
 {
@@ -385,7 +462,7 @@ void MissionInterface::readWaypoints(const std::string &path_file)
     // It begin in 1 because first point is given as initial point.
     ugv_pos_data = "poses" + std::to_string(i);
     uav_pos_data = "poses" + std::to_string(i);
-    tether_data = "tether" + std::to_string(i);
+    tether_data = "length" + std::to_string(i);
     try {
 	init_uav_pose.orientation.z =
 	  file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["z"].as<double>();
@@ -474,7 +551,7 @@ void MissionInterface::readWaypoints(const std::string &path_file)
 
 	float length = 2.0;
 	try {
-	  length = file["tether"][tether_data].as<double>();
+	  length = file["tether"][tether_data]["length"].as<double>();
 	} catch (std::exception &e) {}
 	tether_length_vector.push_back(length); // TODO calculate the distance bw UAV and UGV
     } catch(std::exception &e) {

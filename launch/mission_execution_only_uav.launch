@@ -7,7 +7,8 @@
     <arg name="ugv_odom_frame" default="odom" /> 
     <arg name="uav_base_frame" default="base_link" /> 
     <arg name="uav_odom_frame" default="odom" /> 
-    <arg name="uav_takeoff_height" default="3.0" /> 
+    <arg name="uav_takeoff_height" default="2.0" /> 
+    <arg name="interpolation_distance" default="0.4"/>
 
     <node name="mission_interface" pkg="marsupial_mission_interface" type="mission_interface_node" output="screen" launch-prefix="">
         <rosparam command="load" file="$(find marsupial_mission_interface)/cfg/offset_maps_dll/offset_maps_dll_$(arg map_name).yaml"/>
@@ -20,6 +21,7 @@
         <param name="uav_base_frame" value="$(arg uav_base_frame)"/> 
         <param name="uav_odom_frame" value="$(arg uav_odom_frame)"/> 
         <param name="takeoff_height" value="$(arg uav_takeoff_height)"/> 
+        <param name="interpolation_distance" value="$(arg interpolation_distance)" />
     </node>
 
 </launch>
