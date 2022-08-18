@@ -538,7 +538,6 @@ bool MissionInterface::isInitialPose()
     return true;
   else
     return false;
-
 }
 
 bool MissionInterface::UAVisOnTheGround()
