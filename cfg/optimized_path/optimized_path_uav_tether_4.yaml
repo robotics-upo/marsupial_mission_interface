@@ -190,12 +190,12 @@ tether:
     header: tether0
     seq: 0
     frame_id: tether_length
-    length: 6.7
+    length: 6.0
   length1:
     header: tether1
     seq: 1
     frame_id: tether_length
-    length: 7.3
+    length: 7.0
   length2:
     header: tether2
     seq: 2
@@ -205,17 +205,17 @@ tether:
     header: tether3
     seq: 3
     frame_id: tether_length
-    length: 9.2
+    length: 9.0
   length4:
     header: tether4
     seq: 4
     frame_id: tether_length
-    length: 10.3
+    length: 10.0
   length5:
     header: tether5
     seq: 5
     frame_id: tether_length
-    length: 11.0
+    length: 10.5
   length6:
     header: tether6
     seq: 6

@@ -136,7 +136,9 @@ add_executable(mission_interface_node src/mission_interface_node.cpp src/mission
 target_link_libraries(mission_interface_node ${catkin_LIBRARIES} ${EXTERNAL_LIBS} yaml-cpp)
 add_dependencies(mission_interface_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-
+add_executable(get_mission_data_node src/get_mission_data_node.cpp ) 
+add_dependencies(get_mission_data_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(get_mission_data_node ${catkin_LIBRARIES} ${EXTERNAL_LIBS} ${CERES_LIBRARIES} ${catkin_LIBRARIES})
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}

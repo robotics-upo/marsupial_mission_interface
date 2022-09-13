@@ -59,7 +59,7 @@ MissionInterface::MissionInterface(std::string node_name_)
   resetFlags();
   markerPoints();
   ros::spinOnce();
-  configServices();
+  // configServices();
 
   try{
     uav_tf_ = tfBuffer->lookupTransform(world_frame, uav_base_frame, ros::Time(0));
@@ -158,7 +158,6 @@ void MissionInterface::configServices()
         ugvNavigation3DClient.reset(new Navigate3DClient("/UGVNavigation3D", true));
         ugvNavigation3DClient->waitForServer();
     }
-
 }
 
 void MissionInterface::configTopics()

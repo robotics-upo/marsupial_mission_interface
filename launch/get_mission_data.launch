@@ -1,0 +1,16 @@
+<launch>
+
+    <arg name="path" default="/home/simon/Documents/" /> 
+    
+    <arg name="ugv_base_frame" default="ugv_base_link" /> 
+    <arg name="uav_base_frame" default="odom" /> 
+    <arg name="world_frame" default="world" /> 
+
+    <node name="mission_interface" pkg="marsupial_mission_interface" type="get_mission_data_node" output="screen" launch-prefix="">
+        <param name="path" value="$(arg path)"/> 
+        <param name="ugv_base_frame" value="$(arg ugv_base_frame)"/> 
+        <param name="uav_base_frame" value="$(arg uav_base_frame)"/> 
+        <param name="world_frame" value="$(arg world_frame)"/> 
+    </node>
+
+</launch>
