@@ -2,12 +2,12 @@ marsupial_ugv:
   header: marsupial_ugv
   seq: 1
   stamp: 9508
-  frame_id: ugv
+  frame_id: base_link_ugv
   size: 58
   poses0:
     header: ugv0
     seq: 0
-    frame_id: base_link_ugv
+    frame_id: ugv
     pose:
       position:
         x: 54.95000076293945
