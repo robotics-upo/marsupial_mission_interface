@@ -1506,17 +1506,17 @@ tether:
     header: tether0
     seq: 0
     frame_id: tether_length
-    length: 2.55667
+    length: 2.70000
   length1:
     header: tether1
     seq: 1
     frame_id: tether_length
-    length: 2.588341
+    length: 2.7000
   length2:
     header: tether2
     seq: 2
     frame_id: tether_length
-    length: 2.69682
+    length: 2.7000
   length3:
     header: tether3
     seq: 3

@@ -468,29 +468,16 @@ void MissionInterface::readWaypoints(const std::string &path_file)
 	init_uav_pose.orientation.w =
 	  file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["w"].as<double>();
 	if (i==0) {
-	    init_ugv_pose.position.x =
-	      file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["x"].as<double>();
-	    init_ugv_pose.position.y =
-	      file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["y"].as<double>();
-	    init_ugv_pose.position.z =
-	      file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["z"].as<double>();
-	    init_ugv_pose.orientation.x =
-	      file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["x"].as<double>();
-	    init_ugv_pose.orientation.y =
-	      file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["y"].as<double>();
-	    init_ugv_pose.orientation.z =
-	      file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["z"].as<double>();
-	    init_ugv_pose.orientation.w =
-	      file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["w"].as<double>();
-	    init_uav_pose.position.x =
-	      (file["marsupial_uav"][uav_pos_data]["pose"]["position"]["x"].as<double>()) +
-	      offset_map_dll_x;
-	    init_uav_pose.position.y =
-	      (file["marsupial_uav"][uav_pos_data]["pose"]["position"]["y"].as<double>()) +
-	      offset_map_dll_y;
-	    init_uav_pose.position.z =
-	      (file["marsupial_uav"][uav_pos_data]["pose"]["position"]["z"].as<double>()) +
-	      offset_map_dll_z;
+	    init_ugv_pose.position.x = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["x"].as<double>() + offset_map_dll_x;;
+	    init_ugv_pose.position.y = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["y"].as<double>() + offset_map_dll_y;;
+	    init_ugv_pose.position.z = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["z"].as<double>() + offset_map_dll_z;;
+	    init_ugv_pose.orientation.x = file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["x"].as<double>();
+	    init_ugv_pose.orientation.y = file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["y"].as<double>();
+	    init_ugv_pose.orientation.z = file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["z"].as<double>();
+	    init_ugv_pose.orientation.w = file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["w"].as<double>();
+	    init_uav_pose.position.x = (file["marsupial_uav"][uav_pos_data]["pose"]["position"]["x"].as<double>()) + offset_map_dll_x;
+	    init_uav_pose.position.y = (file["marsupial_uav"][uav_pos_data]["pose"]["position"]["y"].as<double>()) + offset_map_dll_y;	    
+      init_uav_pose.position.z = (file["marsupial_uav"][uav_pos_data]["pose"]["position"]["z"].as<double>()) + offset_map_dll_z;
 	    init_uav_pose.orientation.x =
 	      file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["x"].as<double>();
 	    init_uav_pose.orientation.y =
@@ -501,19 +488,16 @@ void MissionInterface::readWaypoints(const std::string &path_file)
 	      file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["w"].as<double>();
 	}
            
-	ugv_pos_x = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["x"].as<double>();
-	ugv_pos_y = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["y"].as<double>();
-	ugv_pos_z = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["z"].as<double>();
+	ugv_pos_x = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["x"].as<double>() + offset_map_dll_x;;
+	ugv_pos_y = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["y"].as<double>() + offset_map_dll_y;;
+	ugv_pos_z = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["z"].as<double>() + offset_map_dll_z;;
 	ugv_rot_x = file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["x"].as<double>();
 	ugv_rot_y = file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["y"].as<double>();
 	ugv_rot_z = file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["z"].as<double>();
 	ugv_rot_w = file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["w"].as<double>();
-	uav_pos_x = file["marsupial_uav"][uav_pos_data]["pose"]["position"]["x"].as<double>() +
-	  offset_map_dll_x;
-	uav_pos_y = file["marsupial_uav"][uav_pos_data]["pose"]["position"]["y"].as<double>() +
-	  offset_map_dll_y;
-	uav_pos_z = file["marsupial_uav"][uav_pos_data]["pose"]["position"]["z"].as<double>() +
-	  offset_map_dll_z;
+	uav_pos_x = file["marsupial_uav"][uav_pos_data]["pose"]["position"]["x"].as<double>() + offset_map_dll_x;
+	uav_pos_y = file["marsupial_uav"][uav_pos_data]["pose"]["position"]["y"].as<double>() + offset_map_dll_y;
+	uav_pos_z = file["marsupial_uav"][uav_pos_data]["pose"]["position"]["z"].as<double>() + offset_map_dll_z;
 	uav_rot_x = file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["x"].as<double>();
 	uav_rot_y = file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["y"].as<double>();
 	uav_rot_z = file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["z"].as<double>();
