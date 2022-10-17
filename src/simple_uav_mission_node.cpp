@@ -53,7 +53,7 @@ public:
         nh_->param("mission_file_path", mission_file_, (std::string) "~/");
         nh_->param("base_frame", base_frame_, (std::string) "base_link");
         nh_->param("world_frame", world_frame_, (std::string) "world");
-        nh_->param("start_inmediatelly", startInmediatelly_, true);
+        nh_->param("start_immediately", startImmediately_, true);
         
         // Load yaml file with the mission tasks
         loadMission(mission_file_);
@@ -91,7 +91,7 @@ public:
         
         // setup subscribers 
         startMission_ = false;
-        if(startInmediatelly_)
+        if(startImmediately_)
             startMission_ = true;
         startMissionSub_ = nh_->subscribe<std_msgs::Bool>("startMission", 1, &MissionInterface::startMissionCallback, this);
         for(int i=0; i<10; i++)
@@ -372,7 +372,7 @@ public:
     } 
 
     // Node params
-    bool startInmediatelly_;
+    bool startImmediately_;
     std::string base_frame_, world_frame_, mission_file_; 
 
     // Subscribers
