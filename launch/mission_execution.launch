@@ -1,5 +1,5 @@
 <launch>
-    <arg name="map_name" default="stage_5" /> 
+    <arg name="map_name" default="thermal_central" /> 
 
     <arg name="ugv_name" default="arco" /> 
     <arg name="uav_name" default="firefly" /> 
@@ -11,9 +11,10 @@
     <arg name="ugv_odom_frame" default="odom" /> 
     <arg name="uav_base_frame" default="base_link" /> 
     <arg name="uav_odom_frame" default="odom" /> 
-    <arg name="uav_takeoff_height" default="1" /> 
+    <arg name="uav_takeoff_height" default="2" /> 
+    <arg name="interpolation_distance" default="0.2"/>
 
-    <node name="mission_interface" pkg="marsupial_mission_interface" type="mission_interface_node" output="screen">
+    <node name="mission_interface" pkg="marsupial_mission_interface" type="mission_interface_node" output="screen" launch-prefix="gdb -ex run --args">
         <rosparam command="load" file="$(find marsupial_mission_interface)/cfg/offset_maps_dll/offset_maps_dll_$(arg map_name).yaml"/>
         <param name="path_file" value="$(find marsupial_mission_interface)/cfg/optimized_path/optimized_path_$(arg mission_file).yaml"/> 
         <param name="map_name" value="$(arg map_name)"/> 
@@ -24,6 +25,7 @@
         <param name="uav_base_frame" value="$(arg uav_base_frame)"/> 
         <param name="uav_odom_frame" value="$(arg uav_odom_frame)"/> 
         <param name="takeoff_height" value="$(arg uav_takeoff_height)"/> 
+        <param name="interpolation_distance" value="$(arg interpolation_distance)" />
     </node>
 
 </launch>

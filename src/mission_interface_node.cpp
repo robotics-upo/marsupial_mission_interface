@@ -17,7 +17,7 @@ int main(int argc, char **argv)
 
         ros::spinOnce();
         mission.markerPoints();
-        mission.executeMission();
+        // mission.executeMission();
 
         loop_rate.sleep();
     }

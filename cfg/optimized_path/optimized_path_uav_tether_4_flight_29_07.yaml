@@ -1,0 +1,185 @@
+marsupial_ugv:
+  header: marsupial_ugv
+  seq: 1
+  stamp: 212558
+  frame_id: ugv
+  size: 5
+  poses0:
+    header: ugv0
+    seq: 0
+    frame_id: ugv
+    pose:
+      position:
+        x: 57
+        y: 11
+        z: 2.3
+      orientation:
+        x: 0
+        y: 0
+        z: 0
+        w: 1
+  poses1:
+    header: ugv1
+    seq: 1
+    frame_id: ugv
+    pose:
+      position:
+        x: 57
+        y: 11
+        z: 2.3
+      orientation:
+        x: 0
+        y: 0
+        z: 0
+        w: 1
+  poses2:
+    header: ugv2
+    seq: 2
+    frame_id: ugv
+    pose:
+      position:
+        x: 57
+        y: 11
+        z: 2.3
+      orientation:
+        x: 0
+        y: 0
+        z: 0
+        w: 1
+  poses3:
+    header: ugv3
+    seq: 3
+    frame_id: ugv
+    pose:
+      position:
+        x: 57
+        y: 11
+        z: 2.3
+      orientation:
+        x: 0
+        y: 0
+        z: 0
+        w: 1
+  poses4:
+    header: ugv4
+    seq: 4
+    frame_id: ugv
+    pose:
+      position:
+        x: 57
+        y: 11
+        z: 2.3
+      orientation:
+        x: 0
+        y: 0
+        z: 0
+        w: 1
+
+marsupial_uav:
+  header: marsupial_uav
+  seq: 1
+  stamp: 212558
+  frame_id: uav
+  size: 5
+  poses0:
+    header: uav0
+    seq: 0
+    frame_id: uav
+    pose:
+      position:
+        x: 53
+        y: 11
+        z: 4.8
+      orientation:
+        x: 0
+        y: 0
+        z: 1.0
+        w: 0.0
+  poses1:
+    header: uav1
+    seq: 1
+    frame_id: uav
+    pose:
+      position:
+        x: 52
+        y: 12
+        z: 5.8
+      orientation:
+        x: 0
+        y: 0
+        z: 1.0
+        w: 0.0
+  poses2:
+    header: uav2
+    seq: 2
+    frame_id: uav
+    pose:
+      position:
+        x: 51
+        y: 10
+        z: 5.8
+      orientation:
+        x: 0
+        y: 0
+        z: 1
+        w: 0
+  poses3:
+    header: uav3
+    seq: 3
+    frame_id: uav
+    pose:
+      position:
+        x: 50
+        y: 13
+        z: 6.8
+      orientation:
+        x: 0
+        y: 0
+        z: 1.0
+        w: 0.0
+  poses4:
+    header: uav4
+    seq: 4
+    frame_id: uav
+    pose:
+      position:
+        x: 49
+        y: 10
+        z: 6.8
+      orientation:
+        x: 0
+        y: 0
+        z: 1.0
+        w: 0.0
+
+tether:
+  header: tether
+  seq: 1
+  stamp: 212558
+  frame_id: frame_tether
+  size: 5
+  length0:
+    header: tether0
+    seq: 0
+    frame_id: tether_length
+    length: 7.0
+  length1:
+    header: tether1
+    seq: 1
+    frame_id: tether_length
+    length: 7.8
+  length2:
+    header: tether2
+    seq: 2
+    frame_id: tether_length
+    length: 8.5
+  length3:
+    header: tether3
+    seq: 3
+    frame_id: tether_length
+    length: 9.4
+  length4:
+    header: tether3
+    seq: 4
+    frame_id: tether_length
+    length: 10.2
