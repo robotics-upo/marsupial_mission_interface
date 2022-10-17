@@ -1,0 +1,10 @@
+<launch>
+
+    <node name="simple_uav_mission_node" pkg="marsupial_mission_interface" type="simple_uav_mission_node" output="screen" launch-prefix="">
+        <param name="mission_file_path" value="$(find marsupial_mission_interface)/cfg/simple_uav.yaml"/> 
+        <param name="base_frame" value="base_link"/> 
+        <param name="world_frame" value="map"/> 
+        <param name="start_inmediatelly" value="true"/> 
+    </node>
+
+</launch>
