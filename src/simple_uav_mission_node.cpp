@@ -282,16 +282,23 @@ public:
     {
         YAML::Node file = YAML::LoadFile(path_file);
 
-        // read number of taks  
-        int size = (file["length"].as<int>());
-
         // read tasks one by one 
         mission_.clear();
-        for (int i = 0; i < size; i++) {
+        bool end_ = false;
+        int i = 0;
+        while (!end_) {
             missionTask t;
 
             // Create the task text to search
             std::string task = "task" + std::to_string(i);
+
+            try {
+              // Try to get the type. If not available --> end of the mission
+              auto a = file[task]["type"].as<std::string>();
+            } catch (std::exception &a) {
+              end_ = true;
+              continue;
+            }
 
             // Read task type and parse it
             std::string typeString = file[task]["type"].as<std::string>();
@@ -356,6 +363,7 @@ public:
 
             // Store the task into the mission
             mission_.push_back(t);
+            i++;
         }
         std::cout << "YAML FILE readed. YAML FILE NAME: " << path_file << std::endl;
         std::cout << "Number of tasks: " << mission_.size() << std::endl;
