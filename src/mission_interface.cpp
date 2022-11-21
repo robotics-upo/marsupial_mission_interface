@@ -603,6 +603,10 @@ bool MissionInterface::isInitialPose()
 bool MissionInterface::UAVisOnTheGround()
 {
     geometry_msgs::TransformStamped uav_tf_;
+
+    if (!able_tracker_uav)
+      return false;
+
     try{
         uav_tf_ = tfBuffer->lookupTransform(world_frame, uav_base_frame, ros::Time(0));
         ROS_INFO("Mission Interface: Got UAV Pose (base_frame: %s - odom_frame: %s).",
