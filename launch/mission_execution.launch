@@ -2,11 +2,11 @@
     <arg name="map_name" default="thermal_central" /> 
 
     <arg name="ugv_name" default="arco" /> 
-    <arg name="uav_name" default="firefly" /> 
     
     <arg name="mission_file" default="2022_3_15_23540" /> 
     <arg name="able_tracker_ugv" default="false" /> 
     <arg name="able_tracker_uav" default="true" /> 
+    <arg name="able_tracker_tether" default="true" /> 
     <arg name="ugv_base_frame" default="base_link" /> 
     <arg name="ugv_odom_frame" default="odom" /> 
     <arg name="uav_base_frame" default="base_link" /> 
@@ -20,6 +20,7 @@
         <param name="map_name" value="$(arg map_name)"/> 
         <param name="able_tracker_ugv" value="$(arg able_tracker_ugv)"/> 
         <param name="able_tracker_uav" value="$(arg able_tracker_uav)"/> 
+        <param name="used_length_reached" value="$(arg able_tracker_tether)"/> 
         <param name="ugv_base_frame" value="$(arg ugv_name)/$(arg ugv_base_frame)"/> 
         <param name="ugv_odom_frame" value="$(arg ugv_name)/$(arg ugv_odom_frame)"/> 
         <param name="uav_base_frame" value="$(arg uav_base_frame)"/> 
