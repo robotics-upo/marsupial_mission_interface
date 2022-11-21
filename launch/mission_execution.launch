@@ -3,7 +3,8 @@
 
     <arg name="ugv_name" default="arco" /> 
     
-    <arg name="mission_file" default="2022_3_15_23540" /> 
+    
+    <arg name="mission_file" default="2022_9_18_16299" /> 
     <arg name="able_tracker_ugv" default="false" /> 
     <arg name="able_tracker_uav" default="true" /> 
     <arg name="able_tracker_tether" default="true" /> 
