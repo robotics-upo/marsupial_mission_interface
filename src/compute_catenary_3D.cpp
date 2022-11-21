@@ -113,7 +113,7 @@ bool bisectionCat::configBisection(double _l, double _x1, double _y1, double _z1
         getNumberPointsCatenary(L);
     else{
         getNumberPointsCatenary(1.001*distance_3d);
-        printf("Warning: Input Length minor that necesary distance between point to apply bisection method ugv[%f %f %f] uav[%f %f %f] L=[%f]\n",_x1, _y1, _z1, _x2, _y2, _z2, L);
+        // printf("Warning: Input Length minor that necesary distance between point to apply bisection method ugv[%f %f %f] uav[%f %f %f] L=[%f]\n",_x1, _y1, _z1, _x2, _y2, _z2, L);
         L_minor_than_D = true;
     }
 
