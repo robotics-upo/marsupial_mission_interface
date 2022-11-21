@@ -7,8 +7,8 @@
     <arg name="mission_file" default="2022_3_15_23540" /> 
     <arg name="able_tracker_ugv" default="false" /> 
     <arg name="able_tracker_uav" default="true" /> 
-    <arg name="ugv_base_frame" default="base_link" /> 
-    <arg name="ugv_odom_frame" default="odom" /> 
+    <arg name="ugv_base_frame" default="$(arg ugv_name)/base_link" /> 
+    <arg name="ugv_odom_frame" default="$(arg ugv_name)/odom" /> 
     <arg name="uav_base_frame" default="base_link" /> 
     <arg name="uav_odom_frame" default="odom" /> 
     <arg name="uav_takeoff_height" default="2" /> 
