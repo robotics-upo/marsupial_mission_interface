@@ -14,7 +14,7 @@
     <arg name="uav_odom_frame" default="odom" /> 
     <arg name="uav_takeoff_height" default="1" /> 
 
-    <node name="mission_interface" pkg="marsupial_mission_interface" type="mission_interface_node" output="screen"># launch-prefix="gdb -ex run --args" >
+    <node name="mission_interface" pkg="marsupial_mission_interface" type="mission_interface_node" output="screen" launch-prefix="gdb -ex run --args" >
 	    <rosparam command="load" file="$(find marsupial_mission_interface)/cfg/offset_maps_dll/offset_maps_dll_$(arg map_name).yaml"/>
         <param name="path_file" value="$(find marsupial_mission_interface)/cfg/optimized_path/optimized_path_$(arg mission_file).yaml"/> 
         <param name="map_name" value="$(arg map_name)"/> 
@@ -25,7 +25,8 @@
         <param name="ugv_odom_frame" value="$(arg ugv_name)/$(arg ugv_odom_frame)"/> 
         <param name="uav_base_frame" value="$(arg uav_name)/$(arg uav_base_frame)"/> 
         <param name="uav_odom_frame" value="$(arg uav_name)/$(arg uav_odom_frame)"/> 
-        <param name="takeoff_height" value="$(arg uav_takeoff_height)"/> 
+        <param name="takeoff_height" value="$(arg uav_takeoff_height)"/>
+        <param name="flying_height" value="0.2"/>
         <param name="time_max" value="35"/> 
     </node>
 

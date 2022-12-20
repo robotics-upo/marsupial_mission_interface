@@ -1,9 +1,6 @@
 <launch>
     <arg name="map_name" default="thermal_central" /> 
-
     <arg name="ugv_name" default="arco" /> 
-    
-    
     <arg name="mission_file" default="2022_9_18_16299" /> 
     <arg name="able_tracker_ugv" default="false" /> 
     <arg name="able_tracker_uav" default="true" /> 
@@ -14,7 +11,7 @@
     <arg name="uav_takeoff_height" default="2" /> 
     <arg name="interpolation_distance" default="0.2"/>
 
-    <node name="mission_interface" pkg="marsupial_mission_interface" type="mission_interface_node" output="screen" launch-prefix="gdb -ex run --args">
+    <node name="mission_interface" pkg="marsupial_mission_interface" type="mission_interface_node" output="screen" > <!-- launch-prefix="gdb -ex run - -args"-->
         <rosparam command="load" file="$(find marsupial_mission_interface)/cfg/offset_maps_dll/offset_maps_dll_$(arg map_name).yaml"/>
         <param name="path_file" value="$(find marsupial_mission_interface)/cfg/optimized_path/optimized_path_$(arg mission_file).yaml"/> 
         <param name="map_name" value="$(arg map_name)"/> 
