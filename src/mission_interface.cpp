@@ -35,6 +35,11 @@ MissionInterface::MissionInterface(std::string node_name_)
   is_ugv_in_waypoint = is_uav_in_waypoint = false;
   sent_new_ugv_wp = sent_new_uav_wp = false;
 
+  double sleep_time = 0.0;
+  nh->param<double>("sleep_time", sleep_time, 2.0);
+  ROS_INFO("Sleep %f seconds", sleep_time);
+  ros::Duration(sleep_time).sleep();
+
 
   geometry_msgs::TransformStamped uav_tf_;
   readWaypoints(path_file);
