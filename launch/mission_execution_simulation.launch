@@ -2,9 +2,9 @@
     <arg name="map_name" default="thermal_central" /> 
 
     <arg name="ugv_name" default="arco" /> 
-    <arg name="uav_name" default="x500" /> 
+    <arg name="uav_name" default="firefly" />
     
-    <arg name="mission_file" default="2022_9_18_16299" /> 
+    <arg name="mission_file" default="1" /> 
     <arg name="able_tracker_ugv" default="true" /> 
     <arg name="able_tracker_uav" default="true" /> 
     <arg name="able_tracker_tether" default="false" /> 
@@ -12,9 +12,11 @@
     <arg name="ugv_odom_frame" default="odom" /> 
     <arg name="uav_base_frame" default="base_link" /> 
     <arg name="uav_odom_frame" default="odom" /> 
-    <arg name="uav_takeoff_height" default="1" /> 
+    <arg name="uav_takeoff_height" default="1" />
 
-    <node name="mission_interface" pkg="marsupial_mission_interface" type="mission_interface_node" output="screen" launch-prefix="gdb -ex run --args" >
+    <include file="$(find marsupial_gazebo)/launch/marsupial_simulation.launch"/>
+
+    <node name="mission_interface" pkg="marsupial_mission_interface" type="mission_interface_node" output="screen"> # launch-prefix="gdb -ex run --args" >
 	    <rosparam command="load" file="$(find marsupial_mission_interface)/cfg/offset_maps_dll/offset_maps_dll_$(arg map_name).yaml"/>
         <param name="path_file" value="$(find marsupial_mission_interface)/cfg/optimized_path/optimized_path_$(arg mission_file).yaml"/> 
         <param name="map_name" value="$(arg map_name)"/> 
@@ -26,8 +28,19 @@
         <param name="uav_base_frame" value="$(arg uav_name)/$(arg uav_base_frame)"/> 
         <param name="uav_odom_frame" value="$(arg uav_name)/$(arg uav_odom_frame)"/> 
         <param name="takeoff_height" value="$(arg uav_takeoff_height)"/>
-        <param name="flying_height" value="0.2"/>
-        <param name="time_max" value="35"/> 
+        <param name="flying_height" value="0.3"/>
+        <param name="time_max" value="35"/>
+        <param name="sleep_time" value="20.0"/>
     </node>
+
+    <include file="$(find matrice_traj_tracker)/launch/matrice_marsupial_traj_tracker.launch">
+
+             <arg name="gazebo_sim" value="true"/>
+             <arg name="uav_name" value="$(arg uav_name)"/>
+    </include>
+
+    <include file="$(find arco_path_tracker)/launch/new_arco_traj_tracker.launch"/>
+
+    <node name="rqt" pkg="rqt_gui" type="rqt_gui"/>
 
 </launch>
