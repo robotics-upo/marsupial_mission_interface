@@ -35,6 +35,11 @@ MissionInterface::MissionInterface(std::string node_name_)
   is_ugv_in_waypoint = is_uav_in_waypoint = false;
   sent_new_ugv_wp = sent_new_uav_wp = false;
 
+  double sleep_time = 0.0;
+  nh->param<double>("sleep_time", sleep_time, 2.0);
+  ROS_INFO("Sleep %f seconds", sleep_time);
+  ros::Duration(sleep_time).sleep();
+
 
   geometry_msgs::TransformStamped uav_tf_;
   readWaypoints(path_file);
@@ -143,7 +148,6 @@ void MissionInterface::interpolate(float dist) {
   trajectory = new_trajectory;
 
   ROS_INFO("Interpolated trajectory. New points: %lu", new_length_vector.size());
-  
 }
 
 //Config standard services and action lib servers and clients
@@ -326,13 +330,13 @@ void MissionInterface::executeMission()
         }
 
          // To reset variable after waypoint WayPoint. If not able defaults to true
-        is_ugv_in_waypoint = false;  // Reset variable after WayPoint reached
-        is_uav_in_waypoint = false;
+        is_ugv_in_waypoint = !able_tracker_ugv;  // Reset variable after WayPoint reached
+        is_uav_in_waypoint = !able_tracker_uav;
         length_reached = false;
 
         // TODO: wait also for the UGV client
-          if ( (NavigationClient->getState() == actionlib::SimpleClientGoalState::SUCCEEDED || !able_tracker_ugv) && 
-               (uavNavigation3DClient->getState() == actionlib::SimpleClientGoalState::SUCCEEDED || !able_tracker_uav) )
+        if ( (!able_tracker_ugv || NavigationClient->getState() == actionlib::SimpleClientGoalState::SUCCEEDED) && 
+               (!able_tracker_uav || uavNavigation3DClient->getState() == actionlib::SimpleClientGoalState::SUCCEEDED) )
           {
             if(able_tracker_ugv){
               is_ugv_in_waypoint = true;
@@ -343,8 +347,8 @@ void MissionInterface::executeMission()
               ROS_INFO("UAV Path Tracker: Goal [%i/%i] Achieved",num_wp + 1,size_);
             }
           }
-          else if ((NavigationClient->getState() == actionlib::SimpleClientGoalState::ABORTED || !able_tracker_ugv) &&
-                   (uavNavigation3DClient->getState() == actionlib::SimpleClientGoalState::ABORTED || !able_tracker_uav))
+          else if ((!able_tracker_ugv || NavigationClient->getState() == actionlib::SimpleClientGoalState::ABORTED) &&
+                   (!able_tracker_uav || uavNavigation3DClient->getState() == actionlib::SimpleClientGoalState::ABORTED))
           {
             if(able_tracker_ugv){
               ROS_INFO_COND(debug, "UGV Goal aborted by path tracker");
@@ -357,8 +361,8 @@ void MissionInterface::executeMission()
               return;
             }
           }
-          else if ((NavigationClient->getState() == actionlib::SimpleClientGoalState::PREEMPTED || !able_tracker_ugv) &&
-                   (uavNavigation3DClient->getState() == actionlib::SimpleClientGoalState::PREEMPTED || !able_tracker_uav))
+          else if ((!able_tracker_ugv || NavigationClient->getState() == actionlib::SimpleClientGoalState::PREEMPTED) &&
+                   (!able_tracker_uav || uavNavigation3DClient->getState() == actionlib::SimpleClientGoalState::PREEMPTED))
           { 
             if(able_tracker_ugv){
               ROS_INFO_COND(debug, "UGV Goal preempted by path tracker");
@@ -393,16 +397,16 @@ void MissionInterface::executeMission()
           sent_new_ugv_wp = sent_new_uav_wp = false;
           num_wp++;
         } else {
-          ROS_WARN("\t\tExecuting maneauvere to reach WayPoint [%i/%i]", num_wp + 1,size_);
+          //ROS_WARN("\t\tExecuting maneauvere to reach WayPoint [%i/%i]", num_wp + 1,size_);
         }
 
-        if(ros::Time::now() - time_count_ugv > ros::Duration(time_max)) {
+        if(able_tracker_ugv && ros::Time::now() - time_count_ugv > ros::Duration(time_max)) {
           std::cout <<" " << std::endl;
           ROS_ERROR("\t\tWasn't posible to reach UGV WayPoint [%i/%i] ", num_wp + 1,size_);
           resetFlags();
         }
 
-        if(ros::Time::now() - time_count_uav > ros::Duration(time_max)) {
+        if(able_tracker_uav && ros::Time::now() - time_count_uav > ros::Duration(time_max)) {
           std::cout <<" " << std::endl;
           ROS_ERROR("\t\tWasn't posible to reach UAV WayPoint [%i/%i] ", num_wp + 1,size_);
           resetFlags();
@@ -609,6 +613,10 @@ bool MissionInterface::isInitialPose()
 bool MissionInterface::UAVisOnTheGround()
 {
     geometry_msgs::TransformStamped uav_tf_;
+
+    if (!able_tracker_uav)
+      return false;
+
     try{
         uav_tf_ = tfBuffer->lookupTransform(world_frame, uav_base_frame, ros::Time(0));
         // printf("\t\tMission Interface: Got UAV Pose (base_frame: %s - odom_frame: %s).", uav_base_frame.c_str(),world_frame.c_str());
