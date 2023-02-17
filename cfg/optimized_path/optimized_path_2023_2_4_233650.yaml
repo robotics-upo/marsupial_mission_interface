@@ -1,0 +1,53 @@
+marsupial_ugv:
+  header: marsupial_ugv
+  seq: 1
+  stamp: 233650
+  frame_id: ugv
+  size: 1
+  poses0:
+    header: ugv0
+    seq: 0
+    frame_id: ugv
+    pose:
+      position:
+        x: -4
+        y: -0.2000000029802322
+        z: 2
+      orientation:
+        x: 0
+        y: 0
+        z: 0
+        w: 1
+---
+marsupial_uav:
+  header: marsupial_uav
+  seq: 1
+  stamp: 233650
+  frame_id: base_link_uav
+  size: 1
+  poses0:
+    header: uav0
+    seq: 0
+    frame_id: uav
+    pose:
+      position:
+        x: 2
+        y: 0.6000000238418579
+        z: 4
+      orientation:
+        x: 0
+        y: 0
+        z: 0
+        w: 1
+---
+tether:
+  header: tether
+  seq: 1
+  stamp: 233650
+  frame_id: frame_tether
+  size: 1
+  length0:
+    header: tether0
+    seq: 0
+    frame_id: tether_length
+    length: 6.334072
