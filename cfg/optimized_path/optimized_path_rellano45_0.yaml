@@ -3,36 +3,8 @@ marsupial_ugv:
   seq: 1
   stamp: 212558
   frame_id: ugv
-  size: 7
+  size: 5
   poses0:
-    header: ugv0
-    seq: 0
-    frame_id: ugv
-    pose:
-      position:
-        x: 34
-        y: 25
-        z: 0.27
-      orientation:
-        x: 0
-        y: 0
-        z: 0.7884
-        w: 0.6151
-  poses1:
-    header: ugv1
-    seq: 1
-    frame_id: ugv
-    pose:
-      position:
-        x: 32
-        y: 26
-        z: 0.27
-      orientation:
-        x: 0
-        y: 0
-        z: 0.4014
-        w: 0.9158
-  poses2:
     header: ugv2
     seq: 2
     frame_id: ugv
@@ -46,9 +18,23 @@ marsupial_ugv:
         y: 0
         z: 0.1135
         w: 0.9935
-  poses3:
+  poses1:
     header: ugv3
     seq: 3
+    frame_id: ugv
+    pose:
+      position:
+        x: 25
+        y: 24
+        z: 0.27
+      orientation:
+        x: 0
+        y: 0
+        z: 0.1358
+        w: 0.9907
+  poses2:
+    header: ugv4
+    seq: 4
     frame_id: ugv
     pose:
       position:
@@ -58,29 +44,15 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.1358
-        w: 0.9907
-  poses4:
-    header: ugv4
-    seq: 4
-    frame_id: ugv
-    pose:
-      position:
-        x: 20
-        y: 24
-        z: 0.27
-      orientation:
-        x: 0
-        y: 0
         z: 0
         w: 1
-  poses5:
+  poses3:
     header: ugv5
     seq: 5
     frame_id: ugv
     pose:
       position:
-        x: 18
+        x: 21
         y: 24
         z: 0.27
       orientation:
@@ -88,13 +60,13 @@ marsupial_ugv:
         y: 0
         z: 0.1199
         w: 0.9927
-  poses6:
+  poses4:
     header: ugv6
     seq: 6
     frame_id: ugv
     pose:
       position:
-        x: 18
+        x: 20
         y: 24
         z: 0.27
       orientation:
@@ -108,36 +80,8 @@ marsupial_uav:
   seq: 1
   stamp: 212558
   frame_id: uav
-  size: 7
+  size: 5
   poses0:
-    header: uav0
-    seq: 0
-    frame_id: uav
-    pose:
-      position:
-        x: 34
-        y: 25
-        z: 2
-      orientation:
-        x: 0
-        y: 0
-        z: 0.7884
-        w: 0.6151
-  poses1:
-    header: uav1
-    seq: 1
-    frame_id: uav
-    pose:
-      position:
-        x: 32
-        y: 26
-        z: 2
-      orientation:
-        x: 0
-        y: 0
-        z: 0.4014
-        w: 0.9158
-  poses2:
     header: uav2
     seq: 2
     frame_id: uav
@@ -151,9 +95,23 @@ marsupial_uav:
         y: 0
         z: 0.1135
         w: 0.9935
-  poses3:
+  poses1:
     header: uav3
     seq: 3
+    frame_id: uav
+    pose:
+      position:
+        x: 25
+        y: 24
+        z: 2
+      orientation:
+        x: 0
+        y: 0
+        z: 0.1358
+        w: 0.9907
+  poses2:
+    header: uav4
+    seq: 4
     frame_id: uav
     pose:
       position:
@@ -163,29 +121,15 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: 0.1358
-        w: 0.9907
-  poses4:
-    header: uav4
-    seq: 4
-    frame_id: uav
-    pose:
-      position:
-        x: 20
-        y: 24
-        z: 2
-      orientation:
-        x: 0
-        y: 0
         z: 0
         w: 1
-  poses5:
+  poses3:
     header: uav5
     seq: 5
     frame_id: uav
     pose:
       position:
-        x: 18
+        x: 21
         y: 24
         z: 2
       orientation:
@@ -193,13 +137,13 @@ marsupial_uav:
         y: 0
         z: 0.1199
         w: 0.9927
-  poses6:
+  poses4:
     header: uga6
     seq: 6
     frame_id: uav
     pose:
       position:
-        x: 18
+        x: 20
         y: 24
         z: 2
       orientation:
@@ -212,38 +156,28 @@ tether:
   seq: 1
   stamp: 212558
   frame_id: frame_tether
-  size: 7
+  size: 5
   length0:
-    header: tether0
-    seq: 0
-    frame_id: tether_length
-    length: 2.1
-  length1:
-    header: tether1
-    seq: 1
-    frame_id: tether_length
-    length: 2.1
-  length2:
     header: tether2
     seq: 2
     frame_id: tether_length
     length: 2.1
-  length3:
+  length1:
     header: tether3
     seq: 3
     frame_id: tether_length
     length: 2.1
-  length4:
+  length2:
     header: tether4
     seq: 4
     frame_id: tether_length
     length: 2.1
-  length5:
+  length3:
     header: tether5
     seq: 5
     frame_id: tether_length
     length: 2.1
-  length6:
+  length4:
     header: tether6
     seq: 6
     frame_id: tether_length

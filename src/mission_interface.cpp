@@ -72,15 +72,19 @@ MissionInterface::MissionInterface(std::string node_name_)
   ros::spinOnce();
   configServices();
 
-  try{
-    uav_tf_ = tfBuffer->lookupTransform(world_frame, uav_base_frame, ros::Time(0));
-    initial_pose  = uav_tf_.transform.translation;
-    ROS_INFO("\tGot initial UAV position uav_tf_[%f %f %f]",uav_tf_.transform.translation.x,uav_tf_.transform.translation.y,uav_tf_.transform.translation.z);
-    received_initial_pose = true;
-  }    
-  catch (tf2::TransformException &ex){
-    ROS_WARN("Mission Interface: Couldn't get position initial UAV (base_frame: %s - odom_frame: %s), so not possible to set UAV start point; tf exception: %s",
-	     uav_base_frame.c_str(),uav_odom_frame.c_str(),ex.what());
+  markerPoints();
+
+  if (able_tracker_uav){
+    try{
+      uav_tf_ = tfBuffer->lookupTransform(world_frame, uav_base_frame, ros::Time(0));
+      initial_pose  = uav_tf_.transform.translation;
+      ROS_INFO("\tGot initial UAV position uav_tf_[%f %f %f]",uav_tf_.transform.translation.x,uav_tf_.transform.translation.y,uav_tf_.transform.translation.z);
+      received_initial_pose = true;
+    }    
+    catch (tf2::TransformException &ex){
+      ROS_WARN("Mission Interface: Couldn't get position initial UAV (base_frame: %s - odom_frame: %s), so not possible to set UAV start point; tf exception: %s",
+        uav_base_frame.c_str(),uav_odom_frame.c_str(),ex.what());
+    }
   }
 }
 
@@ -403,12 +407,16 @@ void MissionInterface::executeMission()
         if(able_tracker_ugv && ros::Time::now() - time_count_ugv > ros::Duration(time_max)) {
           std::cout <<" " << std::endl;
           ROS_ERROR("\t\tWasn't posible to reach UGV WayPoint [%i/%i] ", num_wp + 1,size_);
+          NavigationClient->cancelGoal();
+          uavNavigation3DClient->cancelGoal();
           resetFlags();
         }
 
         if(able_tracker_uav && ros::Time::now() - time_count_uav > ros::Duration(time_max)) {
           std::cout <<" " << std::endl;
           ROS_ERROR("\t\tWasn't posible to reach UAV WayPoint [%i/%i] ", num_wp + 1,size_);
+          NavigationClient->cancelGoal();
+          uavNavigation3DClient->cancelGoal();
           resetFlags();
         }
 
@@ -418,7 +426,6 @@ void MissionInterface::executeMission()
           printf("\n\tInitializing flags !!\n");
           resetFlags();
         }
-
       }
     } 
     else {
