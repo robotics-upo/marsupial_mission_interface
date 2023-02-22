@@ -26,7 +26,9 @@ MissionInterface::MissionInterface(std::string node_name_)
   nh->param<bool>("able_tracker_uav",able_tracker_uav, true);
   nh->param<bool>("used_length_reached",used_length_reached, true);
   nh->param("takeoff_height",takeoff_height, (float)1.0);
-    
+
+  nh->param<int>("stop_arco_mission_button", stopArcoMissionButton, STOP_ARCO_MISSION_BUTTON);
+
   ros_node_name = node_name_;
   ROS_INFO("Initialized Node : %s", ros_node_name.c_str());
 
@@ -183,17 +185,15 @@ void MissionInterface::configTopics()
     uav_state_mission_sub_ = nh->subscribe<std_msgs::Bool>
       ("uav_ready_for_mission", 1, &MissionInterface::uavReadyForMissionCB, this);
   }
-  start_mission_sub_ = nh->subscribe<std_msgs::Bool>("start_mission", 1,
-						     &MissionInterface::startMissionCB, this);
+  start_mission_sub_ = nh->subscribe<std_msgs::Bool>("start_mission", 1, &MissionInterface::startMissionCB, this);
   gps_sub_ = nh->subscribe<sensor_msgs::NavSatFix>("gps", 1, &MissionInterface::gpsCB, this);
+  length_reached_sub_ = nh->subscribe("/tie_controller/length_reached", 1, &MissionInterface::lengthReachedCB, this);
+  load_trajectory_sub_ = nh->subscribe("load_mission", 1, &MissionInterface::loadMissionCB, this);
+  joy_sub_ = nh->subscribe<sensor_msgs::Joy>("/joy", 5, &MissionInterface::joyReceivedCB,this);
+  
   traj_ugv_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_ugv", 100);
   traj_uav_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_uav", 100);
   catenary_length_pub_ = nh->advertise<std_msgs::Float32>("/tie_controller/set_length", 1);
-  length_reached_sub_ = nh->subscribe("/tie_controller/length_reached", 1,
-					&MissionInterface::lengthReachedCB, this);
-  load_trajectory_sub_ = nh->subscribe("load_mission", 1,
-				       &MissionInterface::loadMissionCB, this);
-  
   traj_lines_ugv_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_lines_ugv", 100);
   traj_lines_uav_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_lines_uav", 100);
   catenary_marker_pub_= nh->advertise<visualization_msgs::MarkerArray>("trajectory_catenary", 100);
@@ -234,6 +234,14 @@ void MissionInterface::gpsCB(const sensor_msgs::NavSatFix::ConstPtr& msg)
 {
   std_msgs::Float64 height_msg; 
   height = msg->altitude;
+}
+
+void MissionInterface::joyReceivedCB(const sensor_msgs::Joy::ConstPtr& joy)
+{ 
+ if (joy->buttons[stopArcoMissionButton]) {
+      ROS_ERROR("MissionInterface : JOYSTICK is forcing to STOP Arco Mission Path Tracker");
+      NavigationClient->cancelAllGoals();
+  }
 }
 
 void MissionInterface::executeMission()
@@ -407,16 +415,18 @@ void MissionInterface::executeMission()
         if(able_tracker_ugv && ros::Time::now() - time_count_ugv > ros::Duration(time_max)) {
           std::cout <<" " << std::endl;
           ROS_ERROR("\t\tWasn't posible to reach UGV WayPoint [%i/%i] ", num_wp + 1,size_);
-          NavigationClient->cancelGoal();
-          uavNavigation3DClient->cancelGoal();
+          NavigationClient->cancelAllGoals();
+          if(able_tracker_uav)
+            uavNavigation3DClient->cancelAllGoals();
           resetFlags();
         }
 
         if(able_tracker_uav && ros::Time::now() - time_count_uav > ros::Duration(time_max)) {
           std::cout <<" " << std::endl;
           ROS_ERROR("\t\tWasn't posible to reach UAV WayPoint [%i/%i] ", num_wp + 1,size_);
-          NavigationClient->cancelGoal();
-          uavNavigation3DClient->cancelGoal();
+          if(able_tracker_ugv)
+            NavigationClient->cancelAllGoals();
+          uavNavigation3DClient->cancelAllGoals();
           resetFlags();
         }
 

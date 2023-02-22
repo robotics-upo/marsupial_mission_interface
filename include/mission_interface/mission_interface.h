@@ -37,12 +37,15 @@
 #include <std_msgs/Int32.h>
 #include <std_msgs/Bool.h>
 #include <sensor_msgs/NavSatFix.h>
+#include <sensor_msgs/Joy.h>
 
 #include <yaml-cpp/yaml.h>
 #include <std_srvs/Trigger.h>
 
 #include "mission_interface/compute_catenary_3D.h"
 #include "marsupial_mission_interface/vector_float.h"
+
+#define STOP_ARCO_MISSION_BUTTON   	      1
 
 
 class MissionInterface
@@ -79,13 +82,13 @@ public:
   bool isInitialPose();
   bool UAVisOnTheGround();
   void markerPoints();
-
+  void joyReceivedCB(const sensor_msgs::Joy::ConstPtr& joy);
   void interpolate(float dist);
 
   bisectionCat BisCat;
   
   ros::Subscriber ugv_state_mission_sub_, uav_state_mission_sub_, start_mission_sub_, gps_sub_;
-  ros::Subscriber load_trajectory_sub_, length_reached_sub_;
+  ros::Subscriber load_trajectory_sub_, length_reached_sub_, joy_sub_;
   geometry_msgs::Pose init_uav_pose, init_ugv_pose;
   geometry_msgs::Vector3 initial_pose;
   float takeoff_height;
@@ -117,6 +120,9 @@ public:
   double time_max;
   double sent_new_uav_wp , sent_new_ugv_wp ;
   bool used_length_reached; //variable created to test mission node with or without length_reached status
+
+  //Joystick Stuff
+  int stopArcoMissionButton;
 
 };
 
