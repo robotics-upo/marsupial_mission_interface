@@ -189,7 +189,7 @@ void MissionInterface::configTopics()
   gps_sub_ = nh->subscribe<sensor_msgs::NavSatFix>("gps", 1, &MissionInterface::gpsCB, this);
   length_reached_sub_ = nh->subscribe("/tie_controller/length_reached", 1, &MissionInterface::lengthReachedCB, this);
   load_trajectory_sub_ = nh->subscribe("load_mission", 1, &MissionInterface::loadMissionCB, this);
-  joy_sub_ = nh->subscribe<sensor_msgs::Joy>("/joy", 5, &MissionInterface::joyReceivedCB,this);
+  joy_sub_ = nh->subscribe<sensor_msgs::Joy>("/arco/joy", 5, &MissionInterface::joyReceivedCB,this);
   
   traj_ugv_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_ugv", 100);
   traj_uav_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_uav", 100);
