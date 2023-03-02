@@ -4,14 +4,14 @@
     "mainwindow": {
       "keys": {
         "geometry": {
-          "repr(QByteArray.hex)": "QtCore.QByteArray(b'01d9d0cb00030000000000d2000000a30000063b000003b7000000d2000000c80000063b000003b700000000000000000780000000d2000000c80000063b000003b7')",
+          "repr(QByteArray.hex)": "QtCore.QByteArray(b'01d9d0cb000300000000006400000064000007b90000024a0000006400000089000007b90000024a00000000000000000a000000006400000089000007b90000024a')",
           "type": "repr(QByteArray.hex)",
-          "pretty-print": "         ;       ;            ;  "
+          "pretty-print": "     d d   J d     J      d     J"
         },
         "state": {
-          "repr(QByteArray.hex)": "QtCore.QByteArray(b'000000ff00000000fd00000001000000030000056a000002c4fc0100000002fc000000000000056a0000038200fffffffc0100000002fc000000000000023d0000023d00fffffffc0200000002fb00000058007200710074005f007000750062006c00690073006800650072005f005f005000750062006c00690073006800650072005f005f0031005f005f005000750062006c006900730068006500720057006900640067006500740100000016000001c50000008c00fffffffb00000058007200710074005f007000750062006c00690073006800650072005f005f005000750062006c00690073006800650072005f005f0032005f005f005000750062006c0069007300680065007200570069006400670065007401000001e1000000f90000008c00fffffffb00000042007200710074005f0070006c006f0074005f005f0050006c006f0074005f005f0031005f005f00440061007400610050006c006f00740057006900640067006500740100000243000003270000013f00fffffffb0000004c007200710074005f0074006f007000690063005f005f0054006f0070006900630050006c007500670069006e005f005f0031005f005f0054006f00700069006300570069006400670065007401000005d40000011400000000000000000000056a0000000000000004000000040000000800000008fc00000001000000030000000100000036004d0069006e0069006d0069007a006500640044006f0063006b00570069006400670065007400730054006f006f006c0062006100720000000000ffffffff0000000000000000')",
+          "repr(QByteArray.hex)": "QtCore.QByteArray(b'000000ff00000000fd00000001000000030000075600000194fc0100000002fc0000000000000756000003af00fffffffc0100000002fc00000000000003090000026d00fffffffc0200000002fb00000058007200710074005f007000750062006c00690073006800650072005f005f005000750062006c00690073006800650072005f005f0031005f005f005000750062006c006900730068006500720057006900640067006500740100000017000000ea000000a300fffffffb00000058007200710074005f007000750062006c00690073006800650072005f005f005000750062006c00690073006800650072005f005f0032005f005f005000750062006c006900730068006500720057006900640067006500740100000108000000a3000000a300fffffffb00000042007200710074005f0070006c006f0074005f005f0050006c006f0074005f005f0031005f005f00440061007400610050006c006f00740057006900640067006500740100000310000004460000013b00fffffffb0000004c007200710074005f0074006f007000690063005f005f0054006f0070006900630050006c007500670069006e005f005f0031005f005f0054006f00700069006300570069006400670065007401000005d4000001140000000000000000000007560000000000000004000000040000000800000008fc00000001000000030000000100000036004d0069006e0069006d0069007a006500640044006f0063006b00570069006400670065007400730054006f006f006c0062006100720000000000ffffffff0000000000000000')",
           "type": "repr(QByteArray.hex)",
-          "pretty-print": "                   j                    Xrqt_publisher__Publisher__1__PublisherWidget          Xrqt_publisher__Publisher__2__PublisherWidget          Brqt_plot__Plot__1__DataPlotWidget          Lrqt_topic__TopicPlugin__1__TopicWidget                            6MinimizedDockWidgetsToolbar        "
+          "pretty-print": "                   V                    Xrqt_publisher__Publisher__1__PublisherWidget          Xrqt_publisher__Publisher__2__PublisherWidget          Brqt_plot__Plot__1__DataPlotWidget          Lrqt_topic__TopicPlugin__1__TopicWidget                            6MinimizedDockWidgetsToolbar        "
         }
       },
       "groups": {
@@ -65,15 +65,15 @@
                   "type": "repr"
                 },
                 "topics": {
-                  "repr": "''",
+                  "repr": "['/tie_controller/length_status/data', '/tie_controller/error_status/data']",
                   "type": "repr"
                 },
                 "x_limits": {
-                  "repr": "[23.759087085723877, 24.759087085723877]",
+                  "repr": "[446.66344714164734, 447.66344714164734]",
                   "type": "repr"
                 },
                 "y_limits": {
-                  "repr": "[3.746860217276755e-37, 33.439735412597656]",
+                  "repr": "[-2.4998912811279297, 33.439735412597656]",
                   "type": "repr"
                 }
               },
@@ -104,7 +104,7 @@
             "plugin": {
               "keys": {
                 "publishers": {
-                  "repr": "\"[{'topic_name': '/tie_controller/enable', 'type_name': 'std_msgs/Bool', 'rate': 1.0, 'enabled': False, 'publisher_id': 0, 'counter': 0, 'expressions': {'/tie_controller/enable/data': 'True'}}, {'topic_name': '/tie_controller/enable', 'type_name': 'std_msgs/Bool', 'rate': 3.0, 'enabled': False, 'publisher_id': 1, 'counter': 0, 'expressions': {}}, {'topic_name': '/tie_controller/reverse', 'type_name': 'std_msgs/Bool', 'rate': 1.0, 'enabled': False, 'publisher_id': 2, 'counter': 0, 'expressions': {'/tie_controller/reverse/data': 'False'}}, {'topic_name': '/tie_controller/set_length', 'type_name': 'std_msgs/Float32', 'rate': 2.0, 'enabled': False, 'publisher_id': 3, 'counter': 0, 'expressions': {'/tie_controller/set_length/data': '6.4'}}, {'topic_name': '/tie_controller/reset_length_estimation', 'type_name': 'std_msgs/Float32', 'rate': 1.0, 'enabled': False, 'publisher_id': 4, 'counter': 0, 'expressions': {'/tie_controller/reset_length_estimation/data': '7.5'}}, {'topic_name': '/tie_controller/one_way', 'type_name': 'std_msgs/Bool', 'rate': 1.0, 'enabled': False, 'publisher_id': 5, 'counter': 0, 'expressions': {'/tie_controller/one_way/data': 'True'}}]\"",
+                  "repr": "\"[{'topic_name': '/mission_interface/uav_ready_for_mission', 'type_name': 'std_msgs/Bool', 'rate': 1.0, 'enabled': False, 'publisher_id': 0, 'counter': 0, 'expressions': {'/mission_interface/uav_ready_for_mission/data': 'True'}}, {'topic_name': '/mission_interface/start_mission', 'type_name': 'std_msgs/Bool', 'rate': 1.0, 'enabled': False, 'publisher_id': 1, 'counter': 8, 'expressions': {'/mission_interface/start_mission/data': 'True'}}, {'topic_name': '/tie_controller/enable', 'type_name': 'std_msgs/Bool', 'rate': 1.0, 'enabled': False, 'publisher_id': 2, 'counter': 6, 'expressions': {'/tie_controller/enable/data': 'True'}}, {'topic_name': '/tie_controller/enable', 'type_name': 'std_msgs/Bool', 'rate': 3.0, 'enabled': False, 'publisher_id': 3, 'counter': 0, 'expressions': {}}, {'topic_name': '/tie_controller/reverse', 'type_name': 'std_msgs/Bool', 'rate': 1.0, 'enabled': False, 'publisher_id': 4, 'counter': 0, 'expressions': {'/tie_controller/reverse/data': 'False'}}, {'topic_name': '/tie_controller/set_length', 'type_name': 'std_msgs/Float32', 'rate': 2.0, 'enabled': False, 'publisher_id': 5, 'counter': 0, 'expressions': {'/tie_controller/set_length/data': '6.4'}}, {'topic_name': '/tie_controller/reset_length_estimation', 'type_name': 'std_msgs/Float32', 'rate': 1.0, 'enabled': False, 'publisher_id': 6, 'counter': 0, 'expressions': {'/tie_controller/reset_length_estimation/data': '7.5'}}, {'topic_name': '/tie_controller/one_way', 'type_name': 'std_msgs/Bool', 'rate': 1.0, 'enabled': False, 'publisher_id': 7, 'counter': 0, 'expressions': {'/tie_controller/one_way/data': 'True'}}]\"",
                   "type": "repr"
                 }
               },
@@ -135,7 +135,7 @@
             "plugin": {
               "keys": {
                 "publishers": {
-                  "repr": "\"[{'topic_name': '/mission_interface/start_mission', 'type_name': 'std_msgs/Bool', 'rate': 1.0, 'enabled': False, 'publisher_id': 0, 'counter': 6303, 'expressions': {'/mission_interface/start_mission/data': 'True'}}, {'topic_name': '/mission_interface/uav_ready_for_mission', 'type_name': 'std_msgs/Bool', 'rate': 1.0, 'enabled': False, 'publisher_id': 1, 'counter': 6301, 'expressions': {'/mission_interface/uav_ready_for_mission/data': 'True'}}, {'topic_name': '/mission_interface/ugv_ready_for_mission', 'type_name': 'std_msgs/Bool', 'rate': 1.0, 'enabled': False, 'publisher_id': 3, 'counter': 33, 'expressions': {}}]\"",
+                  "repr": "\"[{'topic_name': '/mission_interface/start_mission', 'type_name': 'std_msgs/Bool', 'rate': 1.0, 'enabled': False, 'publisher_id': 0, 'counter': 1, 'expressions': {'/mission_interface/start_mission/data': 'True'}}, {'topic_name': '/mission_interface/uav_ready_for_mission', 'type_name': 'std_msgs/Bool', 'rate': 1.0, 'enabled': False, 'publisher_id': 1, 'counter': 2, 'expressions': {'/mission_interface/uav_ready_for_mission/data': 'True'}}, {'topic_name': '/mission_interface/ugv_ready_for_mission', 'type_name': 'std_msgs/Bool', 'rate': 1.0, 'enabled': False, 'publisher_id': 2, 'counter': 10, 'expressions': {'/mission_interface/ugv_ready_for_mission/data': 'True'}}]\"",
                   "type": "repr"
                 }
               },
