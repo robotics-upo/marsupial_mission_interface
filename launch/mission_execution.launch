@@ -2,8 +2,8 @@
     <arg name="map_name" default="teatro_wall" /> 
     <arg name="ugv_name" default="arco" /> 
     <arg name="mission_file" default="teatro_wall" /> 
-    <arg name="able_tracker_ugv" default="true" /> 
-    <arg name="able_tracker_uav" default="true" /> 
+    <arg name="able_tracker_ugv" default="false" /> 
+    <arg name="able_tracker_uav" default="false" /> 
     <arg name="able_tracker_tether" default="false" /> 
     <arg name="ugv_base_frame" default="$(arg ugv_name)/base_link" /> 
     <arg name="ugv_odom_frame" default="$(arg ugv_name)/odom" /> 
@@ -11,7 +11,7 @@
     <arg name="uav_odom_frame" default="odom" /> 
     <arg name="uav_takeoff_height" default="2" /> 
     <arg name="interpolation_distance" default="0.5"/>
-    <arg name="time_max_get_WP" default="30.0"/>
+    <arg name="time_max_get_WP" default="60.0"/>
 
     <node name="mission_interface" pkg="marsupial_mission_interface" type="mission_interface_node" output="screen"> #launch-prefix="gdb -ex run --args">
         <rosparam command="load" file="$(find marsupial_mission_interface)/cfg/offset_maps_dll/offset_maps_dll_$(arg map_name).yaml"/>

@@ -1367,8 +1367,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.4270687699317932
+        w: 0.9042191505432129
   poses1:
     header: uav1
     seq: 1
@@ -1381,8 +1381,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.4270687699317932
+        w: 0.9042191505432129
   poses2:
     header: uav2
     seq: 2
@@ -1395,8 +1395,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.5257311463356018
+        w: 0.8506507873535156
   poses3:
     header: uav3
     seq: 3
@@ -1409,8 +1409,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.5257311463356018
+        w: 0.8506507873535156
   poses4:
     header: uav4
     seq: 4
@@ -1423,8 +1423,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.5257311463356018
+        w: 0.8506507873535156
   poses5:
     header: uav5
     seq: 5
@@ -1437,8 +1437,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.5257311463356018
+        w: 0.8506507873535156
   poses6:
     header: uav6
     seq: 6
@@ -1451,8 +1451,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.3162277638912201
+        w: 0.9486833214759827
   poses7:
     header: uav7
     seq: 7
@@ -1465,8 +1465,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: -0.289784163236618
+        w: 0.9570920467376709
   poses8:
     header: uav8
     seq: 8
@@ -1479,8 +1479,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: -0.289784163236618
+        w: 0.9570920467376709
   poses9:
     header: uav9
     seq: 9
@@ -1493,8 +1493,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: -0.289784163236618
+        w: 0.9570920467376709
   poses10:
     header: uav10
     seq: 10
@@ -1507,8 +1507,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: -0.289784163236618
+        w: 0.9570920467376709
   poses11:
     header: uav11
     seq: 11
@@ -1521,8 +1521,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.5257311463356018
+        w: 0.8506507873535156
   poses12:
     header: uav12
     seq: 12
@@ -1535,8 +1535,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.2297529131174088
+        w: 0.9732490181922913
   poses13:
     header: uav13
     seq: 13
@@ -1549,8 +1549,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.4472135901451111
+        w: 0.8944271802902222
   poses14:
     header: uav14
     seq: 14
@@ -1563,8 +1563,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.4472135901451111
+        w: 0.8944271802902222
   poses15:
     header: uav15
     seq: 15
@@ -1577,8 +1577,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.4472135901451111
+        w: 0.8944271802902222
   poses16:
     header: uav16
     seq: 16
@@ -1591,8 +1591,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.4472135901451111
+        w: 0.8944271802902222
   poses17:
     header: uav17
     seq: 17
@@ -1605,8 +1605,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.7071067690849304
+        w: 0.7071067690849304
   poses18:
     header: uav18
     seq: 18
@@ -1619,8 +1619,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.7071067690849304
+        w: 0.7071067690849304
   poses19:
     header: uav19
     seq: 19
@@ -1633,8 +1633,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.5257311463356018
+        w: 0.8506507873535156
   poses20:
     header: uav20
     seq: 20
@@ -1647,8 +1647,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.5257311463356018
+        w: 0.8506507873535156
   poses21:
     header: uav21
     seq: 21
@@ -1661,8 +1661,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.5257311463356018
+        w: 0.8506507873535156
   poses22:
     header: uav22
     seq: 22
@@ -1675,8 +1675,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.5257311463356018
+        w: 0.8506507873535156
   poses23:
     header: uav23
     seq: 23
@@ -1689,8 +1689,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.4472135901451111
+        w: 0.8944271802902222
   poses24:
     header: uav24
     seq: 24
@@ -1703,8 +1703,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.1221832633018494
+        w: 0.9925075769424438
   poses25:
     header: uav25
     seq: 25
@@ -1717,8 +1717,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.3162277638912201
+        w: 0.9486833214759827
   poses26:
     header: uav26
     seq: 26
@@ -1731,8 +1731,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.4472135901451111
+        w: 0.8944271802902222
   poses27:
     header: uav27
     seq: 27
@@ -1745,8 +1745,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.5257311463356018
+        w: 0.8506507873535156
   poses28:
     header: uav28
     seq: 28
@@ -1759,8 +1759,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.3162277638912201
+        w: 0.9486833214759827
   poses29:
     header: uav29
     seq: 29
@@ -1773,8 +1773,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.7071067690849304
+        w: 0.7071067690849304
   poses30:
     header: uav30
     seq: 30
@@ -1787,8 +1787,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.7071067690849304
+        w: 0.7071067690849304
   poses31:
     header: uav31
     seq: 31
@@ -1801,8 +1801,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.7071067690849304
+        w: 0.7071067690849304
   poses32:
     header: uav32
     seq: 32
@@ -1815,8 +1815,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.7071067690849304
+        w: 0.7071067690849304
   poses33:
     header: uav33
     seq: 33
@@ -1829,8 +1829,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.9238795042037964
+        w: 0.3826834261417389
   poses34:
     header: uav34
     seq: 34
@@ -1843,8 +1843,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.9238795042037964
+        w: 0.3826834261417389
   poses35:
     header: uav35
     seq: 35
@@ -1857,8 +1857,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.9238795042037964
+        w: 0.3826834261417389
   poses36:
     header: uav36
     seq: 36
@@ -1871,8 +1871,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.9238795042037964
+        w: 0.3826834261417389
   poses37:
     header: uav37
     seq: 37
@@ -1885,8 +1885,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.9238795042037964
+        w: 0.3826834261417389
   poses38:
     header: uav38
     seq: 38
@@ -1899,8 +1899,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.9238795042037964
+        w: 0.3826834261417389
   poses39:
     header: uav39
     seq: 39
@@ -1913,8 +1913,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.9238795042037964
+        w: 0.3826834261417389
   poses40:
     header: uav40
     seq: 40
@@ -1927,8 +1927,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.9238795042037964
+        w: 0.3826834261417389
   poses41:
     header: uav41
     seq: 41
@@ -1941,8 +1941,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.9238795042037964
+        w: 0.3826834261417389
   poses42:
     header: uav42
     seq: 42
@@ -1955,8 +1955,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.9570920467376709
+        w: 0.2897841334342957
   poses43:
     header: uav43
     seq: 43
@@ -1969,8 +1969,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.9570920467376709
+        w: 0.2897841334342957
   poses44:
     header: uav44
     seq: 44
@@ -1983,8 +1983,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.9570920467376709
+        w: 0.2897841334342957
   poses45:
     header: uav45
     seq: 45
@@ -1997,8 +1997,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: -0.9870874285697937
+        w: 0.1601822376251221
   poses46:
     header: uav46
     seq: 46
@@ -2011,8 +2011,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.9870874285697937
+        w: 0.1601822376251221
   poses47:
     header: uav47
     seq: 47
@@ -2023,10 +2023,10 @@ marsupial_uav:
         y: 1.300000071525574
         z: 2.5
       orientation:
-        x: 0
+        x: -0
         y: 0
-        z: -1.0
-        w: 0.0.371138828673793e-08
+        z: 1
+        w: -4.371138828673793e-08
   poses48:
     header: uav48
     seq: 48
@@ -2039,8 +2039,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.9870874285697937
+        w: 0.1601822376251221
   poses49:
     header: uav49
     seq: 49
@@ -2053,8 +2053,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.9870874285697937
+        w: 0.1601822376251221
   poses50:
     header: uav50
     seq: 50
@@ -2067,8 +2067,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.9870874285697937
+        w: 0.1601822376251221
   poses51:
     header: uav51
     seq: 51
@@ -2081,8 +2081,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: -0.9870874285697937
+        w: 0.1601822376251221
   poses52:
     header: uav52
     seq: 52
@@ -2095,8 +2095,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: -0.9870874285697937
+        w: 0.1601822376251221
   poses53:
     header: uav53
     seq: 53
@@ -2109,8 +2109,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.9238795042037964
+        w: 0.3826834261417389
   poses54:
     header: uav54
     seq: 54
@@ -2123,8 +2123,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.9238795042037964
+        w: 0.3826834261417389
   poses55:
     header: uav55
     seq: 55
@@ -2137,8 +2137,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.9238795042037964
+        w: 0.3826834261417389
   poses56:
     header: uav56
     seq: 56
@@ -2151,8 +2151,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.9238795042037964
+        w: 0.3826834261417389
   poses57:
     header: uav57
     seq: 57
@@ -2165,8 +2165,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.5847102403640747
+        w: 0.8112422227859497
   poses58:
     header: uav58
     seq: 58
@@ -2179,8 +2179,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.5847102403640747
+        w: 0.8112422227859497
   poses59:
     header: uav59
     seq: 59
@@ -2193,8 +2193,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.5847102403640747
+        w: 0.8112422227859497
   poses60:
     header: uav60
     seq: 60
@@ -2207,8 +2207,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.4718579351902008
+        w: 0.881674587726593
   poses61:
     header: uav61
     seq: 61
@@ -2221,8 +2221,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.4718579351902008
+        w: 0.881674587726593
   poses62:
     header: uav62
     seq: 62
@@ -2235,8 +2235,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.4718579351902008
+        w: 0.881674587726593
   poses63:
     header: uav63
     seq: 63
@@ -2249,8 +2249,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.4718579351902008
+        w: 0.881674587726593
   poses64:
     header: uav64
     seq: 64
@@ -2263,8 +2263,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.5847102403640747
+        w: 0.8112422227859497
   poses65:
     header: uav65
     seq: 65
@@ -2277,8 +2277,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.5847102403640747
+        w: 0.8112422227859497
   poses66:
     header: uav66
     seq: 66
@@ -2291,8 +2291,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.5847102403640747
+        w: 0.8112422227859497
   poses67:
     header: uav67
     seq: 67
@@ -2305,8 +2305,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.5847102403640747
+        w: 0.8112422227859497
   poses68:
     header: uav68
     seq: 68
@@ -2319,8 +2319,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.5847102403640747
+        w: 0.8112422227859497
   poses69:
     header: uav69
     seq: 69
@@ -2333,8 +2333,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.5847102403640747
+        w: 0.8112422227859497
   poses70:
     header: uav70
     seq: 70
@@ -2347,8 +2347,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.5847102403640747
+        w: 0.8112422227859497
   poses71:
     header: uav71
     seq: 71
@@ -2361,8 +2361,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.5847102403640747
+        w: 0.8112422227859497
   poses72:
     header: uav72
     seq: 72
@@ -2375,8 +2375,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.5847102403640747
+        w: 0.8112422227859497
   poses73:
     header: uav73
     seq: 73
@@ -2389,8 +2389,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.5847102403640747
+        w: 0.8112422227859497
   poses74:
     header: uav74
     seq: 74
@@ -2403,8 +2403,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.5847102403640747
+        w: 0.8112422227859497
   poses75:
     header: uav75
     seq: 75
@@ -2417,8 +2417,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.5847102403640747
+        w: 0.8112422227859497
   poses76:
     header: uav76
     seq: 76
@@ -2431,8 +2431,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.5847102403640747
+        w: 0.8112422227859497
   poses77:
     header: uav77
     seq: 77
@@ -2445,8 +2445,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.5847102403640747
+        w: 0.8112422227859497
   poses78:
     header: uav78
     seq: 78
@@ -2459,8 +2459,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.5847102403640747
+        w: 0.8112422227859497
   poses79:
     header: uav79
     seq: 79
@@ -2473,8 +2473,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.5847102403640747
+        w: 0.8112422227859497
   poses80:
     header: uav80
     seq: 80
@@ -2487,8 +2487,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: -0.9870874285697937
+        w: 0.1601822376251221
   poses81:
     header: uav81
     seq: 81
@@ -2501,8 +2501,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: -0.9870874285697937
+        w: 0.1601822376251221
   poses82:
     header: uav82
     seq: 82
@@ -2515,8 +2515,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: -0.9870874285697937
+        w: 0.1601822376251221
   poses83:
     header: uav83
     seq: 83
@@ -2529,8 +2529,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.289784163236618
+        w: 0.9570920467376709
   poses84:
     header: uav84
     seq: 84
@@ -2541,10 +2541,10 @@ marsupial_uav:
         y: 5.508333285649617
         z: 3.033333460489909
       orientation:
-        x: 0
+        x: -0
         y: 0
-        z: -1.0
-        w: 0.0.371138828673793e-08
+        z: 1
+        w: -4.371138828673793e-08
   poses85:
     header: uav85
     seq: 85
@@ -2555,10 +2555,10 @@ marsupial_uav:
         y: 5.416666666666667
         z: 2.96666677792867
       orientation:
-        x: 0
+        x: -0
         y: 0
-        z: -1.0
-        w: 0.0.371138828673793e-08
+        z: 1
+        w: -4.371138828673793e-08
   poses86:
     header: uav86
     seq: 86
@@ -2569,10 +2569,10 @@ marsupial_uav:
         y: 5.233333428700765
         z: 2.833333412806193
       orientation:
-        x: 0
+        x: -0
         y: 0
-        z: -1.0
-        w: 0.0.371138828673793e-08
+        z: 1
+        w: -4.371138828673793e-08
   poses87:
     header: uav87
     seq: 87
@@ -2583,10 +2583,10 @@ marsupial_uav:
         y: 5.141666809717814
         z: 2.766666730244955
       orientation:
-        x: 0
+        x: -0
         y: 0
-        z: -1.0
-        w: 0.0.371138828673793e-08
+        z: 1
+        w: -4.371138828673793e-08
   poses88:
     header: uav88
     seq: 88
@@ -2599,8 +2599,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: -0.881674587726593
+        w: 0.4718579351902008
   poses89:
     header: uav89
     seq: 89
@@ -2613,8 +2613,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: -0.881674587726593
+        w: 0.4718579351902008
   poses90:
     header: uav90
     seq: 90
@@ -2627,8 +2627,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: -0.881674587726593
+        w: 0.4718579351902008
   poses91:
     header: uav91
     seq: 91
@@ -2641,8 +2641,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: -0.881674587726593
+        w: 0.4718579351902008
   poses92:
     header: uav92
     seq: 92
@@ -2655,8 +2655,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.881674587726593
+        w: 0.4718579351902008
   poses93:
     header: uav93
     seq: 93
@@ -2669,8 +2669,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.9870874285697937
+        w: 0.1601822376251221
   poses94:
     header: uav94
     seq: 94
@@ -2683,8 +2683,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: -0.9870874285697937
+        w: 0.1601822376251221
   poses95:
     header: uav95
     seq: 95
@@ -2697,8 +2697,8 @@ marsupial_uav:
       orientation:
         x: 0
         y: 0
-        z: -1.0
-        w: 0.0
+        z: 0.9870874285697937
+        w: 0.1601822376251221
 
 tether:
   header: tether

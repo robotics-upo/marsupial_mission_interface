@@ -16,8 +16,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses1:
     header: ugv1
     seq: 1
@@ -30,8 +30,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses2:
     header: ugv2
     seq: 2
@@ -44,8 +44,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses3:
     header: ugv3
     seq: 3
@@ -58,8 +58,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses4:
     header: ugv4
     seq: 4
@@ -72,8 +72,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses5:
     header: ugv5
     seq: 5
@@ -86,8 +86,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses6:
     header: ugv6
     seq: 6
@@ -100,8 +100,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses7:
     header: ugv7
     seq: 7
@@ -114,8 +114,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses8:
     header: ugv8
     seq: 8
@@ -128,8 +128,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses9:
     header: ugv9
     seq: 9
@@ -142,8 +142,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses10:
     header: ugv10
     seq: 10
@@ -156,8 +156,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses11:
     header: ugv11
     seq: 11
@@ -170,8 +170,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses12:
     header: ugv12
     seq: 12
@@ -184,8 +184,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses13:
     header: ugv13
     seq: 13
@@ -198,8 +198,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses14:
     header: ugv14
     seq: 14
@@ -212,8 +212,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses15:
     header: ugv15
     seq: 15
@@ -226,8 +226,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses16:
     header: ugv16
     seq: 16
@@ -240,8 +240,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses17:
     header: ugv17
     seq: 17
@@ -254,8 +254,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses18:
     header: ugv18
     seq: 18
@@ -268,8 +268,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses19:
     header: ugv19
     seq: 19
@@ -282,8 +282,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses20:
     header: ugv20
     seq: 20
@@ -296,8 +296,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses21:
     header: ugv21
     seq: 21
@@ -310,8 +310,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses22:
     header: ugv22
     seq: 22
@@ -324,8 +324,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses23:
     header: ugv23
     seq: 23
@@ -338,8 +338,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses24:
     header: ugv24
     seq: 24
@@ -352,8 +352,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses25:
     header: ugv25
     seq: 25
@@ -366,8 +366,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses26:
     header: ugv26
     seq: 26
@@ -380,8 +380,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses27:
     header: ugv27
     seq: 27
@@ -394,8 +394,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses28:
     header: ugv28
     seq: 28
@@ -408,8 +408,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses29:
     header: ugv29
     seq: 29
@@ -422,8 +422,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses30:
     header: ugv30
     seq: 30
@@ -436,8 +436,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses31:
     header: ugv31
     seq: 31
@@ -450,8 +450,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses32:
     header: ugv32
     seq: 32
@@ -464,8 +464,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses33:
     header: ugv33
     seq: 33
@@ -478,8 +478,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses34:
     header: ugv34
     seq: 34
@@ -492,8 +492,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses35:
     header: ugv35
     seq: 35
@@ -506,8 +506,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses36:
     header: ugv36
     seq: 36
@@ -520,8 +520,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses37:
     header: ugv37
     seq: 37
@@ -534,8 +534,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses38:
     header: ugv38
     seq: 38
@@ -548,8 +548,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses39:
     header: ugv39
     seq: 39
@@ -562,8 +562,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses40:
     header: ugv40
     seq: 40
@@ -576,8 +576,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses41:
     header: ugv41
     seq: 41
@@ -590,8 +590,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4270687699317932
-        w: 0.9042191505432129
+        z: -1.0
+        w: 0.0
   poses42:
     header: ugv42
     seq: 42
@@ -604,8 +604,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.1601822376251221
-        w: 0.9870874285697937
+        z: -1.0
+        w: 0.0
   poses43:
     header: ugv43
     seq: 43
@@ -618,8 +618,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.1601822376251221
-        w: 0.9870874285697937
+        z: -1.0
+        w: 0.0
   poses44:
     header: ugv44
     seq: 44
@@ -632,8 +632,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0
-        w: 1
+        z: -1.0
+        w: 0.0
   poses45:
     header: ugv45
     seq: 45
@@ -646,8 +646,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0
-        w: 1
+        z: -1.0
+        w: 0.0
   poses46:
     header: ugv46
     seq: 46
@@ -660,8 +660,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.5257311463356018
-        w: 0.8506507873535156
+        z: -1.0
+        w: 0.0
   poses47:
     header: ugv47
     seq: 47
@@ -674,8 +674,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.5257311463356018
-        w: 0.8506507873535156
+        z: -1.0
+        w: 0.0
   poses48:
     header: ugv48
     seq: 48
@@ -688,8 +688,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.5257311463356018
-        w: 0.8506507873535156
+        z: -1.0
+        w: 0.0
   poses49:
     header: ugv49
     seq: 49
@@ -702,8 +702,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.5257311463356018
-        w: 0.8506507873535156
+        z: -1.0
+        w: 0.0
   poses50:
     header: ugv50
     seq: 50
@@ -716,8 +716,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.5257311463356018
-        w: 0.8506507873535156
+        z: -1.0
+        w: 0.0
   poses51:
     header: ugv51
     seq: 51
@@ -730,8 +730,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: -0.7071067690849304
-        w: 0.7071067690849304
+        z: -1.0
+        w: 0.0
   poses52:
     header: ugv52
     seq: 52
@@ -744,8 +744,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: -0.7071067690849304
-        w: 0.7071067690849304
+        z: -1.0
+        w: 0.0
   poses53:
     header: ugv53
     seq: 53
@@ -758,8 +758,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4718579351902008
-        w: 0.881674587726593
+        z: -1.0
+        w: 0.0
   poses54:
     header: ugv54
     seq: 54
@@ -772,8 +772,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.4718579351902008
-        w: 0.881674587726593
+        z: -1.0
+        w: 0.0
   poses55:
     header: ugv55
     seq: 55
@@ -786,8 +786,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.6154122352600098
-        w: 0.7882054448127747
+        z: -1.0
+        w: 0.0
   poses56:
     header: ugv56
     seq: 56
@@ -800,8 +800,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.9238795042037964
-        w: 0.3826834261417389
+        z: -1.0
+        w: 0.0
   poses57:
     header: ugv57
     seq: 57
@@ -814,8 +814,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.9238795042037964
-        w: 0.3826834261417389
+        z: -1.0
+        w: 0.0
   poses58:
     header: ugv58
     seq: 58
@@ -828,8 +828,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.9238795042037964
-        w: 0.3826834261417389
+        z: -1.0
+        w: 0.0
   poses59:
     header: ugv59
     seq: 59
@@ -842,8 +842,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.9238795042037964
-        w: 0.3826834261417389
+        z: -1.0
+        w: 0.0
   poses60:
     header: ugv60
     seq: 60
@@ -856,8 +856,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.6154122352600098
-        w: 0.7882054448127747
+        z: -1.0
+        w: 0.0
   poses61:
     header: ugv61
     seq: 61
@@ -870,8 +870,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.6154122352600098
-        w: 0.7882054448127747
+        z: -1.0
+        w: 0.0
   poses62:
     header: ugv62
     seq: 62
@@ -884,8 +884,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.6154122352600098
-        w: 0.7882054448127747
+        z: -1.0
+        w: 0.0
   poses63:
     header: ugv63
     seq: 63
@@ -898,8 +898,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.6154122352600098
-        w: 0.7882054448127747
+        z: -1.0
+        w: 0.0
   poses64:
     header: ugv64
     seq: 64
@@ -912,8 +912,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.5257311463356018
-        w: 0.8506507873535156
+        z: -1.0
+        w: 0.0
   poses65:
     header: ugv65
     seq: 65
@@ -926,8 +926,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.5257311463356018
-        w: 0.8506507873535156
+        z: -1.0
+        w: 0.0
   poses66:
     header: ugv66
     seq: 66
@@ -940,8 +940,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.5257311463356018
-        w: 0.8506507873535156
+        z: -1.0
+        w: 0.0
   poses67:
     header: ugv67
     seq: 67
@@ -954,8 +954,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.5257311463356018
-        w: 0.8506507873535156
+        z: -1.0
+        w: 0.0
   poses68:
     header: ugv68
     seq: 68
@@ -968,8 +968,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: -0.3826834559440613
-        w: 0.9238795042037964
+        z: -1.0
+        w: 0.0
   poses69:
     header: ugv69
     seq: 69
@@ -982,8 +982,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: -0.3826834559440613
-        w: 0.9238795042037964
+        z: -1.0
+        w: 0.0
   poses70:
     header: ugv70
     seq: 70
@@ -996,8 +996,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: -0.3826834559440613
-        w: 0.9238795042037964
+        z: -1.0
+        w: 0.0
   poses71:
     header: ugv71
     seq: 71
@@ -1010,8 +1010,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: -0.3826834559440613
-        w: 0.9238795042037964
+        z: -1.0
+        w: 0.0
   poses72:
     header: ugv72
     seq: 72
@@ -1024,8 +1024,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: -0.3826834559440613
-        w: 0.9238795042037964
+        z: -1.0
+        w: 0.0
   poses73:
     header: ugv73
     seq: 73
@@ -1038,8 +1038,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: -0.3826834559440613
-        w: 0.9238795042037964
+        z: -1.0
+        w: 0.0
   poses74:
     header: ugv74
     seq: 74
@@ -1052,8 +1052,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: -0.3826834559440613
-        w: 0.9238795042037964
+        z: -1.0
+        w: 0.0
   poses75:
     header: ugv75
     seq: 75
@@ -1066,8 +1066,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: -0.3826834559440613
-        w: 0.9238795042037964
+        z: -1.0
+        w: 0.0
   poses76:
     header: ugv76
     seq: 76
@@ -1080,8 +1080,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: -0.3826834559440613
-        w: 0.9238795042037964
+        z: -1.0
+        w: 0.0
   poses77:
     header: ugv77
     seq: 77
@@ -1094,8 +1094,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: -0.3826834559440613
-        w: 0.9238795042037964
+        z: -1.0
+        w: 0.0
   poses78:
     header: ugv78
     seq: 78
@@ -1108,8 +1108,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: -0.3826834559440613
-        w: 0.9238795042037964
+        z: -1.0
+        w: 0.0
   poses79:
     header: ugv79
     seq: 79
@@ -1122,8 +1122,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: -0.3826834559440613
-        w: 0.9238795042037964
+        z: -1.0
+        w: 0.0
   poses80:
     header: ugv80
     seq: 80
@@ -1136,8 +1136,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.8112421631813049
-        w: 0.5847102999687195
+        z: -1.0
+        w: 0.0
   poses81:
     header: ugv81
     seq: 81
@@ -1150,8 +1150,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.8112421631813049
-        w: 0.5847102999687195
+        z: -1.0
+        w: 0.0
   poses82:
     header: ugv82
     seq: 82
@@ -1164,8 +1164,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.8112421631813049
-        w: 0.5847102999687195
+        z: -1.0
+        w: 0.0
   poses83:
     header: ugv83
     seq: 83
@@ -1178,8 +1178,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.8112421631813049
-        w: 0.5847102999687195
+        z: -1.0
+        w: 0.0
   poses84:
     header: ugv84
     seq: 84
@@ -1192,8 +1192,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.8112421631813049
-        w: 0.5847102999687195
+        z: -1.0
+        w: 0.0
   poses85:
     header: ugv85
     seq: 85
@@ -1206,8 +1206,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.8112421631813049
-        w: 0.5847102999687195
+        z: -1.0
+        w: 0.0
   poses86:
     header: ugv86
     seq: 86
@@ -1220,8 +1220,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.8112421631813049
-        w: 0.5847102999687195
+        z: -1.0
+        w: 0.0
   poses87:
     header: ugv87
     seq: 87
@@ -1234,8 +1234,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.8112421631813049
-        w: 0.5847102999687195
+        z: -1.0
+        w: 0.0
   poses88:
     header: ugv88
     seq: 88
@@ -1248,8 +1248,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.9732490181922913
-        w: 0.2297528684139252
+        z: -1.0
+        w: 0.0
   poses89:
     header: ugv89
     seq: 89
@@ -1262,8 +1262,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.9732490181922913
-        w: 0.2297528684139252
+        z: -1.0
+        w: 0.0
   poses90:
     header: ugv90
     seq: 90
@@ -1276,8 +1276,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.9732490181922913
-        w: 0.2297528684139252
+        z: -1.0
+        w: 0.0
   poses91:
     header: ugv91
     seq: 91
@@ -1290,8 +1290,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.9732490181922913
-        w: 0.2297528684139252
+        z: -1.0
+        w: 0.0
   poses92:
     header: ugv92
     seq: 92
@@ -1304,8 +1304,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.9732490181922913
-        w: 0.2297528684139252
+        z: -1.0
+        w: 0.0
   poses93:
     header: ugv93
     seq: 93
@@ -1318,8 +1318,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.9732490181922913
-        w: 0.2297528684139252
+        z: -1.0
+        w: 0.0
   poses94:
     header: ugv94
     seq: 94
@@ -1332,8 +1332,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.9732490181922913
-        w: 0.2297528684139252
+        z: -1.0
+        w: 0.0
   poses95:
     header: ugv95
     seq: 95
@@ -1346,8 +1346,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0.9732490181922913
-        w: 0.2297528684139252
+        z: -1.0
+        w: 0.0
 
 marsupial_uav:
   header: marsupial_uav

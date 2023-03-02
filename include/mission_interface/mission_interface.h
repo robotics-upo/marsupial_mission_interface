@@ -105,7 +105,7 @@ public:
   trajectory_msgs::MultiDOFJointTrajectory trajectory;
   ros::Publisher traj_uav_pub_, traj_ugv_pub_, catenary_length_pub_;
   ros::Publisher traj_lines_ugv_pub_;
-  ros::Publisher traj_lines_uav_pub_, catenary_marker_pub_;
+  ros::Publisher traj_lines_uav_pub_, catenary_marker_pub_, reset_length_pub_;
 
   std::string path_file, ros_node_name;
   std::string ugv_base_frame, uav_base_frame, ugv_odom_frame, uav_odom_frame, world_frame; 

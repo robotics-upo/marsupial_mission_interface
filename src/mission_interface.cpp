@@ -1,6 +1,7 @@
 
 #include <mission_interface/mission_interface.h>
 #include <tf/transform_datatypes.h>
+#include<stdlib.h>
 
 MissionInterface::MissionInterface(std::string node_name_)
 {
@@ -73,7 +74,12 @@ MissionInterface::MissionInterface(std::string node_name_)
   markerPoints();
   ros::spinOnce();
   configServices();
-
+    
+    if(used_length_reached){
+      std_msgs::Float32 reset_msg_;
+      reset_msg_.data = tether_length_vector[0];
+      reset_length_pub_.publish(reset_msg_);
+    }
   markerPoints();
 
   if (able_tracker_uav){
@@ -197,6 +203,9 @@ void MissionInterface::configTopics()
   traj_lines_ugv_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_lines_ugv", 100);
   traj_lines_uav_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_lines_uav", 100);
   catenary_marker_pub_= nh->advertise<visualization_msgs::MarkerArray>("trajectory_catenary", 100);
+  reset_length_pub_= nh->advertise<std_msgs::Float32>("/tie_controller/reset_length_estimation", 100);
+
+  
 }
 
 void MissionInterface::ugvReadyForMissionCB(const std_msgs::BoolConstPtr &msg)
@@ -255,6 +264,8 @@ void MissionInterface::executeMission()
   }
 
   if(start_mission){
+
+    
     // To force variable in TRUE and continue with execution tracker even if UGV is not able
     if(!able_tracker_ugv)   
       ugv_ready = true;
@@ -318,6 +329,8 @@ void MissionInterface::executeMission()
         }
         std_msgs::Float32 catenary_msg;
         catenary_msg.data = tether_length_vector.at(num_wp);
+        ros::Duration(2.0).sleep();  //DONT forget delete
+
         catenary_length_pub_.publish(catenary_msg);
 
         if(able_tracker_ugv && !sent_new_ugv_wp){
