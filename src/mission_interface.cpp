@@ -128,7 +128,9 @@ void MissionInterface::interpolate(float dist) {
     
     float dist_uav = uav_p1.distance(uav_p0);
     float dist_ugv = ugv_p1.distance(ugv_p0);
-    int n = (int)ceil(dist_uav/dist);
+    float n = ceil(dist_uav/dist);
+    float n_ugv = ceil(dist_ugv/dist);
+    n = std::max(n_ugv, n);
     float delta_length = (length1 - length0)/n;
     float delta = 1.0 / (float) n;
     for (int j = 1; j <= n; j++) {
