@@ -203,9 +203,7 @@ void MissionInterface::configTopics()
   traj_lines_ugv_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_lines_ugv", 100);
   traj_lines_uav_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_lines_uav", 100);
   catenary_marker_pub_= nh->advertise<visualization_msgs::MarkerArray>("trajectory_catenary", 100);
-  reset_length_pub_= nh->advertise<std_msgs::Float32>("/tie_controller/reset_length_estimation", 100);
-
-  
+  reset_length_pub_= nh->advertise<std_msgs::Float32>("/tie_controller/reset_length_estimation", 100); 
 }
 
 void MissionInterface::ugvReadyForMissionCB(const std_msgs::BoolConstPtr &msg)
