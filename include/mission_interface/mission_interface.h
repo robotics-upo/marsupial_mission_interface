@@ -112,7 +112,7 @@ public:
   std::string map_name;
   bool debug;
   int num_wp;
-  bool ugv_ready, uav_ready, is_ugv_in_waypoint, is_uav_in_waypoint, start_mission;
+  bool ugv_ready, uav_ready, is_ugv_in_waypoint, is_uav_in_waypoint, start_mission, do_takeoff;
   bool able_tracker_uav, able_tracker_ugv; 
   std::unique_ptr<tf2_ros::TransformListener> tf2_list;
   ros::Time time_count_ugv, time_count_uav;

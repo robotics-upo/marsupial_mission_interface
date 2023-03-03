@@ -27,6 +27,8 @@ MissionInterface::MissionInterface(std::string node_name_)
   nh->param<bool>("able_tracker_uav",able_tracker_uav, true);
   nh->param<bool>("used_length_reached",used_length_reached, true);
   nh->param("takeoff_height",takeoff_height, (float)1.0);
+  nh->param<bool>("do_takeoff",do_takeoff, true);
+
 
   nh->param<int>("stop_arco_mission_button", stopArcoMissionButton, STOP_ARCO_MISSION_BUTTON);
 
@@ -76,10 +78,16 @@ MissionInterface::MissionInterface(std::string node_name_)
   configServices();
     
     if(used_length_reached){
+      ROS_INFO("Reset Tether Length to: %f", tether_length_vector[0]);
       std_msgs::Float32 reset_msg_;
       reset_msg_.data = tether_length_vector[0];
-      reset_length_pub_.publish(reset_msg_);
+      for(int i = 0; i < 3 ; i++){
+        reset_length_pub_.publish(reset_msg_);
+        ros::spinOnce();
+        ros::Duration(1.0).sleep();
+      }
     }
+
   markerPoints();
 
   if (able_tracker_uav){
@@ -205,9 +213,7 @@ void MissionInterface::configTopics()
   traj_lines_ugv_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_lines_ugv", 100);
   traj_lines_uav_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_lines_uav", 100);
   catenary_marker_pub_= nh->advertise<visualization_msgs::MarkerArray>("trajectory_catenary", 100);
-  reset_length_pub_= nh->advertise<std_msgs::Float32>("/tie_controller/reset_length_estimation", 100);
-
-  
+  reset_length_pub_= nh->advertise<std_msgs::Float32>("/tie_controller/reset_length_estimation", 100); 
 }
 
 void MissionInterface::ugvReadyForMissionCB(const std_msgs::BoolConstPtr &msg)
@@ -266,8 +272,6 @@ void MissionInterface::executeMission()
   }
 
   if(start_mission){
-
-    
     // To force variable in TRUE and continue with execution tracker even if UGV is not able
     if(!able_tracker_ugv)   
       ugv_ready = true;
@@ -278,7 +282,7 @@ void MissionInterface::executeMission()
     if(ugv_ready && uav_ready)
     {
       bool uav_in_on_ground_ = UAVisOnTheGround();
-      if (uav_in_on_ground_){
+      if (do_takeoff){
         std::cout << "UAV is on the ground? : " << uav_in_on_ground_ << std::endl;
                   
         if(uav_in_on_ground_){
@@ -288,7 +292,7 @@ void MissionInterface::executeMission()
           takeoff_height_.data = takeoff_height;
           takeOffGoal.takeoff_height = takeoff_height_;
           takeOffClient->sendGoal(takeOffGoal);
-          while (!takeOffClient->waitForResult(ros::Duration(30.0))){
+          while (!takeOffClient->waitForResult(ros::Duration(time_max))){
             std::cout << "\tSent takeoff height ... waiting action server" << std::endl;
           }
               
@@ -307,9 +311,11 @@ void MissionInterface::executeMission()
         else{
           printf("\tUAV already took off - ready to perform maneuver to go first WP\n");
         }
+      }else{
+          uav_in_on_ground_ =false;
       }
 
-      if(num_wp < size_ && !uav_in_on_ground_) {
+      if(num_wp < size_) {
 
         if(able_tracker_ugv){
           ugv_goal3D.global_goal.position.x = trajectory.points.at(num_wp).transforms[0].translation.x;
@@ -331,7 +337,7 @@ void MissionInterface::executeMission()
         }
         std_msgs::Float32 catenary_msg;
         catenary_msg.data = tether_length_vector.at(num_wp);
-        ros::Duration(2.0).sleep();  //DONT forget delete
+        // ros::Duration(1.0).sleep();  //DONT forget delete
 
         catenary_length_pub_.publish(catenary_msg);
 
@@ -407,7 +413,7 @@ void MissionInterface::executeMission()
         if (used_length_reached){
           ROS_INFO("Waiting for the cable system to get the commanded length");
           while (!length_reached && ros::ok()) {
-            ros::Duration(0.5).sleep();
+            ros::Duration(0.2).sleep();
             ros::spinOnce();
           }
         } else{
