@@ -16,8 +16,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0
-        w: 1
+        z: 0.39
+        w: 0.92
   poses1:
     header: ugv1
     seq: 1
@@ -30,8 +30,8 @@ marsupial_ugv:
       orientation:
         x: 0
         y: 0
-        z: 0
-        w: 1
+        z: 0.39
+        w: 0.92
 
 marsupial_uav:
   header: marsupial_uav
