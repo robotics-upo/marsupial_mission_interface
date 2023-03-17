@@ -2,6 +2,7 @@
 
     <param name="use_sim_time" value="true"/>
 
+    <arg name="need_map" default="true" /> 
     <arg name="rviz" default="true" /> 
     <arg name="map" default="teatro_wall" />
     <arg name="bag_file" default="$(env HOME)/Documents/Bags/teatro/last_day/casi_2023-03-06-10-21-26_edited.bag" />
@@ -10,12 +11,12 @@
             args="5 marsupial_mission_interface check_mission_markers.launch" >
     </node>
 
-    <include file="$(find marsupial_launchers)/arco_launch/dll_arco.launch">
+    //To show MAP from DLL and not affect TFs
+    <include file="$(find marsupial_launchers)/arco_launch/dll_arco.launch" if="$(arg need_map)">
         <arg name="map_path" value="$(env HOME)/marsupial_ws/src/marsupial_optimizer/maps/$(arg map).bt"/>    
     </include>
 
-    //To show MAP from DLL and not affect TFs
-    <node name="bag_player_tongo" pkg="rosbag" type="play" args="$(arg bag_file) --clock" >
+    <node name="bag_player_tongo" pkg="rosbag" type="play" args="$(arg bag_file) --clock" if="$(arg need_map)">
         <remap from="/tf" to="/tf_tongo"/>
         <remap from="/tf_static" to="/tf_static_tongo"/>
         <remap from="/arco_os1_cloud_node/points_non_dense" to="/arco_os1_cloud_node/points_non_dense_tongo"/>
