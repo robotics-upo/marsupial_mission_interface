@@ -78,11 +78,11 @@ tether:
     header: tether0
     seq: 0
     frame_id: tether_length
-    length: 4.9
+    length: 5.0
   length1:
     header: tether1
     seq: 1
     frame_id: tether_length
-    length: 3.2
+    length: 2.6
 
 
