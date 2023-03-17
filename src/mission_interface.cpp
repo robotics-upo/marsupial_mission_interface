@@ -337,7 +337,7 @@ void MissionInterface::executeMission()
         }
         std_msgs::Float32 catenary_msg;
         catenary_msg.data = tether_length_vector.at(num_wp);
-        // ros::Duration(1.0).sleep();  //DONT forget delete
+        ros::Duration(0.2).sleep();  //DONT forget delete
 
         catenary_length_pub_.publish(catenary_msg);
 

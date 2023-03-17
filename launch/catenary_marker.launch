@@ -1,0 +1,13 @@
+<launch>
+
+    <param name="use_sim_time" value="true"/>
+    
+    <arg name="ugv_base_frame" default="arco/base_link" /> 
+    <arg name="uav_base_frame" default="base_link" /> 
+
+    <node name="catenary_marker_node" pkg="marsupial_mission_interface" type="catenary_marker_node" output="screen"># launch-prefix="gdb -ex run --args">
+        <param name="ugv_base_frame" value="$(arg ugv_base_frame)"/> 
+        <param name="uav_base_frame" value="$(arg uav_base_frame)"/> 
+    </node>
+
+</launch>
