@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 #include <yaml-cpp/yaml.h>
-#include <ctime>
 
 #include <ros/ros.h>
 #include <trajectory_msgs/MultiDOFJointTrajectory.h>
@@ -67,7 +66,7 @@ public:
     struct timespec start_ugv_goal, finish_ugv_goal, start_uav_goal, finish_uav_goal;
 
     trajectory_msgs::MultiDOFJointTrajectory trajectory;
-    std::vector<float> tether_length_vector, v_length_traj_cat, v_time_ugv, v_time_uav;
+    std::vector<float> tether_length_vector, v_length_traj_cat, v_time_ugv, v_time_uav, v_time_traj_ugv, v_time_traj_uav;
     std::vector<geometry_msgs::Point> v_pose_traj_ugv, v_pose_traj_uav;
 
     geometry_msgs::TransformStamped uav_tf, ugv_tf;
@@ -79,7 +78,9 @@ public:
     int total_pts = -1;
     double offset_map_dll_x ,offset_map_dll_y ,offset_map_dll_z;
     std::string mission_path, map_name, statistical_results_path;
-    double final_position_x, final_position_y, final_position_z;
+    double final_position_x, final_position_y, final_position_z, vel_ugv, vel_uav;
+
+    int ugv_f_sec, ugv_f_nsec,ugv_s_sec ,ugv_s_nsec, uav_f_sec, uav_f_nsec, uav_s_sec , uav_s_nsec;
 
 private:
     std::string uav_base_frame, ugv_base_frame, world_frame;
@@ -110,6 +111,8 @@ checkMission::checkMission(ros::NodeHandlePtr nh, ros::NodeHandle pnh)
     pnh.param(map_name+"_pos_final_1/pose/x", final_position_x,(double) 0.0);
     pnh.param(map_name+"_pos_final_1/pose/y", final_position_y,(double) 0.0);
     pnh.param(map_name+"_pos_final_1/pose/z", final_position_z,(double) 0.0);
+    pnh.param("vel_ugv", vel_ugv,(double) 1.0);
+    pnh.param("vel_uav", vel_uav,(double) 1.0);
 
     traj_ugv_pub_ = pnh.advertise<visualization_msgs::MarkerArray>("trajectory_ugv", 100);
     traj_uav_pub_ = pnh.advertise<visualization_msgs::MarkerArray>("trajectory_uav", 100);
@@ -138,9 +141,8 @@ checkMission::checkMission(ros::NodeHandlePtr nh, ros::NodeHandle pnh)
 
     count = 0;
     ugv_reached_goal = uav_reached_goal = uav_take_off = false;
-    v_pose_traj_ugv.clear();
-    v_pose_traj_uav.clear();
-    v_length_traj_cat.clear();
+    v_pose_traj_ugv.clear(); v_pose_traj_uav.clear(); v_length_traj_cat.clear(); 
+    v_time_traj_ugv.clear(); v_time_traj_uav.clear();
       
     readWaypoints(mission_path);
 
@@ -155,21 +157,32 @@ checkMission::checkMission(ros::NodeHandlePtr nh, ros::NodeHandle pnh)
 
   for (size_t i =0; i < trajectory.points.size(); i++ ){
     printf("[%lu] UGV[%f %f %f][%f %f %f %f] UAV[%f %f %f][%f %f %f %f] TETHER[%f]\n",
-	   i, trajectory.points.at(i).transforms[0].translation.x,
-	   trajectory.points.at(i).transforms[0].translation.y,
-	   trajectory.points.at(i).transforms[0].translation.z,
-	   trajectory.points.at(i).transforms[0].rotation.x,
-	   trajectory.points.at(i).transforms[0].rotation.y,
-	   trajectory.points.at(i).transforms[0].rotation.z,
-	   trajectory.points.at(i).transforms[0].rotation.w,
-	   trajectory.points.at(i).transforms[1].translation.x,
-	   trajectory.points.at(i).transforms[1].translation.y,
-	   trajectory.points.at(i).transforms[1].translation.z,
-	   trajectory.points.at(i).transforms[1].rotation.x,
-	   trajectory.points.at(i).transforms[1].rotation.y,
-	   trajectory.points.at(i).transforms[1].rotation.z,
-	   trajectory.points.at(i).transforms[1].rotation.w,
-	   tether_length_vector[i]);
+	  i, trajectory.points.at(i).transforms[0].translation.x,
+	  trajectory.points.at(i).transforms[0].translation.y,
+	  trajectory.points.at(i).transforms[0].translation.z,
+	  trajectory.points.at(i).transforms[0].rotation.x,
+	  trajectory.points.at(i).transforms[0].rotation.y,
+	  trajectory.points.at(i).transforms[0].rotation.z,
+	  trajectory.points.at(i).transforms[0].rotation.w,
+	  trajectory.points.at(i).transforms[1].translation.x,
+	  trajectory.points.at(i).transforms[1].translation.y,
+	  trajectory.points.at(i).transforms[1].translation.z,
+	  trajectory.points.at(i).transforms[1].rotation.x,
+	  trajectory.points.at(i).transforms[1].rotation.y,
+	  trajectory.points.at(i).transforms[1].rotation.z,
+	  trajectory.points.at(i).transforms[1].rotation.w,
+	  tether_length_vector[i]);
+    //Compute time for compute trajectory
+    if (i < trajectory.points.size()-1){
+      double d_ = sqrt(pow(trajectory.points.at(i+1).transforms[0].translation.x - trajectory.points.at(i).transforms[0].translation.x,2)+
+                      pow(trajectory.points.at(i+1).transforms[0].translation.y - trajectory.points.at(i).transforms[0].translation.y,2)+
+                      pow(trajectory.points.at(i+1).transforms[0].translation.z - trajectory.points.at(i).transforms[0].translation.z,2));
+      v_time_traj_ugv.push_back(d_/vel_ugv); 
+      d_ = sqrt(pow(trajectory.points.at(i+1).transforms[1].translation.x - trajectory.points.at(i).transforms[1].translation.x,2)+
+                pow(trajectory.points.at(i+1).transforms[1].translation.y - trajectory.points.at(i).transforms[1].translation.y,2)+
+                pow(trajectory.points.at(i+1).transforms[1].translation.z - trajectory.points.at(i).transforms[1].translation.z,2));
+      v_time_traj_uav.push_back(d_/vel_uav); 
+    }
   }
 	printf("\n\tFinished read file YAML !!\n");
 }
@@ -177,13 +190,19 @@ checkMission::checkMission(ros::NodeHandlePtr nh, ros::NodeHandle pnh)
 void checkMission::ugvReachedGoalCB(const upo_actions::NavigateActionResultConstPtr &msg)
 {
   ugv_reached_goal = msg->result.arrived;
-  clock_gettime(CLOCK_REALTIME, &finish_ugv_goal);
+  ugv_f_sec = msg->status.goal_id.stamp.sec;
+  ugv_f_nsec = msg->status.goal_id.stamp.nsec;
+  ugv_s_sec = msg->header.stamp.sec;
+  ugv_s_nsec = msg->header.stamp.nsec;
 }
 
 void checkMission::uavReachedGoalCB(const upo_actions::Navigate3DActionResultConstPtr &msg)
 {
   uav_reached_goal = msg->result.arrived;
-  clock_gettime(CLOCK_REALTIME, &finish_uav_goal);
+  uav_f_sec= msg->status.goal_id.stamp.sec;
+  uav_f_nsec= msg->status.goal_id.stamp.nsec;
+  uav_s_sec = msg->header.stamp.sec;
+  uav_s_nsec = msg->header.stamp.nsec;
 }
 
 void checkMission::uavTakeOffCB(const upo_actions::TakeOffActionResultConstPtr &msg)
@@ -199,13 +218,12 @@ void checkMission::lengthStatusCB(const std_msgs::Float32ConstPtr &msg)
 void checkMission::ugvNewGoalCB(const upo_actions::NavigateActionGoalConstPtr &msg)
 {
   msg->goal.global_goal.position;
-  clock_gettime(CLOCK_REALTIME, &start_ugv_goal);
 }
 
 void checkMission::uavNewGoalCB(const upo_actions::Navigate3DActionGoalConstPtr &msg)
 {
   msg->goal.global_goal.pose.position;
-  clock_gettime(CLOCK_REALTIME, &start_uav_goal);
+  // printf("start_uav_goal =%lu\n", start_uav_goal.tv_sec);
 }
 
 void checkMission::readWaypoints(const std::string &path_file)
@@ -378,11 +396,6 @@ void checkMission::updateMarkers()
       ROS_WARN("Check Mission: Couldn't get UGV Pose(base_frame: %s - world_frame: %s), so not possible to set UGV start point; tf exception: %s",
                 ugv_base_frame.c_str(),world_frame.c_str(),ex.what());
     }
-  if(ugv_reached_goal)
-    clock_gettime(CLOCK_REALTIME, &finish_ugv_goal);
-  if(uav_reached_goal)
-    clock_gettime(CLOCK_REALTIME, &finish_uav_goal);
-  
   if (uav_take_off){
     printf("\tUAV take Off succeessful\n");
     initial_pos_ugv.x = ugv_tf.transform.translation.x;
@@ -403,15 +416,12 @@ void checkMission::updateMarkers()
     current_pos_uav.z = uav_tf.transform.translation.z;
     printf("  Reached succeessfully WayPoint: %i --> ",count);
       //For time analisys between WP in trajectory
-      float time_ugv, time_uav, milliseconds, seconds;
-      seconds = finish_ugv_goal.tv_sec - start_ugv_goal.tv_sec - 1;
-      milliseconds = (1000000000 - start_ugv_goal.tv_nsec) + finish_ugv_goal.tv_nsec;
-      time_ugv = (milliseconds + seconds * 1000000000.0)/1000000000.0;
-      seconds = finish_uav_goal.tv_sec - start_uav_goal.tv_sec - 1;
-      milliseconds = (1000000000 - start_uav_goal.tv_nsec) + finish_uav_goal.tv_nsec;
-      time_uav = (milliseconds + seconds * 1000000000.0)/1000000000.0;
-      v_time_ugv.push_back(time_ugv); v_time_uav.push_back(time_uav);
-    printf("   length[%f/%f] p_ugv[%f %f %f / %f %f %f] p_uav[%f %f %f / %f %f %f] t_ugv[%f] t_uav[%f]\n", 
+    float time_ugv = ugv_s_sec+ugv_s_nsec*1e-9-(ugv_f_sec+ugv_f_nsec*1e-9);
+    float time_uav = (uav_s_sec+uav_s_nsec*1e-9-(uav_f_sec+uav_f_nsec*1e-9))-178.35;
+  // printf("time ugv : sec[%f]\n",time_ugv);
+  // printf("time uav : sec[%f]\n",time_uav);
+    v_time_ugv.push_back(time_ugv); v_time_uav.push_back(time_uav);
+    printf("length[%f/%f] p_ugv[%f %f %f / %f %f %f] p_uav[%f %f %f / %f %f %f] t_ugv[%f] t_uav[%f]\n", 
         length_status, tether_length_vector[count], 
         current_pos_ugv.x, current_pos_ugv.y, current_pos_ugv.z,
         trajectory.points.at(count).transforms[0].translation.x, trajectory.points.at(count).transforms[0].translation.y, trajectory.points.at(count).transforms[0].translation.z,
@@ -755,6 +765,7 @@ void checkMission::computeError()
     stand_dev_length = sqrt(pow(v_error_length[i]-average_length,2)/(count));
   }
 
+
   // Save Data for trajectory tracking analysis
   std::ofstream ofs_data_analysis;
   std::string output_file = statistical_results_path+"statistical_results_from_validation_experiments_"+year_+"_"+month_+"_"+day_+"_"+hour_+min_+sec_ +".txt";
@@ -794,35 +805,37 @@ void checkMission::computeError()
   std::ofstream ofs_time_analisys;
   float sum_t_ugv, sum_t_uav, max_t_ugv, max_t_uav, min_t_ugv, min_t_uav;
   sum_t_ugv = sum_t_uav = max_t_ugv = max_t_uav = 0.0;
-  min_t_ugv = min_t_uav = 1000000.0;
+  min_t_ugv = min_t_uav  = 1000000.0;
   output_file = statistical_results_path+"time_results_from_validation_experiments_"+year_+"_"+month_+"_"+day_+"_"+hour_+min_+sec_ +".txt";
   ifile1.open(output_file);
   if(ifile1) {
       std::cout << output_file <<" : File exists !!!!!!!!!! " << std::endl;
   } else {
     ofs_time_analisys.open(output_file.c_str(), std::ofstream::app);
-    ofs_time_analisys <<"time_ugv;time_uav"<<std::endl;
+    ofs_time_analisys <<"time_ugv;time_uav;"<<std::endl;
     for (size_t i=0 ; i<v_time_ugv.size();i++)
     {
-      ofs_time_analisys <<v_time_ugv[i]<<";"<<v_time_uav[i]<<std::endl;
-      sum_t_ugv = v_time_ugv[i] + sum_t_ugv;
-      sum_t_uav = v_time_uav[i] + sum_t_uav;
-      if(max_t_ugv < v_time_ugv[i])
-         max_t_ugv = v_time_ugv[i];
-      if(min_t_ugv > v_time_ugv[i])
-         min_t_ugv = v_time_ugv[i];
-      if(max_t_uav < v_time_ugv[i])
-         max_t_uav = v_time_ugv[i];
-      if(min_t_uav > v_time_ugv[i])
-         min_t_uav = v_time_ugv[i];
+      float error_t_ugv = fabs(v_time_ugv[i] - v_time_traj_ugv[i]);
+      float error_t_uav = fabs(v_time_uav[i] - v_time_traj_uav[i]);
+      ofs_time_analisys <<error_t_ugv<<";"<<error_t_uav<<";"<<std::endl;
+      sum_t_ugv = error_t_ugv + sum_t_ugv;
+      sum_t_uav = error_t_uav + sum_t_uav;
+      if(max_t_ugv < error_t_ugv)
+         max_t_ugv = error_t_ugv;
+      if(min_t_ugv > error_t_ugv)
+         min_t_ugv = error_t_ugv;
+      if(max_t_uav < error_t_uav)
+         max_t_uav = error_t_uav;
+      if(min_t_uav > error_t_uav)
+         min_t_uav = error_t_uav;
     }
-    ofs_time_analisys <<"mean_time_ugv;mean_time_uav;max_t_ugv;min_t_ugv;max_t_uav;min_t_uav"<<std::endl;
+    ofs_time_analisys <<"mean_t_ugv;mean_t_uav;max_t_ugv;min_t_ugv;max_t_uav;min_t_uav;"<<std::endl;
     ofs_time_analisys <<sum_t_ugv/v_time_ugv.size()<<";"
                       <<sum_t_uav/v_time_uav.size()<<";"
                       <<max_t_ugv<<";"
                       <<min_t_ugv<<";"
                       <<max_t_uav<<";"
-                      <<min_t_uav<<std::endl;
+                      <<min_t_uav<<";"<<std::endl;
     ofs_time_analisys.close();
     std::cout << output_file <<" : Saved data for analysis !!!!!!!!!! " << std::endl;
   }
