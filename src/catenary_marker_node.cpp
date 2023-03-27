@@ -1,11 +1,11 @@
+/* This Node is use to visualize Catenary Marker when a mission is carried out
+    ie: From a Bag
+   So you can visualize in real-time through RVIZ the catenary state.
+*/
+
 #include <iostream>
-// #include <fstream>
 #include <string>
 #include <vector>
-// #include <yaml-cpp/yaml.h>
-
-// #include <geometry_msgs/PoseStamped.h>
-// #include <trajectory_msgs/MultiDOFJointTrajectory.h>
 
 #include <ros/ros.h>
 #include <std_msgs/Float32.h>

@@ -757,6 +757,7 @@ void checkMission::computeError()
 
   float stand_dev_ugv_xy, stand_dev_ugv_z, stand_dev_uav_xy, stand_dev_uav_z, stand_dev_length;
   stand_dev_ugv_xy = stand_dev_ugv_z = stand_dev_uav_xy = stand_dev_uav_z = stand_dev_length = 0.0;
+
   for(int i = 0 ; i< count; i++){
     stand_dev_ugv_xy = sqrt(pow(v_error_ugv[i].xy-average_ugv_xy,2)/(count)); 
     stand_dev_ugv_z = sqrt(pow(v_error_ugv[i].z-average_ugv_z,2)/(count));
@@ -764,7 +765,6 @@ void checkMission::computeError()
     stand_dev_uav_z = sqrt(pow(v_error_uav[i].z-average_uav_z,2)/(count));
     stand_dev_length = sqrt(pow(v_error_length[i]-average_length,2)/(count));
   }
-
 
   // Save Data for trajectory tracking analysis
   std::ofstream ofs_data_analysis;
@@ -853,7 +853,7 @@ int main(int argc, char **argv)
 
 	while (ros::ok() && continue_process) {
     ros::spinOnce();
-    if (cm.count < cm.total_pts-2)
+    if (cm.count < cm.total_pts-2) // This value is bacause -2 
       cm.updateMarkers();
     else{
       cm.computeError();

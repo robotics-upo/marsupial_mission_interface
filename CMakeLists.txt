@@ -136,17 +136,13 @@ add_executable(mission_interface_node src/mission_interface_node.cpp src/mission
 target_link_libraries(mission_interface_node ${catkin_LIBRARIES} ${EXTERNAL_LIBS} yaml-cpp)
 add_dependencies(mission_interface_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-add_executable(simple_uav_mission_node src/simple_uav_mission_node.cpp)
-target_link_libraries(simple_uav_mission_node ${catkin_LIBRARIES} ${EXTERNAL_LIBS} yaml-cpp)
-add_dependencies(simple_uav_mission_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
-add_executable(get_mission_data_node src/get_mission_data_node.cpp ) 
-add_dependencies(get_mission_data_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(get_mission_data_node ${catkin_LIBRARIES} ${EXTERNAL_LIBS} ${CERES_LIBRARIES} ${catkin_LIBRARIES})
-
 add_executable(check_mission_node src/check_mission_node.cpp src/compute_catenary_3D.cpp) 
 target_link_libraries(check_mission_node ${catkin_LIBRARIES} ${EXTERNAL_LIBS} yaml-cpp)
 add_dependencies(check_mission_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+add_executable(get_data_error_mission_node src/get_data_error_mission_node.cpp) 
+target_link_libraries(get_data_error_mission_node ${catkin_LIBRARIES} ${EXTERNAL_LIBS} yaml-cpp)
+add_dependencies(get_data_error_mission_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 add_executable(catenary_marker_node src/catenary_marker_node.cpp src/compute_catenary_3D.cpp) 
 target_link_libraries(catenary_marker_node ${catkin_LIBRARIES} ${EXTERNAL_LIBS})
