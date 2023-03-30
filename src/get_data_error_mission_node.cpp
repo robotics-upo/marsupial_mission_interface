@@ -17,6 +17,7 @@ exportDataMission::exportDataMission(ros::NodeHandlePtr nh, ros::NodeHandle pnh)
     pnh.param("get_raw_data", get_raw_data, (bool) false);
     pnh.param("vel_ugv", vel_ugv, (float)1.0);
     pnh.param("vel_uav", vel_uav, (float)1.0);
+    pnh.param("d_min_wp", d_min_wp, (float)0.1);
 
 	  printf("\n\t\tInitialazed Publishes !!\n");
     ugv_reached_goal_sub_ = pnh.subscribe<upo_actions::NavigateActionResult>("/Navigation/result", 100, &exportDataMission::ugvReachedGoalCB, this);
@@ -24,7 +25,9 @@ exportDataMission::exportDataMission(ros::NodeHandlePtr nh, ros::NodeHandle pnh)
     lenth_cat_sub_ = pnh.subscribe<std_msgs::Float32>("/tie_controller/length_status", 100, &exportDataMission::lengthStatusCB, this);
     vel_ugv_sub_ = pnh.subscribe<geometry_msgs::Twist>("/arco/idmind_motors/set_velocities", 100, &exportDataMission::velUGVStatusCB, this);
     vel_uav_sub_ = pnh.subscribe<geometry_msgs::Vector3Stamped>("/dji_sdk/velocity", 100, &exportDataMission::velUAVStatusCB, this);
-    acc_uav_sub_ = pnh.subscribe<geometry_msgs::Vector3Stamped>("/dji_sdk/velocity", 100, &exportDataMission::accUAVStatusCB, this);
+    acc_uav_sub_ = pnh.subscribe<geometry_msgs::Vector3Stamped>("/dji_sdk/acceleration_ground_fused", 100, &exportDataMission::accUAVStatusCB, this);
+    ugv_new_goal_sub_ = pnh.subscribe<upo_actions::NavigateActionGoal>("/Navigation/goal", 100, &exportDataMission::ugvNewGoalCB, this);
+    uav_new_goal_sub_ = pnh.subscribe<upo_actions::Navigate3DActionGoal>("/UAVNavigation3D/goal", 100, &exportDataMission::uavNewGoalCB, this);
 
     initializeVariables();
     // Load and export mission
@@ -57,6 +60,8 @@ void exportDataMission::ugvReachedGoalCB(const upo_actions::NavigateActionResult
   ugv_f_nsec = msg->status.goal_id.stamp.nsec;
   ugv_s_sec = msg->header.stamp.sec;
   ugv_s_nsec = msg->header.stamp.nsec;
+  read_acc_ugv_data = false;
+  read_vel_ugv_data = false;
 }
 
 void exportDataMission::uavReachedGoalCB(const upo_actions::Navigate3DActionResultConstPtr &msg)
@@ -66,44 +71,37 @@ void exportDataMission::uavReachedGoalCB(const upo_actions::Navigate3DActionResu
   uav_f_nsec= msg->status.goal_id.stamp.nsec;
   uav_s_sec = msg->header.stamp.sec;
   uav_s_nsec = msg->header.stamp.nsec;
+  read_acc_uav_data = false;
+  read_vel_uav_data = false;
+}
+
+void exportDataMission::ugvNewGoalCB(const upo_actions::NavigateActionGoalConstPtr &msg)
+{
+  msg->goal.global_goal.position;
+  read_acc_ugv_data = true;
+  read_vel_ugv_data = true;
+}
+
+void exportDataMission::uavNewGoalCB(const upo_actions::Navigate3DActionGoalConstPtr &msg)
+{
+  msg->goal.global_goal.pose.position;
+  read_acc_uav_data = true;
+  read_vel_uav_data = true;
 }
 
 void exportDataMission::velUGVStatusCB(const geometry_msgs::TwistConstPtr &msg)
 {
   vel_ugv_status = msg->linear.x;
-  v_vel_ugv.push_back(vel_ugv_status);
-  float error_v_ugv = fabs(fabs(vel_ugv_status) - vel_ugv);
-  sum_error_v_ugv = error_v_ugv + sum_error_v_ugv;
-  if(max_v_ugv < error_v_ugv)
-     max_v_ugv = error_v_ugv;
-  if(min_v_ugv > error_v_ugv)
-     min_v_ugv = error_v_ugv;
 }
 
 void exportDataMission::velUAVStatusCB(const geometry_msgs::Vector3StampedConstPtr &msg)
 {
   vel_uav_status = sqrt(pow(msg->vector.x,2)+pow(msg->vector.y,2)+pow(msg->vector.z,2));
-  v_vel_uav.push_back(vel_uav_status);
-  
-  float error_v_uav = fabs(vel_uav_status - vel_uav);
-  sum_error_v_uav = error_v_uav + sum_error_v_uav;
-  if(max_v_uav < error_v_uav)
-     max_v_uav = error_v_uav;
-  if(min_v_uav > error_v_uav)
-     min_v_uav = error_v_uav;
 }
 
 void exportDataMission::accUAVStatusCB(const geometry_msgs::Vector3StampedConstPtr &msg)
 {
   acc_uav_status = sqrt(pow(msg->vector.x,2)+pow(msg->vector.y,2)+pow(msg->vector.z,2));
-  v_acc_uav.push_back(acc_uav_status);
-  
-  float error_a_uav = fabs(acc_uav_status);
-  sum_error_a_uav = error_a_uav + sum_error_a_uav;
-  if(max_a_uav < error_a_uav)
-     max_a_uav = error_a_uav;
-  if(min_a_uav > error_a_uav)
-     min_a_uav = error_a_uav;
 }
 
 void exportDataMission::lengthStatusCB(const std_msgs::Float32ConstPtr &msg)
@@ -130,6 +128,48 @@ void exportDataMission::updateStates()
       v_error_ugv.push_back(error_ugv);
       v_error_uav.push_back(error_uav);
     }
+
+  if ( count > 0){
+    float d_min_wp_ugv = sqrt(pow(Tj.points.at(count).transforms[0].translation.x - Tj.points.at(count-1).transforms[0].translation.x,2)+
+                              pow(Tj.points.at(count).transforms[0].translation.y - Tj.points.at(count-1).transforms[0].translation.y,2));
+    float d_min_wp_uav = sqrt(pow(Tj.points.at(count).transforms[1].translation.x - Tj.points.at(count-1).transforms[1].translation.x,2)+
+                              pow(Tj.points.at(count).transforms[1].translation.y - Tj.points.at(count-1).transforms[1].translation.y,2)+
+                              pow(Tj.points.at(count).transforms[1].translation.z - Tj.points.at(count-1).transforms[1].translation.z,2));
+    d_min_wp = 0.01;
+    float min_vel = 0.001;
+    // To read UGV velocities just during sections
+    if (read_vel_ugv_data && d_min_wp_ugv > d_min_wp &&  fabs(vel_ugv_status) > min_vel ){
+      float error_v_ugv = fabs(fabs(vel_ugv_status) - vel_ugv);
+      sum_error_v_ugv = error_v_ugv + sum_error_v_ugv;
+      if(max_v_ugv < error_v_ugv)
+        max_v_ugv = error_v_ugv;
+      if(min_v_ugv > error_v_ugv)
+        min_v_ugv = error_v_ugv;
+      v_vel_ugv.push_back(vel_ugv_status);
+      printf("error_v_ugv= %f , fabs(vel_ugv_status)=%f , vel_ugv = %f\n",error_v_ugv, fabs(vel_ugv_status) , vel_ugv);
+    }
+    // To read UAV velocities just during sections
+    if (read_vel_uav_data && d_min_wp_uav > d_min_wp && fabs(vel_uav_status) > min_vel){
+      float error_v_uav = fabs(vel_uav_status - vel_uav);
+      sum_error_v_uav = error_v_uav + sum_error_v_uav;
+      if(max_v_uav < error_v_uav)
+        max_v_uav = error_v_uav;
+      if(min_v_uav > error_v_uav)
+        min_v_uav = error_v_uav;
+      v_vel_uav.push_back(vel_uav_status);
+      // printf("error_v_uav= %f , fabs(vel_uav_status)=%f , vel_uav = %f\n",error_v_uav, fabs(vel_uav_status) , vel_uav);
+    }  
+    // To read UAV accelerations just during sections
+    if (read_acc_uav_data && d_min_wp_uav > d_min_wp && fabs(vel_ugv_status) > min_vel){
+      float error_a_uav = fabs(acc_uav_status);
+      sum_error_a_uav = error_a_uav + sum_error_a_uav;
+      if(max_a_uav < error_a_uav)
+        max_a_uav = error_a_uav;
+      if(min_a_uav > error_a_uav)
+        min_a_uav = error_a_uav;
+      v_acc_uav.push_back(acc_uav_status);
+    }
+  }
 
   if (ugv_reached_goal && uav_reached_goal)
   {
@@ -281,8 +321,6 @@ void exportDataMission::computeError()
     if(min_t_uav > error_t_uav)
        min_t_uav = error_t_uav;
   }
-
-
   mean_t_ugv = sum_error_t_ugv / v_time_ugv.size();
   mean_t_uav = sum_error_t_uav / v_time_uav.size();
   mean_v_ugv = sum_error_v_ugv / v_vel_ugv.size();
@@ -291,17 +329,18 @@ void exportDataMission::computeError()
   mean_a_uav = sum_error_a_uav / v_acc_uav.size(); // Lengh two units less
 
   float sum_stand_dev_t_ugv, sum_stand_dev_t_uav;
+  sum_stand_dev_t_ugv = sum_stand_dev_t_uav = 0.0;
   // Compute Standard Deviation for time 
   for (size_t i=0 ; i<v_time_ugv.size();i++)
   {
     float error_stand_dev_t_ugv = (v_error_t_ugv[i] - mean_t_ugv)*(v_error_t_ugv[i] - mean_t_ugv);
-    float error_stand_dev_t_uav = (v_error_t_uav[i] - mean_t_ugv)*(v_error_t_uav[i] - mean_t_ugv);
+    float error_stand_dev_t_uav = (v_error_t_uav[i] - mean_t_uav)*(v_error_t_uav[i] - mean_t_uav);
     v_stand_dev_t_ugv.push_back(error_stand_dev_t_ugv); v_stand_dev_t_uav.push_back(error_stand_dev_t_uav);
     sum_stand_dev_t_ugv = error_stand_dev_t_ugv + sum_stand_dev_t_ugv;
     sum_stand_dev_t_uav = error_stand_dev_t_uav + sum_stand_dev_t_uav;
   }
   stand_dev_t_ugv = sqrt(sum_stand_dev_t_ugv/v_time_ugv.size());
-  stand_dev_t_uav = sqrt(sum_stand_dev_t_uav/v_time_ugv.size());
+  stand_dev_t_uav = sqrt(sum_stand_dev_t_uav/v_time_uav.size());
 }
 
 void exportDataMission::exportDataError(){
@@ -342,7 +381,7 @@ void exportDataMission::exportDataError(){
       std::cout << output_file <<" : File exists !!!!!!!!!! " << std::endl;
   } else {
     ofs_time_analisys.open(output_file.c_str(), std::ofstream::app);
-    ofs_time_analisys <<"error_time_ugv;error_time_uav;stand_dev_t_ugv;stand_dev_t_ugv;"<<std::endl;
+    ofs_time_analisys <<"error_time_ugv;error_time_uav;stand_dev_t_ugv;stand_dev_t_uav;"<<std::endl;
     for (size_t i=0 ; i<v_time_ugv.size();i++)
     {
       ofs_time_analisys <<v_error_t_ugv[i]<<";"<<v_error_t_uav[i]<<";"<<v_stand_dev_t_ugv[i]<<";"<<v_stand_dev_t_uav[i]<<";"<<std::endl;
@@ -350,10 +389,10 @@ void exportDataMission::exportDataError(){
     ofs_time_analisys <<"mean_t_ugv;mean_t_uav;stand_dev_t_ugv;stand_dev_t_uav;max_t_ugv;min_t_ugv;max_t_uav;min_t_uav;"<<std::endl;
     ofs_time_analisys <<mean_t_ugv<<";"<<mean_t_uav<<";"<<stand_dev_t_ugv<<";"<<stand_dev_t_uav<<";"
                       <<max_t_ugv<<";"<<min_t_ugv<<";"<<max_t_uav<<";"<<min_t_uav<<";"<<std::endl;
-    ofs_time_analisys <<"mean_v_ugv;mean_v_uav;max_v_ugv;min_v_ugv;max_v_uav;min_v_uav;"<<std::endl;
-    ofs_time_analisys <<mean_v_ugv<<";"<<mean_v_uav<<";"<<max_v_ugv<<";"<<min_v_ugv<<";"<<max_v_uav<<";"<<min_v_uav<<";"<<std::endl;
-    ofs_time_analisys <<"mean_a_ugv;mean_a_uav;max_a_ugv;min_a_ugv;max_a_uav;min_a_uav;"<<std::endl;
-    ofs_time_analisys <<mean_a_ugv<<";"<<mean_a_uav<<";"<<max_a_ugv<<";"<<min_a_ugv<<";"<<max_a_uav<<";"<<min_a_uav<<";"<<std::endl;
+    ofs_time_analisys <<"mean_v_ugv;max_v_ugv;min_v_ugv;mean_v_uav;max_v_uav;min_v_uav;"<<std::endl;
+    ofs_time_analisys <<mean_v_ugv<<";"<<max_v_ugv<<";"<<min_v_ugv<<";"<<mean_v_uav<<";"<<max_v_uav<<";"<<min_v_uav<<";"<<std::endl;
+    ofs_time_analisys <<"mean_a_ugv;max_a_ugv;min_a_ugv;mean_a_uav;max_a_uav;min_a_uav;"<<std::endl;
+    ofs_time_analisys <<mean_a_ugv<<";"<<max_a_ugv<<";"<<min_a_ugv<<";"<<mean_a_uav<<";"<<max_a_uav<<";"<<min_a_uav<<";"<<std::endl;
     ofs_time_analisys.close();
     std::cout << output_file <<" : Saved data for analysis !!!!!!!!!! " << std::endl;
   }

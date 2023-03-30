@@ -43,6 +43,8 @@ public:
     void velUGVStatusCB(const geometry_msgs::TwistConstPtr &msg);
     void velUAVStatusCB(const geometry_msgs::Vector3StampedConstPtr &msg);
     void accUAVStatusCB(const geometry_msgs::Vector3StampedConstPtr &msg);
+    void ugvNewGoalCB(const upo_actions::NavigateActionGoalConstPtr &msg);
+    void uavNewGoalCB(const upo_actions::Navigate3DActionGoalConstPtr &msg);
     void computeError();
     void exportDataError();
     void initializeVariables();
@@ -51,7 +53,8 @@ public:
     std::shared_ptr<tf2_ros::Buffer> tfBuffer;
     std::unique_ptr<tf2_ros::TransformListener> tf2_list;
 	
-    ros::Subscriber ugv_reached_goal_sub_, uav_reached_goal_sub_, lenth_cat_sub_, vel_ugv_sub_, vel_uav_sub_, acc_uav_sub_;
+    ros::Subscriber ugv_reached_goal_sub_, uav_reached_goal_sub_, lenth_cat_sub_, vel_ugv_sub_, vel_uav_sub_, acc_uav_sub_,
+                    ugv_new_goal_sub_, uav_new_goal_sub_;
 
     std::unique_ptr<Navigate3DClient> uavNavigation3DClient;
     std::unique_ptr<NavigateClient> NavigationClient; // For UGV
@@ -77,6 +80,8 @@ public:
     errorDistance error_ugv ,error_uav;
     std::vector<errorDistance> v_error_ugv , v_error_uav;
 
+    bool read_vel_ugv_data, read_vel_uav_data, read_acc_ugv_data, read_acc_uav_data;
+    float d_min_wp;
     float sum_error_ugv_xy, sum_error_ugv_z, sum_error_uav_xy, sum_error_uav_z, sum_error_length;
     float stand_dev_ugv_xy, stand_dev_ugv_z, stand_dev_uav_xy, stand_dev_uav_z, stand_dev_length;
     float average_ugv_xy, average_ugv_z, average_uav_xy, average_uav_z, average_length;
