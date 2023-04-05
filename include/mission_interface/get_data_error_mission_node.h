@@ -89,6 +89,11 @@ public:
     float sum_error_t_ugv, sum_error_t_uav, stand_dev_t_ugv, mean_t_ugv, mean_t_uav, stand_dev_t_uav, max_t_ugv, max_t_uav, min_t_ugv, min_t_uav;
     float max_v_ugv ,min_v_ugv ,max_v_uav ,min_v_uav, max_a_ugv, min_a_ugv, max_a_uav, min_a_uav;
     float sum_error_v_ugv, sum_error_v_uav, sum_error_a_ugv, sum_error_a_uav, mean_v_ugv, mean_v_uav, mean_a_ugv, mean_a_uav;
+    float error_a_ugv, sum_v_ugv_, prev_sum_v_ugv, prev_time;
+    int count_v, prev_size;
+    
+
+
 
 private:
     std::string uav_base_frame, ugv_base_frame, world_frame;

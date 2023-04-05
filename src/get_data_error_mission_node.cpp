@@ -48,9 +48,11 @@ void exportDataMission::initializeVariables()
 
     sum_error_ugv_xy = sum_error_ugv_z = sum_error_uav_xy  = sum_error_uav_z = sum_error_length = max_t_ugv = max_t_uav = 0.0;
     sum_error_t_ugv = sum_error_t_uav = 0.0;
-    sum_error_v_ugv = sum_error_v_uav = sum_error_a_ugv = sum_error_a_uav = 0.0;
-    max_ugv_xy = max_ugv_z = max_uav_xy = max_uav_z = max_length = max_v_ugv = max_v_uav = max_a_uav = 0.0;
-    min_ugv_xy = min_ugv_z = min_uav_xy = min_uav_z = min_length = min_t_ugv = min_t_uav = min_v_uav = min_v_ugv = min_a_uav =100000.0;
+    sum_error_v_ugv = sum_error_v_uav = sum_error_a_ugv = sum_error_a_uav = sum_v_ugv_ = 0.0;
+    max_ugv_xy = max_ugv_z = max_uav_xy = max_uav_z = max_length = max_v_ugv = max_v_uav = max_a_uav = max_a_uav = 0.0;
+    min_ugv_xy = min_ugv_z = min_uav_xy = min_uav_z = min_length = min_t_ugv = min_t_uav = min_v_uav = min_v_ugv = min_a_uav = min_a_ugv = 100000.0;
+    prev_sum_v_ugv = prev_time = 0.0;
+    prev_size = -1;
 }
 
 void exportDataMission::ugvReachedGoalCB(const upo_actions::NavigateActionResultConstPtr &msg)
@@ -129,24 +131,27 @@ void exportDataMission::updateStates()
       v_error_uav.push_back(error_uav);
     }
 
+  float d_min_wp_ugv = 0.0;
+  float d_min_wp_uav = 0.0;
   if ( count > 0){
-    float d_min_wp_ugv = sqrt(pow(Tj.points.at(count).transforms[0].translation.x - Tj.points.at(count-1).transforms[0].translation.x,2)+
-                              pow(Tj.points.at(count).transforms[0].translation.y - Tj.points.at(count-1).transforms[0].translation.y,2));
-    float d_min_wp_uav = sqrt(pow(Tj.points.at(count).transforms[1].translation.x - Tj.points.at(count-1).transforms[1].translation.x,2)+
-                              pow(Tj.points.at(count).transforms[1].translation.y - Tj.points.at(count-1).transforms[1].translation.y,2)+
-                              pow(Tj.points.at(count).transforms[1].translation.z - Tj.points.at(count-1).transforms[1].translation.z,2));
+    d_min_wp_ugv = sqrt(pow(Tj.points.at(count).transforms[0].translation.x - Tj.points.at(count-1).transforms[0].translation.x,2)+
+                        pow(Tj.points.at(count).transforms[0].translation.y - Tj.points.at(count-1).transforms[0].translation.y,2));
+    d_min_wp_uav = sqrt(pow(Tj.points.at(count).transforms[1].translation.x - Tj.points.at(count-1).transforms[1].translation.x,2)+
+                        pow(Tj.points.at(count).transforms[1].translation.y - Tj.points.at(count-1).transforms[1].translation.y,2)+
+                        pow(Tj.points.at(count).transforms[1].translation.z - Tj.points.at(count-1).transforms[1].translation.z,2));
     d_min_wp = 0.01;
     float min_vel = 0.001;
     // To read UGV velocities just during sections
     if (read_vel_ugv_data && d_min_wp_ugv > d_min_wp &&  fabs(vel_ugv_status) > min_vel ){
       float error_v_ugv = fabs(fabs(vel_ugv_status) - vel_ugv);
       sum_error_v_ugv = error_v_ugv + sum_error_v_ugv;
+      sum_v_ugv_ = error_v_ugv + sum_v_ugv_;  // To compute acceleration
       if(max_v_ugv < error_v_ugv)
         max_v_ugv = error_v_ugv;
       if(min_v_ugv > error_v_ugv)
         min_v_ugv = error_v_ugv;
       v_vel_ugv.push_back(vel_ugv_status);
-      printf("error_v_ugv= %f , fabs(vel_ugv_status)=%f , vel_ugv = %f\n",error_v_ugv, fabs(vel_ugv_status) , vel_ugv);
+      count_v++;  // to count how many of velocities are considered per trajectory interval
     }
     // To read UAV velocities just during sections
     if (read_vel_uav_data && d_min_wp_uav > d_min_wp && fabs(vel_uav_status) > min_vel){
@@ -164,13 +169,14 @@ void exportDataMission::updateStates()
       float error_a_uav = fabs(acc_uav_status);
       sum_error_a_uav = error_a_uav + sum_error_a_uav;
       if(max_a_uav < error_a_uav)
-        max_a_uav = error_a_uav;
+         max_a_uav = error_a_uav;
       if(min_a_uav > error_a_uav)
-        min_a_uav = error_a_uav;
+         min_a_uav = error_a_uav;
       v_acc_uav.push_back(acc_uav_status);
     }
   }
 
+  float time_ugv, time_uav;
   if (ugv_reached_goal && uav_reached_goal)
   {
     curr_p_ugv = ugv_tf.transform.translation;
@@ -178,8 +184,8 @@ void exportDataMission::updateStates()
     float d_wp_ugv = sqrt(pow(curr_p_ugv.x-init_p_ugv.x,2)+pow(curr_p_ugv.y-init_p_ugv.y,2)+pow(curr_p_ugv.z-init_p_ugv.z,2));
     float d_wp_uav = sqrt(pow(curr_p_uav.x-init_p_uav.x,2)+pow(curr_p_uav.y-init_p_uav.y,2)+pow(curr_p_uav.z-init_p_uav.z,2));
     v_d_wp_ugv.push_back(d_wp_ugv); v_d_wp_uav.push_back(d_wp_uav);
-    float time_ugv = ugv_s_sec+ugv_s_nsec*1e-9-(ugv_f_sec+ugv_f_nsec*1e-9);
-    float time_uav = (uav_s_sec+uav_s_nsec*1e-9-(uav_f_sec+uav_f_nsec*1e-9))-178.35;
+    time_ugv = ugv_s_sec+ugv_s_nsec*1e-9-(ugv_f_sec+ugv_f_nsec*1e-9);
+    time_uav = (uav_s_sec+uav_s_nsec*1e-9-(uav_f_sec+uav_f_nsec*1e-9))-178.35;
     v_time_ugv.push_back(time_ugv); v_time_uav.push_back(time_uav);
     printf("  Reached succeessfully WayPoint: %i --> ",count);
     printf("length[%f/%f] p_ugv[%f %f %f / %f %f %f] p_uav[%f %f %f / %f %f %f] t_ugv[%f] t_uav[%f]\n", length_status, tether_length_vector[count],
@@ -190,6 +196,26 @@ void exportDataMission::updateStates()
         time_ugv, time_uav);
 
     v_pose_traj_ugv.push_back(curr_p_ugv); v_pose_traj_uav.push_back(curr_p_uav); v_length_traj_cat.push_back(length_status);
+    
+    //For UGV acceleration
+        if (count > 0 && count_v >0 && d_min_wp_ugv > d_min_wp){
+          error_a_ugv = fabs((sum_v_ugv_/(float)count_v)-(prev_sum_v_ugv/(float)prev_size))/(time_ugv+prev_time); 
+          printf("\terror_a_ugv= %f , sum_v_ugv_= %f , prev_sum_v_ugv =%f , count_v=%i , prev_size= %i , time_ugv= %f , prev_time=%f\n", error_a_ugv, sum_v_ugv_, prev_sum_v_ugv, count_v, prev_size, time_ugv, prev_time);
+          sum_error_a_ugv = error_a_ugv + sum_error_a_ugv;
+          v_acc_ugv.push_back(error_a_ugv);
+          if(max_a_ugv < error_a_ugv)
+             max_a_ugv = error_a_ugv;
+          if(min_a_ugv > error_a_ugv)
+             min_a_ugv = error_a_ugv;
+          prev_sum_v_ugv = sum_v_ugv_;
+          prev_size = count_v ;
+          prev_time = time_ugv;
+          count_v = 0;
+          sum_v_ugv_ = 0.0;
+        }
+ 
+    // End UGV acceleration stuff
+
     init_p_ugv.x = curr_p_ugv.x; init_p_ugv.y = curr_p_ugv.y; init_p_ugv.z = curr_p_ugv.z;
     init_p_uav.x = curr_p_uav.x; init_p_uav.y = curr_p_uav.y; init_p_uav.z = curr_p_uav.z;
     ugv_reached_goal = uav_reached_goal = false;
@@ -325,7 +351,7 @@ void exportDataMission::computeError()
   mean_t_uav = sum_error_t_uav / v_time_uav.size();
   mean_v_ugv = sum_error_v_ugv / v_vel_ugv.size();
   mean_v_uav = sum_error_v_uav / v_vel_uav.size();
-  // mean_a_ugv = sum_error_a_ugv / v_acc_ugv.size(); // Lengh two units less
+  mean_a_ugv = sum_error_a_ugv / v_acc_ugv.size(); // Lengh two units less
   mean_a_uav = sum_error_a_uav / v_acc_uav.size(); // Lengh two units less
 
   float sum_stand_dev_t_ugv, sum_stand_dev_t_uav;
