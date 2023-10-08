@@ -40,11 +40,6 @@ public:
     void ugvReachedGoalCB(const upo_actions::NavigateActionResultConstPtr &msg);
     void uavReachedGoalCB(const upo_actions::Navigate3DActionResultConstPtr &msg);
     void lengthStatusCB(const std_msgs::Float32ConstPtr &msg);
-    void velUGVStatusCB(const geometry_msgs::TwistConstPtr &msg);
-    void velUAVStatusCB(const geometry_msgs::Vector3StampedConstPtr &msg);
-    void accUAVStatusCB(const geometry_msgs::Vector3StampedConstPtr &msg);
-    void ugvNewGoalCB(const upo_actions::NavigateActionGoalConstPtr &msg);
-    void uavNewGoalCB(const upo_actions::Navigate3DActionGoalConstPtr &msg);
     void computeError();
     void exportDataError();
     void initializeVariables();
@@ -53,16 +48,15 @@ public:
     std::shared_ptr<tf2_ros::Buffer> tfBuffer;
     std::unique_ptr<tf2_ros::TransformListener> tf2_list;
 	
-    ros::Subscriber ugv_reached_goal_sub_, uav_reached_goal_sub_, lenth_cat_sub_, vel_ugv_sub_, vel_uav_sub_, acc_uav_sub_,
-                    ugv_new_goal_sub_, uav_new_goal_sub_;
+    ros::Subscriber ugv_reached_goal_sub_, uav_reached_goal_sub_, lenth_cat_sub_, vel_ugv_sub_, vel_uav_sub_, acc_uav_sub_;
 
     std::unique_ptr<Navigate3DClient> uavNavigation3DClient;
     std::unique_ptr<NavigateClient> NavigationClient; // For UGV
 
     trajectory_msgs::MultiDOFJointTrajectory Tj;
     std::vector<float> tether_length_vector, v_length_traj_cat, v_time_ugv, v_time_uav, v_time_traj_ugv, v_time_traj_uav;
-    std::vector<float> v_error_t_ugv, v_error_t_uav, v_stand_dev_t_ugv, v_stand_dev_t_uav;
-    std::vector<float> v_d_wp_ugv, v_d_wp_uav; //to save distance values
+    std::vector<float> v_error_t_ugv, v_error_t_uav, v_error_v_ugv, v_error_v_uav, v_error_a_ugv, v_error_a_uav;
+    std::vector<float> v_d_wp_ugv, v_d_wp_uav, v_gt_d_wp_ugv, v_gt_d_wp_uav; //to save distance values
     std::vector<float> v_vel_ugv, v_vel_uav; //to save velocities values
     std::vector<float> v_acc_ugv, v_acc_uav; //to save acelerations values
     std::vector<geometry_msgs::Vector3> v_pose_traj_ugv, v_pose_traj_uav;

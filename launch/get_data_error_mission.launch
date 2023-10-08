@@ -1,7 +1,7 @@
 <launch>
 
     <param name="use_sim_time" value="true"/>
-    <arg name="need_map" default="true"/> 
+    <arg name="need_map" default="false"/> 
     <arg name="rviz" value="$(arg need_map)" /> 
     <arg name="bag_file_tongo" default="$(env HOME)/Documents/Bags/teatro/last_day/casi_2023-03-06-10-21-26_edited.bag" />
 
@@ -28,7 +28,7 @@
         <param name="interpolation_distance" value="$(arg interpolation_distance)"/> 
         <param name="vel_ugv" value="0.3"/> 
         <param name="vel_uav" value="0.2"/>
-        <param name="d_min_wp" value="0.3"/>
+        <param name="d_min_wp" value="0.1"/>
     </node>
 
     # For Bag: refinitiva_2023-03-06-12-19-25.bag from 83 [s]

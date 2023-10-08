@@ -485,8 +485,6 @@ void MissionInterface::resetFlags()
   sent_new_uav_wp = sent_new_ugv_wp = false;
 }
 
-
-
 // Todo: let the user enter them with external files
 void MissionInterface::readWaypoints(const std::string &path_file)
 {

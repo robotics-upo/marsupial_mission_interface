@@ -44,7 +44,6 @@ loadFileMission::loadFileMission(ros::NodeHandlePtr nh, ros::NodeHandle pnh)
     pnh.param("interpolation_distance", interpolation_dist, (float)0.2);
     pnh.param("vel_ugv", vel_ugv, (float)1.0);
     pnh.param("vel_uav", vel_uav, (float)1.0);
-
     printf("loadFileMission : vel_ugv = %f , vel_uav = %f , interpolation_d = %f\n",vel_ugv, vel_uav, interpolation_dist);
 
     bool latch_topic = true;
@@ -55,30 +54,26 @@ loadFileMission::loadFileMission(ros::NodeHandlePtr nh, ros::NodeHandle pnh)
 
     for (size_t i =0; i < Tj.points.size(); i++ ){
       printf("[%lu] UGV[%f %f %f][%f %f %f %f] UAV[%f %f %f][%f %f %f %f] TETHER[%f]\n",i, 
-      Tj.points.at(i).transforms[0].translation.x, 
-      Tj.points.at(i).transforms[0].translation.y, 
-      Tj.points.at(i).transforms[0].translation.z,
-      Tj.points.at(i).transforms[0].rotation.x, 
-      Tj.points.at(i).transforms[0].rotation.y, 
-      Tj.points.at(i).transforms[0].rotation.z, 
-      Tj.points.at(i).transforms[0].rotation.w,
-      Tj.points.at(i).transforms[1].translation.x, 
-      Tj.points.at(i).transforms[1].translation.y, 
-      Tj.points.at(i).transforms[1].translation.z,
-      Tj.points.at(i).transforms[1].rotation.x, 
-      Tj.points.at(i).transforms[1].rotation.y, 
-      Tj.points.at(i).transforms[1].rotation.z, 
-      Tj.points.at(i).transforms[1].rotation.w,
+      Tj.points.at(i).transforms[0].translation.x,Tj.points.at(i).transforms[0].translation.y,Tj.points.at(i).transforms[0].translation.z,
+      Tj.points.at(i).transforms[0].rotation.x, Tj.points.at(i).transforms[0].rotation.y, 
+      Tj.points.at(i).transforms[0].rotation.z, Tj.points.at(i).transforms[0].rotation.w,
+      Tj.points.at(i).transforms[1].translation.x,Tj.points.at(i).transforms[1].translation.y,Tj.points.at(i).transforms[1].translation.z,
+      Tj.points.at(i).transforms[1].rotation.x, Tj.points.at(i).transforms[1].rotation.y, 
+      Tj.points.at(i).transforms[1].rotation.z, Tj.points.at(i).transforms[1].rotation.w,
       tether_length_vector[i]);
       //Compute time for compute trajectory
-      if (i < Tj.points.size()-1){
-        double d_ = sqrt(pow(Tj.points.at(i+1).transforms[0].translation.x - Tj.points.at(i).transforms[0].translation.x,2)+
-                        pow(Tj.points.at(i+1).transforms[0].translation.y - Tj.points.at(i).transforms[0].translation.y,2)+
-                        pow(Tj.points.at(i+1).transforms[0].translation.z - Tj.points.at(i).transforms[0].translation.z,2));
+      if(i==0){
+        v_time_traj_ugv.push_back(0.0); 
+        v_time_traj_uav.push_back(0.0); 
+      }
+      else{
+        double d_ = sqrt(pow(Tj.points.at(i).transforms[0].translation.x - Tj.points.at(i-1).transforms[0].translation.x,2)+
+                         pow(Tj.points.at(i).transforms[0].translation.y - Tj.points.at(i-1).transforms[0].translation.y,2)+
+                         pow(Tj.points.at(i).transforms[0].translation.z - Tj.points.at(i-1).transforms[0].translation.z,2));
         v_time_traj_ugv.push_back(d_/vel_ugv); 
-        d_ = sqrt(pow(Tj.points.at(i+1).transforms[1].translation.x - Tj.points.at(i).transforms[1].translation.x,2)+
-                  pow(Tj.points.at(i+1).transforms[1].translation.y - Tj.points.at(i).transforms[1].translation.y,2)+
-                  pow(Tj.points.at(i+1).transforms[1].translation.z - Tj.points.at(i).transforms[1].translation.z,2));
+        d_ = sqrt(pow(Tj.points.at(i).transforms[1].translation.x - Tj.points.at(i-1).transforms[1].translation.x,2)+
+                  pow(Tj.points.at(i).transforms[1].translation.y - Tj.points.at(i-1).transforms[1].translation.y,2)+
+                  pow(Tj.points.at(i).transforms[1].translation.z - Tj.points.at(i-1).transforms[1].translation.z,2));
         v_time_traj_uav.push_back(d_/vel_uav); 
       }
     }

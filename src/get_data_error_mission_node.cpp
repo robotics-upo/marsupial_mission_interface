@@ -23,11 +23,6 @@ exportDataMission::exportDataMission(ros::NodeHandlePtr nh, ros::NodeHandle pnh)
     ugv_reached_goal_sub_ = pnh.subscribe<upo_actions::NavigateActionResult>("/Navigation/result", 100, &exportDataMission::ugvReachedGoalCB, this);
     uav_reached_goal_sub_ = pnh.subscribe<upo_actions::Navigate3DActionResult>("/UAVNavigation3D/result", 100, &exportDataMission::uavReachedGoalCB, this);
     lenth_cat_sub_ = pnh.subscribe<std_msgs::Float32>("/tie_controller/length_status", 100, &exportDataMission::lengthStatusCB, this);
-    vel_ugv_sub_ = pnh.subscribe<geometry_msgs::Twist>("/arco/idmind_motors/set_velocities", 100, &exportDataMission::velUGVStatusCB, this);
-    vel_uav_sub_ = pnh.subscribe<geometry_msgs::Vector3Stamped>("/dji_sdk/velocity", 100, &exportDataMission::velUAVStatusCB, this);
-    acc_uav_sub_ = pnh.subscribe<geometry_msgs::Vector3Stamped>("/dji_sdk/acceleration_ground_fused", 100, &exportDataMission::accUAVStatusCB, this);
-    ugv_new_goal_sub_ = pnh.subscribe<upo_actions::NavigateActionGoal>("/Navigation/goal", 100, &exportDataMission::ugvNewGoalCB, this);
-    uav_new_goal_sub_ = pnh.subscribe<upo_actions::Navigate3DActionGoal>("/UAVNavigation3D/goal", 100, &exportDataMission::uavNewGoalCB, this);
 
     initializeVariables();
     // Load and export mission
@@ -43,7 +38,7 @@ void exportDataMission::initializeVariables()
     ugv_reached_goal = uav_reached_goal = false;
     v_pose_traj_ugv.clear(); v_pose_traj_uav.clear(); v_length_traj_cat.clear(); 
     v_time_traj_ugv.clear(); v_time_traj_uav.clear(); Tj.points.clear();
-    v_error_ugv.clear(); v_error_uav.clear(); v_stand_dev_t_ugv.clear(); v_stand_dev_t_uav.clear();
+    v_error_ugv.clear(); v_error_uav.clear(); v_gt_d_wp_ugv.clear(); v_gt_d_wp_uav.clear();
     v_vel_ugv.clear(); v_vel_uav.clear(); v_acc_ugv.clear(); v_acc_uav.clear();
 
     sum_error_ugv_xy = sum_error_ugv_z = sum_error_uav_xy  = sum_error_uav_z = sum_error_length = max_t_ugv = max_t_uav = 0.0;
@@ -62,8 +57,7 @@ void exportDataMission::ugvReachedGoalCB(const upo_actions::NavigateActionResult
   ugv_f_nsec = msg->status.goal_id.stamp.nsec;
   ugv_s_sec = msg->header.stamp.sec;
   ugv_s_nsec = msg->header.stamp.nsec;
-  read_acc_ugv_data = false;
-  read_vel_ugv_data = false;
+  ugv_tf = tfBuffer->lookupTransform(world_frame, ugv_base_frame, ros::Time(0));
 }
 
 void exportDataMission::uavReachedGoalCB(const upo_actions::Navigate3DActionResultConstPtr &msg)
@@ -73,37 +67,7 @@ void exportDataMission::uavReachedGoalCB(const upo_actions::Navigate3DActionResu
   uav_f_nsec= msg->status.goal_id.stamp.nsec;
   uav_s_sec = msg->header.stamp.sec;
   uav_s_nsec = msg->header.stamp.nsec;
-  read_acc_uav_data = false;
-  read_vel_uav_data = false;
-}
-
-void exportDataMission::ugvNewGoalCB(const upo_actions::NavigateActionGoalConstPtr &msg)
-{
-  msg->goal.global_goal.position;
-  read_acc_ugv_data = true;
-  read_vel_ugv_data = true;
-}
-
-void exportDataMission::uavNewGoalCB(const upo_actions::Navigate3DActionGoalConstPtr &msg)
-{
-  msg->goal.global_goal.pose.position;
-  read_acc_uav_data = true;
-  read_vel_uav_data = true;
-}
-
-void exportDataMission::velUGVStatusCB(const geometry_msgs::TwistConstPtr &msg)
-{
-  vel_ugv_status = msg->linear.x;
-}
-
-void exportDataMission::velUAVStatusCB(const geometry_msgs::Vector3StampedConstPtr &msg)
-{
-  vel_uav_status = sqrt(pow(msg->vector.x,2)+pow(msg->vector.y,2)+pow(msg->vector.z,2));
-}
-
-void exportDataMission::accUAVStatusCB(const geometry_msgs::Vector3StampedConstPtr &msg)
-{
-  acc_uav_status = sqrt(pow(msg->vector.x,2)+pow(msg->vector.y,2)+pow(msg->vector.z,2));
+  uav_tf = tfBuffer->lookupTransform(world_frame, uav_base_frame, ros::Time(0));
 }
 
 void exportDataMission::lengthStatusCB(const std_msgs::Float32ConstPtr &msg)
@@ -113,12 +77,64 @@ void exportDataMission::lengthStatusCB(const std_msgs::Float32ConstPtr &msg)
 
 void exportDataMission::updateStates()
 {
-  try{
+  float time_ugv, time_uav, d_wp_ugv, d_wp_uav;
+  if (ugv_reached_goal && uav_reached_goal)
+  {
+    curr_p_ugv = ugv_tf.transform.translation;
+    curr_p_uav = uav_tf.transform.translation;
+    if (count > 0){
+      d_wp_ugv = sqrt(pow(curr_p_ugv.x-init_p_ugv.x,2)+pow(curr_p_ugv.y-init_p_ugv.y,2));
+      d_wp_uav = sqrt(pow(curr_p_uav.x-init_p_uav.x,2)+pow(curr_p_uav.y-init_p_uav.y,2)+pow(curr_p_uav.z-init_p_uav.z,2));
+      time_ugv = fabs((ugv_s_sec+ugv_s_nsec*1e-9-(ugv_f_sec+ugv_f_nsec*1e-9))-0.27); // To substract constant because of time difference between machines
+      time_uav = fabs((uav_s_sec+uav_s_nsec*1e-9-(uav_f_sec+uav_f_nsec*1e-9))-177.82); // To substract constant because of time difference between machines
+      v_d_wp_ugv.push_back(d_wp_ugv); v_d_wp_uav.push_back(d_wp_uav);
+      v_time_ugv.push_back(time_ugv); v_time_uav.push_back(time_uav);
+    printf("  Reached succeessfully WayPoint: %i --> ",count);
+    printf("length[%f/%f] p_ugv[%f %f %f / %f %f %f] p_uav[%f %f %f / %f %f %f] t_ugv[%f] t_uav[%f]\n", length_status, tether_length_vector[count],
+        curr_p_ugv.x, curr_p_ugv.y, curr_p_ugv.z,
+        Tj.points.at(count).transforms[0].translation.x, Tj.points.at(count).transforms[0].translation.y, Tj.points.at(count).transforms[0].translation.z,
+        curr_p_uav.x, curr_p_uav.y, curr_p_uav.z,
+        Tj.points.at(count).transforms[1].translation.x, Tj.points.at(count).transforms[1].translation.y, Tj.points.at(count).transforms[1].translation.z,
+        time_ugv, time_uav);
+    
+      float d_min_wp_ugv = sqrt(pow(Tj.points.at(count).transforms[0].translation.x - Tj.points.at(count-1).transforms[0].translation.x,2)+
+                          pow(Tj.points.at(count).transforms[0].translation.y - Tj.points.at(count-1).transforms[0].translation.y,2));
+      float d_min_wp_uav = sqrt(pow(Tj.points.at(count).transforms[1].translation.x - Tj.points.at(count-1).transforms[1].translation.x,2)+
+                          pow(Tj.points.at(count).transforms[1].translation.y - Tj.points.at(count-1).transforms[1].translation.y,2)+
+                          pow(Tj.points.at(count).transforms[1].translation.z - Tj.points.at(count-1).transforms[1].translation.z,2));
+      v_gt_d_wp_ugv.push_back(d_min_wp_ugv); v_gt_d_wp_uav.push_back(d_min_wp_uav);
+      float _v_ugv = d_wp_ugv/time_ugv;
+      float _v_uav = d_wp_uav/time_uav;
+      if (d_min_wp_ugv < d_min_wp){
+        _v_ugv = 0.0;
+      }
+      if (d_min_wp_uav < d_min_wp){
+        _v_uav = 0.0;
+      }
+
+      // printf("%i | d_wp_ugv=%f/%f , time_ugv=%f/%f , v_ugv=%f  | d_wp_uav=%f/%f , time_uav=%f/%f , v_uav=%f\n",count, 
+      //               d_wp_ugv, d_min_wp_ugv, time_ugv, v_time_traj_ugv[count], _v_ugv, 
+      //               d_wp_uav, d_min_wp_uav, time_uav, v_time_traj_uav[count], _v_uav);
+    }
+    else{
+      v_d_wp_ugv.push_back(0.0); v_d_wp_uav.push_back(0.0);
+      v_time_ugv.push_back(0.0); v_time_uav.push_back(0.0);
+      v_gt_d_wp_ugv.push_back(0.0); v_gt_d_wp_uav.push_back(0.0);
+    }
+    v_pose_traj_ugv.push_back(curr_p_ugv); v_pose_traj_uav.push_back(curr_p_uav); v_length_traj_cat.push_back(length_status);
+
+    init_p_ugv.x = curr_p_ugv.x; init_p_ugv.y = curr_p_ugv.y; init_p_ugv.z = curr_p_ugv.z;
+    init_p_uav.x = curr_p_uav.x; init_p_uav.y = curr_p_uav.y; init_p_uav.z = curr_p_uav.z;
+    ugv_reached_goal = uav_reached_goal = false;
+    count++;
+  }
+  else{
+    try{
       uav_tf = tfBuffer->lookupTransform(world_frame, uav_base_frame, ros::Time(0));
     }catch (tf2::TransformException &ex){
       // ROS_WARN("Check Mission: Couldn't get UAV Pose (base_frame: %s - world_frame: %s); tf exception: %s", uav_base_frame.c_str(),world_frame.c_str(),ex.what());
     }
-  try{
+    try{
       ugv_tf = tfBuffer->lookupTransform(world_frame, ugv_base_frame, ros::Time(0));
     }catch (tf2::TransformException &ex){
       // ROS_WARN("Check Mission: Couldn't get UGV Pose(base_frame: %s - world_frame: %s); tf exception: %s", ugv_base_frame.c_str(),world_frame.c_str(),ex.what());
@@ -130,96 +146,6 @@ void exportDataMission::updateStates()
       v_error_ugv.push_back(error_ugv);
       v_error_uav.push_back(error_uav);
     }
-
-  float d_min_wp_ugv = 0.0;
-  float d_min_wp_uav = 0.0;
-  if ( count > 0){
-    d_min_wp_ugv = sqrt(pow(Tj.points.at(count).transforms[0].translation.x - Tj.points.at(count-1).transforms[0].translation.x,2)+
-                        pow(Tj.points.at(count).transforms[0].translation.y - Tj.points.at(count-1).transforms[0].translation.y,2));
-    d_min_wp_uav = sqrt(pow(Tj.points.at(count).transforms[1].translation.x - Tj.points.at(count-1).transforms[1].translation.x,2)+
-                        pow(Tj.points.at(count).transforms[1].translation.y - Tj.points.at(count-1).transforms[1].translation.y,2)+
-                        pow(Tj.points.at(count).transforms[1].translation.z - Tj.points.at(count-1).transforms[1].translation.z,2));
-    d_min_wp = 0.01;
-    float min_vel = 0.001;
-    // To read UGV velocities just during sections
-    if (read_vel_ugv_data && d_min_wp_ugv > d_min_wp &&  fabs(vel_ugv_status) > min_vel ){
-      float error_v_ugv = fabs(fabs(vel_ugv_status) - vel_ugv);
-      sum_error_v_ugv = error_v_ugv + sum_error_v_ugv;
-      sum_v_ugv_ = error_v_ugv + sum_v_ugv_;  // To compute acceleration
-      if(max_v_ugv < error_v_ugv)
-        max_v_ugv = error_v_ugv;
-      if(min_v_ugv > error_v_ugv)
-        min_v_ugv = error_v_ugv;
-      v_vel_ugv.push_back(vel_ugv_status);
-      count_v++;  // to count how many of velocities are considered per trajectory interval
-    }
-    // To read UAV velocities just during sections
-    if (read_vel_uav_data && d_min_wp_uav > d_min_wp && fabs(vel_uav_status) > min_vel){
-      float error_v_uav = fabs(vel_uav_status - vel_uav);
-      sum_error_v_uav = error_v_uav + sum_error_v_uav;
-      if(max_v_uav < error_v_uav)
-        max_v_uav = error_v_uav;
-      if(min_v_uav > error_v_uav)
-        min_v_uav = error_v_uav;
-      v_vel_uav.push_back(vel_uav_status);
-      // printf("error_v_uav= %f , fabs(vel_uav_status)=%f , vel_uav = %f\n",error_v_uav, fabs(vel_uav_status) , vel_uav);
-    }  
-    // To read UAV accelerations just during sections
-    if (read_acc_uav_data && d_min_wp_uav > d_min_wp && fabs(vel_ugv_status) > min_vel){
-      float error_a_uav = fabs(acc_uav_status);
-      sum_error_a_uav = error_a_uav + sum_error_a_uav;
-      if(max_a_uav < error_a_uav)
-         max_a_uav = error_a_uav;
-      if(min_a_uav > error_a_uav)
-         min_a_uav = error_a_uav;
-      v_acc_uav.push_back(acc_uav_status);
-    }
-  }
-
-  float time_ugv, time_uav;
-  if (ugv_reached_goal && uav_reached_goal)
-  {
-    curr_p_ugv = ugv_tf.transform.translation;
-    curr_p_uav = uav_tf.transform.translation;
-    float d_wp_ugv = sqrt(pow(curr_p_ugv.x-init_p_ugv.x,2)+pow(curr_p_ugv.y-init_p_ugv.y,2)+pow(curr_p_ugv.z-init_p_ugv.z,2));
-    float d_wp_uav = sqrt(pow(curr_p_uav.x-init_p_uav.x,2)+pow(curr_p_uav.y-init_p_uav.y,2)+pow(curr_p_uav.z-init_p_uav.z,2));
-    v_d_wp_ugv.push_back(d_wp_ugv); v_d_wp_uav.push_back(d_wp_uav);
-    time_ugv = ugv_s_sec+ugv_s_nsec*1e-9-(ugv_f_sec+ugv_f_nsec*1e-9);
-    time_uav = (uav_s_sec+uav_s_nsec*1e-9-(uav_f_sec+uav_f_nsec*1e-9))-178.35;
-    v_time_ugv.push_back(time_ugv); v_time_uav.push_back(time_uav);
-    printf("  Reached succeessfully WayPoint: %i --> ",count);
-    printf("length[%f/%f] p_ugv[%f %f %f / %f %f %f] p_uav[%f %f %f / %f %f %f] t_ugv[%f] t_uav[%f]\n", length_status, tether_length_vector[count],
-        curr_p_ugv.x, curr_p_ugv.y, curr_p_ugv.z,
-        Tj.points.at(count).transforms[0].translation.x, Tj.points.at(count).transforms[0].translation.y, Tj.points.at(count).transforms[0].translation.z,
-        curr_p_uav.x, curr_p_uav.y, curr_p_uav.z,
-        Tj.points.at(count).transforms[1].translation.x, Tj.points.at(count).transforms[1].translation.y, Tj.points.at(count).transforms[1].translation.z,
-        time_ugv, time_uav);
-
-    v_pose_traj_ugv.push_back(curr_p_ugv); v_pose_traj_uav.push_back(curr_p_uav); v_length_traj_cat.push_back(length_status);
-    
-    //For UGV acceleration
-        if (count > 0 && count_v >0 && d_min_wp_ugv > d_min_wp){
-          error_a_ugv = fabs((sum_v_ugv_/(float)count_v)-(prev_sum_v_ugv/(float)prev_size))/(time_ugv+prev_time); 
-          printf("\terror_a_ugv= %f , sum_v_ugv_= %f , prev_sum_v_ugv =%f , count_v=%i , prev_size= %i , time_ugv= %f , prev_time=%f\n", error_a_ugv, sum_v_ugv_, prev_sum_v_ugv, count_v, prev_size, time_ugv, prev_time);
-          sum_error_a_ugv = error_a_ugv + sum_error_a_ugv;
-          v_acc_ugv.push_back(error_a_ugv);
-          if(max_a_ugv < error_a_ugv)
-             max_a_ugv = error_a_ugv;
-          if(min_a_ugv > error_a_ugv)
-             min_a_ugv = error_a_ugv;
-          prev_sum_v_ugv = sum_v_ugv_;
-          prev_size = count_v ;
-          prev_time = time_ugv;
-          count_v = 0;
-          sum_v_ugv_ = 0.0;
-        }
- 
-    // End UGV acceleration stuff
-
-    init_p_ugv.x = curr_p_ugv.x; init_p_ugv.y = curr_p_ugv.y; init_p_ugv.z = curr_p_ugv.z;
-    init_p_uav.x = curr_p_uav.x; init_p_uav.y = curr_p_uav.y; init_p_uav.z = curr_p_uav.z;
-    ugv_reached_goal = uav_reached_goal = false;
-    count++;
   }
 }
 
@@ -271,18 +197,13 @@ void exportDataMission::computeError()
     float error_length_ = fabs(v_length_traj_cat[i] - tether_length_vector[i]);
     v_error_length.push_back(error_length_);  //Catanary error analisys
 
-    sum_error_length = v_error_length[i] + sum_error_length;
+    sum_error_length = error_length_ + sum_error_length;
     if(max_length < v_error_length[i])
-      max_length = v_error_length[i];
+       max_length = v_error_length[i];
     if(min_length > v_error_length[i])
-      min_length = v_error_length[i];
+       min_length = v_error_length[i];
   }
   average_length = sum_error_length/v_error_ugv.size();
-  // Compute Standard Deviation for catenary
-  for(int i = 0 ; i< count; i++) {
-    sum_stand_dev_length = pow(v_error_length[i] - average_length,2) + sum_stand_dev_length;
-  }
-  stand_dev_length = sqrt(sum_stand_dev_length)/v_error_ugv.size();
 
   // Compute Mean error for UGV and UAV distance 
   for(int i = 0 ; i< v_error_ugv.size(); i++){
@@ -314,59 +235,85 @@ void exportDataMission::computeError()
   average_uav_xy = sum_error_uav_xy/v_error_ugv.size();
   average_uav_z = sum_error_uav_z/v_error_ugv.size();
 
-  // Compute Standard Deviation for UGV and UAV distance
-  float sum_stand_dev_ugv_xy, sum_stand_dev_ugv_z, sum_stand_dev_uav_xy, sum_stand_dev_uav_z;
-  sum_stand_dev_ugv_xy = sum_stand_dev_ugv_z = sum_stand_dev_uav_xy = sum_stand_dev_uav_z = 0.0;
-  for(int i = 0 ; i< v_error_ugv.size(); i++){
-    sum_stand_dev_ugv_xy = pow(v_error_ugv[i].xy-average_ugv_xy,2) + sum_stand_dev_ugv_xy; 
-    sum_stand_dev_ugv_z  = pow(v_error_ugv[i].z-average_ugv_z,2) + sum_stand_dev_ugv_z;
-    sum_stand_dev_uav_xy = pow(v_error_uav[i].xy-average_uav_xy,2) + sum_stand_dev_uav_xy;
-    sum_stand_dev_uav_z  = pow(v_error_uav[i].z-average_uav_z,2)+ sum_stand_dev_uav_z;
-  }
-  stand_dev_ugv_xy = sqrt(sum_stand_dev_ugv_xy)/v_error_ugv.size();
-  stand_dev_ugv_z  = sqrt(sum_stand_dev_ugv_z)/v_error_ugv.size();
-  stand_dev_uav_xy = sqrt(sum_stand_dev_ugv_xy)/v_error_ugv.size();
-  stand_dev_uav_z  = sqrt(sum_stand_dev_ugv_z)/v_error_ugv.size();
-
   // Compute Mean error for time , velocity and accelerations
   for (size_t i=0 ; i<v_time_ugv.size();i++)
   {
     // time
-    float error_t_ugv = fabs(v_time_ugv[i] - v_time_traj_ugv[i]);
-    float error_t_uav = fabs(v_time_uav[i] - v_time_traj_uav[i]);
+    // float error_t_ugv = fabs(v_time_ugv[i] - v_time_traj_ugv[i]);
+    float error_t_ugv = fabs(v_time_ugv[i]);
+    // float error_t_uav = fabs(v_time_uav[i] - v_time_traj_uav[i]);
+    float error_t_uav = fabs(v_time_uav[i]);
     v_error_t_ugv.push_back(error_t_ugv); v_error_t_uav.push_back(error_t_uav);
     sum_error_t_ugv = error_t_ugv + sum_error_t_ugv;
     sum_error_t_uav = error_t_uav + sum_error_t_uav;
-
-    if(max_t_ugv < error_t_ugv)
-       max_t_ugv = error_t_ugv;
-    if(min_t_ugv > error_t_ugv)
-       min_t_ugv = error_t_ugv;
-    if(max_t_uav < error_t_uav)
-       max_t_uav = error_t_uav;
-    if(min_t_uav > error_t_uav)
-       min_t_uav = error_t_uav;
+    if (i> 0){
+      if(max_t_ugv < error_t_ugv)
+        max_t_ugv = error_t_ugv;
+      if(min_t_ugv > error_t_ugv)
+        min_t_ugv = error_t_ugv;
+      if(max_t_uav < error_t_uav)
+        max_t_uav = error_t_uav;
+      if(min_t_uav > error_t_uav)
+        min_t_uav = error_t_uav;
+    }
+    // velocities
+    float error_v_ugv, error_v_uav;
+    if (v_gt_d_wp_ugv[i] > d_min_wp){
+      // error_v_ugv = fabs(v_d_wp_ugv[i]/v_time_ugv[i] - vel_ugv);
+      error_v_ugv = fabs(v_d_wp_ugv[i]/v_time_ugv[i]);
+    }else
+      error_v_ugv = 0.0;
+    if (v_gt_d_wp_uav[i] > d_min_wp){
+      // error_v_uav = fabs(v_d_wp_uav[i]/v_time_uav[i] - vel_uav);
+      error_v_uav = fabs(v_d_wp_uav[i]/v_time_uav[i]);
+    }else
+      error_v_uav = 0.0;
+    v_error_v_ugv.push_back(error_v_ugv); v_error_v_uav.push_back(error_v_uav);
+    sum_error_v_ugv = error_v_ugv + sum_error_v_ugv;
+    sum_error_v_uav = error_v_uav + sum_error_v_uav;
+    if (i> 0){
+      if(max_v_ugv < error_v_ugv)
+        max_v_ugv = error_v_ugv;
+      if(min_v_ugv > error_v_ugv)
+        min_v_ugv = error_v_ugv;
+      if(max_v_uav < error_v_uav)
+        max_v_uav = error_v_uav;
+      if(min_v_uav > error_v_uav)
+        min_v_uav = error_v_uav;
+    }
+  // acceleration
+    float error_a_ugv, error_a_uav;
+    if (i > 0){
+      if (v_gt_d_wp_ugv[i] > d_min_wp)
+        error_a_ugv = fabs(v_d_wp_ugv[i]/v_time_ugv[i]-v_d_wp_ugv[i-1]/v_time_ugv[i-1])/(v_time_ugv[i]+v_time_ugv[i-1]);
+      else
+        error_a_ugv = 0.0;
+      if (v_gt_d_wp_uav[i] > d_min_wp && (v_time_uav[i-1] > 0.0001)){
+        error_a_uav = fabs(v_d_wp_uav[i]/v_time_uav[i]-v_d_wp_uav[i-1]/v_time_uav[i-1])/(v_time_uav[i]+v_time_uav[i-1]);
+      }
+      else
+        error_a_uav = 0.0;
+      v_error_a_ugv.push_back(error_a_ugv); v_error_a_uav.push_back(error_a_uav);
+      sum_error_a_ugv = error_a_ugv + sum_error_a_ugv;
+      sum_error_a_uav = error_a_uav + sum_error_a_uav;
+      if (i> 0){
+        if(max_a_ugv < error_a_ugv)
+          max_a_ugv = error_a_ugv;
+        if(min_a_ugv > error_a_ugv)
+          min_a_ugv = error_a_ugv;
+        if(max_a_uav < error_a_uav)
+          max_a_uav = error_a_uav;
+        if(min_a_uav > error_a_uav)
+          min_a_uav = error_a_uav;
+      }
+    }
   }
   mean_t_ugv = sum_error_t_ugv / v_time_ugv.size();
+  mean_v_ugv = sum_error_v_ugv / v_time_ugv.size();
+  mean_a_ugv = sum_error_a_ugv / v_time_ugv.size(); // Lengh two units less
   mean_t_uav = sum_error_t_uav / v_time_uav.size();
-  mean_v_ugv = sum_error_v_ugv / v_vel_ugv.size();
-  mean_v_uav = sum_error_v_uav / v_vel_uav.size();
-  mean_a_ugv = sum_error_a_ugv / v_acc_ugv.size(); // Lengh two units less
-  mean_a_uav = sum_error_a_uav / v_acc_uav.size(); // Lengh two units less
-
-  float sum_stand_dev_t_ugv, sum_stand_dev_t_uav;
-  sum_stand_dev_t_ugv = sum_stand_dev_t_uav = 0.0;
-  // Compute Standard Deviation for time 
-  for (size_t i=0 ; i<v_time_ugv.size();i++)
-  {
-    float error_stand_dev_t_ugv = (v_error_t_ugv[i] - mean_t_ugv)*(v_error_t_ugv[i] - mean_t_ugv);
-    float error_stand_dev_t_uav = (v_error_t_uav[i] - mean_t_uav)*(v_error_t_uav[i] - mean_t_uav);
-    v_stand_dev_t_ugv.push_back(error_stand_dev_t_ugv); v_stand_dev_t_uav.push_back(error_stand_dev_t_uav);
-    sum_stand_dev_t_ugv = error_stand_dev_t_ugv + sum_stand_dev_t_ugv;
-    sum_stand_dev_t_uav = error_stand_dev_t_uav + sum_stand_dev_t_uav;
-  }
-  stand_dev_t_ugv = sqrt(sum_stand_dev_t_ugv/v_time_ugv.size());
-  stand_dev_t_uav = sqrt(sum_stand_dev_t_uav/v_time_uav.size());
+  mean_v_uav = sum_error_v_uav / v_time_uav.size();
+  mean_a_uav = sum_error_a_uav / v_time_uav.size(); // Lengh two units less
 }
 
 void exportDataMission::exportDataError(){
@@ -389,8 +336,6 @@ void exportDataMission::exportDataError(){
     ofs_data_analysis <<total_pts<<std::endl;
     ofs_data_analysis <<"average_ugv_xy;average_uav_xy;average_uav_z;average_length"<<std::endl;
     ofs_data_analysis <<average_ugv_xy<<";"<<average_uav_xy<<";"<<average_uav_z<<";"<<average_length<<std::endl;
-    ofs_data_analysis <<"stand_dev_ugv_xy;stand_dev_uav_xy;stand_dev_uav_z;stand_dev_length"<<std::endl;
-    ofs_data_analysis <<stand_dev_ugv_xy<<";"<<stand_dev_uav_xy<<";"<<stand_dev_uav_z<<";"<<stand_dev_length<<std::endl;
     ofs_data_analysis <<"max_ugv_xy;max_uav_xy;max_uav_z;max_length"<<std::endl;
     ofs_data_analysis <<max_ugv_xy<<";"<<max_uav_xy<<";"<<max_uav_z<<";"<<max_length<<std::endl;
     ofs_data_analysis <<"min_ugv_xy;min_uav_xy;min_uav_z;min_length"<<std::endl;
@@ -407,14 +352,17 @@ void exportDataMission::exportDataError(){
       std::cout << output_file <<" : File exists !!!!!!!!!! " << std::endl;
   } else {
     ofs_time_analisys.open(output_file.c_str(), std::ofstream::app);
-    ofs_time_analisys <<"error_time_ugv;error_time_uav;stand_dev_t_ugv;stand_dev_t_uav;"<<std::endl;
+    ofs_time_analisys <<"error_time_ugv;error_time_uav;error_vel_ugv;error_vel_uav;error_acc_ugv;error_acc_uav;"<<std::endl;
     for (size_t i=0 ; i<v_time_ugv.size();i++)
     {
-      ofs_time_analisys <<v_error_t_ugv[i]<<";"<<v_error_t_uav[i]<<";"<<v_stand_dev_t_ugv[i]<<";"<<v_stand_dev_t_uav[i]<<";"<<std::endl;
+      ofs_time_analisys <<v_error_t_ugv[i]<<";"<<v_error_t_uav[i]<<";"<< v_error_v_ugv[i]<<";"<<v_error_v_uav[i]<<";";
+      if (i< v_time_ugv.size()-1)                  
+        ofs_time_analisys<<v_error_a_ugv[i]<<";"<<v_error_a_uav[i]<<";"<<std::endl;
+      else
+        ofs_time_analisys<<std::endl;
     }
-    ofs_time_analisys <<"mean_t_ugv;mean_t_uav;stand_dev_t_ugv;stand_dev_t_uav;max_t_ugv;min_t_ugv;max_t_uav;min_t_uav;"<<std::endl;
-    ofs_time_analisys <<mean_t_ugv<<";"<<mean_t_uav<<";"<<stand_dev_t_ugv<<";"<<stand_dev_t_uav<<";"
-                      <<max_t_ugv<<";"<<min_t_ugv<<";"<<max_t_uav<<";"<<min_t_uav<<";"<<std::endl;
+    ofs_time_analisys <<"mean_t_ugv;max_t_ugv;min_t_ugv;mean_t_uav;max_t_uav;min_t_uav;"<<std::endl;
+    ofs_time_analisys <<mean_t_ugv<<";"<<max_t_ugv<<";"<<min_t_ugv<<";"<<mean_t_uav<<";"<<max_t_uav<<";"<<min_t_uav<<";"<<std::endl;
     ofs_time_analisys <<"mean_v_ugv;max_v_ugv;min_v_ugv;mean_v_uav;max_v_uav;min_v_uav;"<<std::endl;
     ofs_time_analisys <<mean_v_ugv<<";"<<max_v_ugv<<";"<<min_v_ugv<<";"<<mean_v_uav<<";"<<max_v_uav<<";"<<min_v_uav<<";"<<std::endl;
     ofs_time_analisys <<"mean_a_ugv;max_a_ugv;min_a_ugv;mean_a_uav;max_a_uav;min_a_uav;"<<std::endl;
