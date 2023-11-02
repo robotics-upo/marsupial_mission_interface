@@ -3,72 +3,72 @@ marsupial_ugv:
   seq: 1
   stamp: 212558
   frame_id: ugv
-  size: 6
+  size: 7
   poses0:
     header: ugv0
     seq: 0
     frame_id: ugv
     pose:
       position:
-        x: 57
-        y: 11
-        z: 2.3
+        x: 34
+        y: 25
+        z: 0.27
       orientation:
         x: 0
         y: 0
-        z: 0
-        w: 1
+        z: 0.7884
+        w: 0.6151
   poses1:
     header: ugv1
     seq: 1
     frame_id: ugv
     pose:
       position:
-        x: 57
-        y: 11
-        z: 2.3
+        x: 32
+        y: 26
+        z: 0.27
       orientation:
         x: 0
         y: 0
-        z: 0
-        w: 1
+        z: 0.4014
+        w: 0.9158
   poses2:
     header: ugv2
     seq: 2
     frame_id: ugv
     pose:
       position:
-        x: 57
-        y: 11
-        z: 2.3
+        x: 29
+        y: 22
+        z: 0.27
       orientation:
         x: 0
         y: 0
-        z: 0
-        w: 1
+        z: 0.1135
+        w: 0.9935
   poses3:
     header: ugv3
     seq: 3
     frame_id: ugv
     pose:
       position:
-        x: 57
-        y: 11
-        z: 2.3
+        x: 23
+        y: 24
+        z: 0.27
       orientation:
         x: 0
         y: 0
-        z: 0
-        w: 1
+        z: 0.1358
+        w: 0.9907
   poses4:
     header: ugv4
     seq: 4
     frame_id: ugv
     pose:
       position:
-        x: 57
-        y: 11
-        z: 2.3
+        x: 20
+        y: 24
+        z: 0.27
       orientation:
         x: 0
         y: 0
@@ -80,144 +80,171 @@ marsupial_ugv:
     frame_id: ugv
     pose:
       position:
-        x: 57
-        y: 11
-        z: 2.3
+        x: 18
+        y: 24
+        z: 0.27
       orientation:
         x: 0
         y: 0
-        z: 0
-        w: 1
+        z: 0.1199
+        w: 0.9927
+  poses6:
+    header: ugv6
+    seq: 6
+    frame_id: ugv
+    pose:
+      position:
+        x: 18
+        y: 24
+        z: 0.27
+      orientation:
+        x: 0
+        y: 0
+        z: 0.1199
+        w: 0.9927 
 
 marsupial_uav:
   header: marsupial_uav
   seq: 1
   stamp: 212558
   frame_id: uav
-  size: 6
+  size: 7
   poses0:
     header: uav0
     seq: 0
     frame_id: uav
     pose:
       position:
-        x: 53
-        y: 11
-        z: 4.5
+        x: 34
+        y: 25
+        z: 2
       orientation:
         x: 0
         y: 0
-        z: 1.0
-        w: 0.0
+        z: 0.7884
+        w: 0.6151
   poses1:
     header: uav1
     seq: 1
     frame_id: uav
     pose:
       position:
-        x: 52
-        y: 11.5
-        z: 5.0
+        x: 32
+        y: 26
+        z: 2
       orientation:
         x: 0
         y: 0
-        z: 1.0
-        w: 0.0
+        z: 0.4014
+        w: 0.9158
   poses2:
     header: uav2
     seq: 2
     frame_id: uav
     pose:
       position:
-        x: 51
-        y: 12
-        z: 5.5
+        x: 29
+        y: 22
+        z: 2
       orientation:
         x: 0
         y: 0
-        z: 1
-        w: 0
+        z: 0.1135
+        w: 0.9935
   poses3:
     header: uav3
     seq: 3
     frame_id: uav
     pose:
       position:
-        x: 50
-        y: 12.5
-        z: 6.0
+        x: 23
+        y: 24
+        z: 2
       orientation:
         x: 0
         y: 0
-        z: 1.0
-        w: 0.0
+        z: 0.1358
+        w: 0.9907
   poses4:
     header: uav4
     seq: 4
     frame_id: uav
     pose:
       position:
-        x: 49
-        y: 13
-        z: 6.5
+        x: 20
+        y: 24
+        z: 2
       orientation:
         x: 0
         y: 0
-        z: 1.0
-        w: 0.0
+        z: 0
+        w: 1
   poses5:
     header: uav5
     seq: 5
     frame_id: uav
     pose:
       position:
-        x: 48
-        y: 13.5
-        z: 7.0
+        x: 18
+        y: 24
+        z: 2
       orientation:
         x: 0
         y: 0
-        z: 1.0
-        w: 0.0
-
+        z: 0.1199
+        w: 0.9927
+  poses6:
+    header: uga6
+    seq: 6
+    frame_id: uav
+    pose:
+      position:
+        x: 18
+        y: 24
+        z: 2
+      orientation:
+        x: 0
+        y: 0
+        z: 0.1199
+        w: 0.9927 
 tether:
   header: tether
   seq: 1
   stamp: 212558
   frame_id: frame_tether
-  size: 5
+  size: 7
   length0:
     header: tether0
     seq: 0
     frame_id: tether_length
-    length: 6.0
+    length: 2.1
   length1:
     header: tether1
     seq: 1
     frame_id: tether_length
-    length: 7.0
+    length: 2.1
   length2:
     header: tether2
     seq: 2
     frame_id: tether_length
-    length: 8.0
+    length: 2.1
   length3:
     header: tether3
     seq: 3
     frame_id: tether_length
-    length: 9.0
+    length: 2.1
   length4:
     header: tether4
     seq: 4
     frame_id: tether_length
-    length: 10.0
+    length: 2.1
   length5:
     header: tether5
     seq: 5
     frame_id: tether_length
-    length: 10.5
+    length: 2.1
   length6:
     header: tether6
     seq: 6
     frame_id: tether_length
-    length: 11.0
+    length: 2.1

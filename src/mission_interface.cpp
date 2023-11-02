@@ -1,6 +1,7 @@
 
 #include <mission_interface/mission_interface.h>
 #include <tf/transform_datatypes.h>
+#include<stdlib.h>
 
 MissionInterface::MissionInterface(std::string node_name_)
 {
@@ -13,22 +14,37 @@ MissionInterface::MissionInterface(std::string node_name_)
   nh->param("ugv_base_frame", ugv_base_frame, (std::string) "ugv_base_link");
   nh->param("ugv_odom_frame", ugv_odom_frame, (std::string) "ugv/odom");
   nh->param("uav_base_frame", uav_base_frame, (std::string) "uav_base_link");
+  nh->param("uav_odom_frame", uav_odom_frame, (std::string) "ugv/odom");
   nh->param("world_frame", world_frame, (std::string) "world");
   nh->param("map_name", map_name, (std::string) "stage");
   nh->param("offset_map_"+map_name+"/offset_map_dll_x", offset_map_dll_x, (double)0.0);
   nh->param("offset_map_"+map_name+"/offset_map_dll_y", offset_map_dll_y, (double)0.0);
   nh->param("offset_map_"+map_name+"/offset_map_dll_z", offset_map_dll_z, (double)0.0);
   nh->param("flying_height", flying_height, (double)0.3);
+  nh->param("time_max", time_max, (double)1.5);
 
   nh->param<bool>("able_tracker_ugv",able_tracker_ugv, true);
   nh->param<bool>("able_tracker_uav",able_tracker_uav, true);
+  nh->param<bool>("used_length_reached",used_length_reached, true);
   nh->param("takeoff_height",takeoff_height, (float)1.0);
-    
+  nh->param<bool>("do_takeoff",do_takeoff, true);
+
+
+  nh->param<int>("stop_arco_mission_button", stopArcoMissionButton, STOP_ARCO_MISSION_BUTTON);
+
   ros_node_name = node_name_;
   ROS_INFO("Initialized Node : %s", ros_node_name.c_str());
 
   take_off = false;
   received_initial_pose = false;
+  is_ugv_in_waypoint = is_uav_in_waypoint = false;
+  sent_new_ugv_wp = sent_new_uav_wp = false;
+
+  double sleep_time = 0.0;
+  nh->param<double>("sleep_time", sleep_time, 2.0);
+  ROS_INFO("Sleep %f seconds", sleep_time);
+  ros::Duration(sleep_time).sleep();
+
 
   geometry_msgs::TransformStamped uav_tf_;
   readWaypoints(path_file);
@@ -59,25 +75,38 @@ MissionInterface::MissionInterface(std::string node_name_)
   resetFlags();
   markerPoints();
   ros::spinOnce();
-  // configServices();
+  configServices();
+    
+    if(used_length_reached){
+      ROS_INFO("Reset Tether Length to: %f", tether_length_vector[0]);
+      std_msgs::Float32 reset_msg_;
+      reset_msg_.data = tether_length_vector[0];
+      for(int i = 0; i < 3 ; i++){
+        reset_length_pub_.publish(reset_msg_);
+        ros::spinOnce();
+        ros::Duration(1.0).sleep();
+      }
+    }
 
-  try{
-    uav_tf_ = tfBuffer->lookupTransform(world_frame, uav_base_frame, ros::Time(0));
-    ROS_INFO("\tGot initial UAV position ");
-    initial_pose  = uav_tf_.transform.translation;
-    received_initial_pose = true;
-  }    
-  catch (tf2::TransformException &ex){
-    ROS_WARN("Mission Interface: Couldn't get position initial UAV (base_frame: %s - odom_frame: %s), so not possible to set UAV start point; tf exception: %s",
-	     world_frame.c_str(),uav_base_frame.c_str(),ex.what());
+  markerPoints();
+
+  if (able_tracker_uav){
+    try{
+      uav_tf_ = tfBuffer->lookupTransform(world_frame, uav_base_frame, ros::Time(0));
+      initial_pose  = uav_tf_.transform.translation;
+      ROS_INFO("\tGot initial UAV position uav_tf_[%f %f %f]",uav_tf_.transform.translation.x,uav_tf_.transform.translation.y,uav_tf_.transform.translation.z);
+      received_initial_pose = true;
+    }    
+    catch (tf2::TransformException &ex){
+      ROS_WARN("Mission Interface: Couldn't get position initial UAV (base_frame: %s - odom_frame: %s), so not possible to set UAV start point; tf exception: %s",
+        uav_base_frame.c_str(),uav_odom_frame.c_str(),ex.what());
+    }
   }
 }
 
 void MissionInterface::interpolate(float dist) {
   trajectory_msgs::MultiDOFJointTrajectory new_trajectory;
   std::vector<float> new_length_vector;
-  
-  
   
   if (trajectory.points.size() < 2)
     return;
@@ -107,7 +136,9 @@ void MissionInterface::interpolate(float dist) {
     
     float dist_uav = uav_p1.distance(uav_p0);
     float dist_ugv = ugv_p1.distance(ugv_p0);
-    int n = (int)ceil(dist_uav/dist);
+    float n = ceil(dist_uav/dist);
+    float n_ugv = ceil(dist_ugv/dist);
+    n = std::max(n_ugv, n);
     float delta_length = (length1 - length0)/n;
     float delta = 1.0 / (float) n;
     for (int j = 1; j <= n; j++) {
@@ -139,7 +170,6 @@ void MissionInterface::interpolate(float dist) {
   trajectory = new_trajectory;
 
   ROS_INFO("Interpolated trajectory. New points: %lu", new_length_vector.size());
-  
 }
 
 //Config standard services and action lib servers and clients
@@ -155,8 +185,8 @@ void MissionInterface::configServices()
     }
     if(able_tracker_ugv){
         ROS_INFO("%s Node: Initialazing UGV Navigation Client", ros_node_name.c_str());
-        ugvNavigation3DClient.reset(new Navigate3DClient("/UGVNavigation3D", true));
-        ugvNavigation3DClient->waitForServer();
+        NavigationClient.reset(new NavigateClient("/Navigation", true));
+        NavigationClient->waitForServer();
     }
 }
 
@@ -171,20 +201,19 @@ void MissionInterface::configTopics()
     uav_state_mission_sub_ = nh->subscribe<std_msgs::Bool>
       ("uav_ready_for_mission", 1, &MissionInterface::uavReadyForMissionCB, this);
   }
-  start_mission_sub_ = nh->subscribe<std_msgs::Bool>("start_mission", 1,
-						     &MissionInterface::startMissionCB, this);
+  start_mission_sub_ = nh->subscribe<std_msgs::Bool>("start_mission", 1, &MissionInterface::startMissionCB, this);
   gps_sub_ = nh->subscribe<sensor_msgs::NavSatFix>("gps", 1, &MissionInterface::gpsCB, this);
-  traj_ugv_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_ugv", 100);
-  traj_uav_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_uav", 100);
-  catenary_length_pub_ = nh->advertise<std_msgs::Float32>("/tie_controller/set_length", 1);
-  length_reached_sub_ = nh->subscribe("/tie_controller/length_reached", 1,
-					&MissionInterface::lengthReachedCB, this);
-  load_trajectory_sub_ = nh->subscribe("load_mission", 1,
-				       &MissionInterface::loadMissionCB, this);
+  length_reached_sub_ = nh->subscribe("/tie_controller/length_reached", 1, &MissionInterface::lengthReachedCB, this);
+  load_trajectory_sub_ = nh->subscribe("load_mission", 1, &MissionInterface::loadMissionCB, this);
+  joy_sub_ = nh->subscribe<sensor_msgs::Joy>("/arco/joy", 5, &MissionInterface::joyReceivedCB,this);
   
-  traj_lines_ugv_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_lines_ugv", 100);
-  traj_lines_uav_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_lines_uav", 100);
-  catenary_marker_pub_= nh->advertise<visualization_msgs::MarkerArray>("trajectory_catenary", 100);
+  traj_ugv_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_ugv", 100, true);
+  traj_uav_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_uav", 100, true);
+  catenary_length_pub_ = nh->advertise<std_msgs::Float32>("/tie_controller/set_length", 1);
+  traj_lines_ugv_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_lines_ugv", 100, true);
+  traj_lines_uav_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_lines_uav", 100, true);
+  catenary_marker_pub_= nh->advertise<visualization_msgs::MarkerArray>("trajectory_catenary", 100, true);
+  reset_length_pub_= nh->advertise<std_msgs::Float32>("/tie_controller/reset_length_estimation", 100); 
 }
 
 void MissionInterface::ugvReadyForMissionCB(const std_msgs::BoolConstPtr &msg)
@@ -224,7 +253,13 @@ void MissionInterface::gpsCB(const sensor_msgs::NavSatFix::ConstPtr& msg)
   height = msg->altitude;
 }
 
-// 
+void MissionInterface::joyReceivedCB(const sensor_msgs::Joy::ConstPtr& joy)
+{ 
+ if (joy->buttons[stopArcoMissionButton]) {
+      ROS_ERROR("MissionInterface : JOYSTICK is forcing to STOP Arco Mission Path Tracker");
+      NavigationClient->cancelAllGoals();
+  }
+}
 
 void MissionInterface::executeMission()
 {
@@ -236,7 +271,7 @@ void MissionInterface::executeMission()
     resetFlags();
   }
 
-  while(start_mission){
+  if(start_mission){
     // To force variable in TRUE and continue with execution tracker even if UGV is not able
     if(!able_tracker_ugv)   
       ugv_ready = true;
@@ -245,181 +280,193 @@ void MissionInterface::executeMission()
       uav_ready = true; 
 
     if(ugv_ready && uav_ready)
-      {
-	bool uav_in_on_ground_ = UAVisOnTheGround();
-	std::cout << "UAV is on the ground? : " << uav_in_on_ground_ << std::endl;
-            
-	if(uav_in_on_ground_){
-	  std::cout << "\tSending takeoff height" << std::endl;
-	  upo_actions::TakeOffGoal takeOffGoal;
-	  std_msgs::Float32 takeoff_height_;
-	  takeoff_height_.data = takeoff_height;
-	  takeOffGoal.takeoff_height = takeoff_height_;
-	  takeOffClient->sendGoal(takeOffGoal);
-	  while (!takeOffClient->waitForResult(ros::Duration(30.0))){
-	    std::cout << "\tSent takeoff height ... waiting action server" << std::endl;
-	  }
-        
-	  if (takeOffClient->getState() == actionlib::SimpleClientGoalState::SUCCEEDED){
-	    printf("\tUAV take Off succeessful\n");
-	    take_off = true;
-	  }
+    {
+      bool uav_in_on_ground_ = UAVisOnTheGround();
+      if (do_takeoff){
+        std::cout << "UAV is on the ground? : " << uav_in_on_ground_ << std::endl;
+                  
+        if(uav_in_on_ground_){
+          std::cout << "\tSending takeoff height" << std::endl;
+          upo_actions::TakeOffGoal takeOffGoal;
+          std_msgs::Float32 takeoff_height_;
+          takeoff_height_.data = takeoff_height;
+          takeOffGoal.takeoff_height = takeoff_height_;
+          takeOffClient->sendGoal(takeOffGoal);
+          while (!takeOffClient->waitForResult(ros::Duration(time_max))){
+            std::cout << "\tSent takeoff height ... waiting action server" << std::endl;
+          }
+              
+          if (takeOffClient->getState() == actionlib::SimpleClientGoalState::SUCCEEDED){
+            printf("\tUAV take Off succeessful\n");
+            take_off = true;
+          }
 
-	  if(!take_off){
-	    ROS_ERROR("DRONE COULDN'T TAKE OFF, IS STILL IN GROUND: FIRST TAKE-OFF");
-	    uav_ready = ugv_ready = false;
-	    ROS_ERROR("Check platform NOT ready to TAKE-OFF: Use teleop control to land UAV");
-	  }
-	}
-	else{
-	  printf("\tUAV already took off - ready to perform maneuver to go first WP\n");
-	}
+          if(!take_off){
+            ROS_ERROR("DRONE COULDN'T TAKE OFF, IS STILL IN GROUND: FIRST TAKE-OFF");
+            uav_ready = ugv_ready = false;
+            ROS_ERROR("Check platform NOT ready to TAKE-OFF: Use teleop control to land UAV");
+          }
+          printf("\t\tUAV Take off - ready to execute trajectory: Sending WP %i\n",num_wp + 1);
+        }
+        else{
+          printf("\tUAV already took off - ready to perform maneuver to go first WP\n");
+        }
+      }else{
+          uav_in_on_ground_ =false;
+      }
 
-	while(ros::ok() && num_wp < size_) {
-	  printf("\t\tUAV Take off - ready to execute trajectory: Sending WP %i\n",num_wp + 1);
-	  ros::Duration(1.0).sleep();
+      if(num_wp < size_) {
 
-	  is_ugv_in_waypoint = !able_tracker_ugv;   // Reset variable after WayPoint reached
-	  // To reset variable after waypoint WayPoint. If not able defaults to true
-	  is_uav_in_waypoint = !able_tracker_uav;
-	  length_reached = false;
+        if(able_tracker_ugv){
+          ugv_goal3D.global_goal.position.x = trajectory.points.at(num_wp).transforms[0].translation.x;
+          ugv_goal3D.global_goal.position.y = trajectory.points.at(num_wp).transforms[0].translation.y;
+          ugv_goal3D.global_goal.position.z = trajectory.points.at(num_wp).transforms[0].translation.z;
+          ugv_goal3D.global_goal.orientation.x = trajectory.points.at(num_wp).transforms[0].rotation.x;
+          ugv_goal3D.global_goal.orientation.y = trajectory.points.at(num_wp).transforms[0].rotation.y;
+          ugv_goal3D.global_goal.orientation.z = trajectory.points.at(num_wp).transforms[0].rotation.z;
+          ugv_goal3D.global_goal.orientation.w = trajectory.points.at(num_wp).transforms[0].rotation.w;
+        }
+        if(able_tracker_uav){
+          uav_goal3D.global_goal.pose.position.x = trajectory.points.at(num_wp).transforms[1].translation.x;
+          uav_goal3D.global_goal.pose.position.y = trajectory.points.at(num_wp).transforms[1].translation.y;
+          uav_goal3D.global_goal.pose.position.z = trajectory.points.at(num_wp).transforms[1].translation.z;
+          uav_goal3D.global_goal.pose.orientation.x = trajectory.points.at(num_wp).transforms[1].rotation.x;
+          uav_goal3D.global_goal.pose.orientation.y = trajectory.points.at(num_wp).transforms[1].rotation.y;
+          uav_goal3D.global_goal.pose.orientation.z = trajectory.points.at(num_wp).transforms[1].rotation.z;
+          uav_goal3D.global_goal.pose.orientation.w = trajectory.points.at(num_wp).transforms[1].rotation.w;
+        }
+        std_msgs::Float32 catenary_msg;
+        catenary_msg.data = tether_length_vector.at(num_wp);
+        ros::Duration(0.2).sleep();  //DONT forget delete
 
-	  if(able_tracker_ugv){
-	    ugv_goal3D.global_goal.pose.position.x =
-	      trajectory.points.at(num_wp).transforms[0].translation.x;
-	    ugv_goal3D.global_goal.pose.position.y =
-	      trajectory.points.at(num_wp).transforms[0].translation.y;
-	    ugv_goal3D.global_goal.pose.position.z =
-	      trajectory.points.at(num_wp).transforms[0].translation.z;
-	    ugv_goal3D.global_goal.pose.orientation.x =
-	      trajectory.points.at(num_wp).transforms[0].rotation.x;
-	    ugv_goal3D.global_goal.pose.orientation.y =
-	      trajectory.points.at(num_wp).transforms[0].rotation.y;
-	    ugv_goal3D.global_goal.pose.orientation.z =
-	      trajectory.points.at(num_wp).transforms[0].rotation.z;
-	    ugv_goal3D.global_goal.pose.orientation.w =
-	      trajectory.points.at(num_wp).transforms[0].rotation.w;
-	  }
-	  if(able_tracker_uav){
-	    uav_goal3D.global_goal.pose.position.x =
-	      trajectory.points.at(num_wp).transforms[1].translation.x;
-	    uav_goal3D.global_goal.pose.position.y =
-	      trajectory.points.at(num_wp).transforms[1].translation.y;
-	    uav_goal3D.global_goal.pose.position.z =
-	      trajectory.points.at(num_wp).transforms[1].translation.z;
-	    uav_goal3D.global_goal.pose.orientation.x =
-	      trajectory.points.at(num_wp).transforms[1].rotation.x;
-	    uav_goal3D.global_goal.pose.orientation.y =
-	      trajectory.points.at(num_wp).transforms[1].rotation.y;
-	    uav_goal3D.global_goal.pose.orientation.z =
-	      trajectory.points.at(num_wp).transforms[1].rotation.z;
-	    uav_goal3D.global_goal.pose.orientation.w =
-	      trajectory.points.at(num_wp).transforms[1].rotation.w;
-	  }
-	  std_msgs::Float32 catenary_msg;
-	  catenary_msg.data = tether_length_vector.at(num_wp);
-	  catenary_length_pub_.publish(catenary_msg);
+        catenary_length_pub_.publish(catenary_msg);
 
-	  if(able_tracker_ugv){
-	    ROS_INFO_COND(debug, "Sending new WayPoint UGV to tracker: goal[%f %f %f]",
-			  ugv_goal3D.global_goal.pose.position.x,
-			  ugv_goal3D.global_goal.pose.position.y,
-			  ugv_goal3D.global_goal.pose.position.z);
-	    ugvNavigation3DClient->sendGoal(ugv_goal3D);
-	    ROS_INFO_COND(debug, "Sent WayPoint for UGV ... Waiting for finishing maneuver");
-	  }
-	  if(able_tracker_uav){
-	    ROS_INFO_COND(debug, "Sending new WayPoint UAV to tracker: goal[%f %f %f]",
-			  uav_goal3D.global_goal.pose.position.x,
-			  uav_goal3D.global_goal.pose.position.y,
-			  uav_goal3D.global_goal.pose.position.z);
-	    uavNavigation3DClient->sendGoal(uav_goal3D);
-	    ROS_INFO_COND(debug, "Sent WayPoint for UAV ... Waiting for finishing maneuver");
-	  }
+        if(able_tracker_ugv && !sent_new_ugv_wp){
+          ROS_INFO_COND(debug, "Sending UGV WayPoint [%i/%i] to tracker: goal[%f %f %f]", num_wp, size_,
+            ugv_goal3D.global_goal.position.x,
+            ugv_goal3D.global_goal.position.y,
+            ugv_goal3D.global_goal.position.z);
+          NavigationClient->sendGoal(ugv_goal3D);
+          ROS_INFO_COND(debug, "Sent WayPoint for UGV ... Waiting for finishing maneuver");
+          sent_new_ugv_wp = true;
+          time_count_ugv = ros::Time::now();
+        }
+        if(able_tracker_uav && !sent_new_uav_wp ){
+          ROS_INFO_COND(debug, "Sending UAV WayPoint [%i/%i] to tracker: goal[%f %f %f]", num_wp, size_,
+            uav_goal3D.global_goal.pose.position.x,
+            uav_goal3D.global_goal.pose.position.y,
+            uav_goal3D.global_goal.pose.position.z);
+          uavNavigation3DClient->sendGoal(uav_goal3D);
+          ROS_INFO_COND(debug, "Sent WayPoint for UAV ... Waiting for finishing maneuver");
+          sent_new_uav_wp = true;
+          time_count_uav = ros::Time::now();
+        }
 
-	  ros::Time start_time = ros::Time::now();
-	  uavNavigation3DClient->waitForResult(ros::Duration(2000.0));
-	  // TODO: wait also for the UGV client
-	  if(able_tracker_ugv){
-	    if(ugvNavigation3DClient->getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
-	      {
-		is_ugv_in_waypoint = true;
-		ROS_INFO("UGV Path Tracker: Goal [%i/%i] Achieved",num_wp + 1,size_);
-	      }
-	    else if (ugvNavigation3DClient->getState() ==
-		     actionlib::SimpleClientGoalState::ABORTED)
-	      {
-		ROS_INFO_COND(debug, "Goal aborted by path tracker");
-		resetFlags();
-		return;
-	      }
-	    else if (ugvNavigation3DClient->getState() ==
-		     actionlib::SimpleClientGoalState::PREEMPTED)
-	      {
-		ROS_INFO_COND(debug, "Goal preempted by path tracker");
-		resetFlags();
-		return;
-	      }
-	  }
-	  if(able_tracker_uav) {
-	    if(uavNavigation3DClient->getState() ==
-	       actionlib::SimpleClientGoalState::SUCCEEDED)
-	      {
-		is_uav_in_waypoint = true;
-		ROS_INFO("UAV Path Tracker: Goal [%i/%i] Achieved",num_wp + 1,size_);
-	      }
-	    else if (uavNavigation3DClient->getState() ==
-		     actionlib::SimpleClientGoalState::ABORTED)
-	      {
-		ROS_INFO_COND(debug, "Goal aborted by path tracker");
-		resetFlags();
-		return;
-	      }
-	    else if (uavNavigation3DClient->getState() ==
-		     actionlib::SimpleClientGoalState::PREEMPTED)
-	      {
-		ROS_INFO_COND(debug, "Goal preempted by path tracker");
-		resetFlags();
-		return;
-	      }
-	  }
+         // To reset variable after waypoint WayPoint. If not able defaults to true
+        is_ugv_in_waypoint = !able_tracker_ugv;  // Reset variable after WayPoint reached
+        is_uav_in_waypoint = !able_tracker_uav;
+        length_reached = false;
 
-	  // Wait for proper length
-	  ROS_INFO("Waiting for the cable system to get the commanded length");
-	  while (!length_reached && ros::ok()) {
-	    ros::Duration(0.5).sleep();
-	    ros::spinOnce();
-	  }
-	  
-	  if(is_ugv_in_waypoint && is_uav_in_waypoint && length_reached) {
-	    std::cout <<" " << std::endl;
-	    printf("\t\tSuccessfully achieved WayPoint [%i/%i]\n",num_wp + 1,size_);
-	    num_wp++;
-	  } else {
-	    std::cout <<" " << std::endl;
-	    ROS_ERROR("\t\tNot possible to reach WayPoint [%i/%i] - Check robot system",
-		      num_wp + 1,size_);
-	    resetFlags();
-	    break;
-	  }
-	  if (num_wp == size_){
-	    printf("\n\tWell Done !!!\n");
-	    printf("\n\tMission Finished: WPs achived\n");
-	    printf("\n\tInitializing flags !!\n");
-	    resetFlags();
-	    break;
-	  }
-	}
-	uav_ready = ugv_ready = false;
-	start_mission = false;
-      } else {
+        // TODO: wait also for the UGV client
+        if ( (!able_tracker_ugv || NavigationClient->getState() == actionlib::SimpleClientGoalState::SUCCEEDED) && 
+               (!able_tracker_uav || uavNavigation3DClient->getState() == actionlib::SimpleClientGoalState::SUCCEEDED) )
+          {
+            if(able_tracker_ugv){
+              is_ugv_in_waypoint = true;
+              ROS_INFO("UGV Path Tracker: Goal [%i/%i] Achieved",num_wp + 1,size_);
+            }
+            if(able_tracker_uav){
+              is_uav_in_waypoint = true;
+              ROS_INFO("UAV Path Tracker: Goal [%i/%i] Achieved",num_wp + 1,size_);
+            }
+          }
+          else if ((!able_tracker_ugv || NavigationClient->getState() == actionlib::SimpleClientGoalState::ABORTED) &&
+                   (!able_tracker_uav || uavNavigation3DClient->getState() == actionlib::SimpleClientGoalState::ABORTED))
+          {
+            if(able_tracker_ugv){
+              ROS_INFO_COND(debug, "UGV Goal aborted by path tracker");
+              resetFlags();
+              return;
+            }
+            if(able_tracker_uav){
+              ROS_INFO_COND(debug, "UAV Goal aborted by path tracker");
+              resetFlags();
+              return;
+            }
+          }
+          else if ((!able_tracker_ugv || NavigationClient->getState() == actionlib::SimpleClientGoalState::PREEMPTED) &&
+                   (!able_tracker_uav || uavNavigation3DClient->getState() == actionlib::SimpleClientGoalState::PREEMPTED))
+          { 
+            if(able_tracker_ugv){
+              ROS_INFO_COND(debug, "UGV Goal preempted by path tracker");
+              resetFlags();
+              return;
+            }
+            if(able_tracker_uav){
+              ROS_INFO_COND(debug, "UAV Goal preempted by path tracker");
+              resetFlags();
+              return;
+            }
+          }
+
+        // Wait for proper length
+        if (used_length_reached){
+          ROS_INFO("Waiting for the cable system to get the commanded length");
+          while (!length_reached && ros::ok()) {
+            ros::Duration(0.2).sleep();
+            ros::spinOnce();
+          }
+        } else{
+          length_reached = true;
+        }
+
+        // printf("is_ugv_in_waypoint: %s",is_ugv_in_waypoint?"true":"false");
+        // printf(" , is_uav_in_waypoint: %s",is_uav_in_waypoint?"true":"false");
+        // printf(" , length_reached: %s\n",length_reached?"true":"false");
+
+        if(is_ugv_in_waypoint && is_uav_in_waypoint && length_reached) {
+          std::cout <<" " << std::endl;
+          ROS_INFO("\t\tSuccessfully achieved WayPoint [%i/%i]\n",num_wp + 1,size_);
+          sent_new_ugv_wp = sent_new_uav_wp = false;
+          num_wp++;
+        } else {
+          //ROS_WARN("\t\tExecuting maneauvere to reach WayPoint [%i/%i]", num_wp + 1,size_);
+        }
+
+        if(able_tracker_ugv && ros::Time::now() - time_count_ugv > ros::Duration(time_max)) {
+          std::cout <<" " << std::endl;
+          ROS_ERROR("\t\tWasn't posible to reach UGV WayPoint [%i/%i] ", num_wp + 1,size_);
+          NavigationClient->cancelAllGoals();
+          if(able_tracker_uav)
+            uavNavigation3DClient->cancelAllGoals();
+          resetFlags();
+        }
+
+        if(able_tracker_uav && ros::Time::now() - time_count_uav > ros::Duration(time_max)) {
+          std::cout <<" " << std::endl;
+          ROS_ERROR("\t\tWasn't posible to reach UAV WayPoint [%i/%i] ", num_wp + 1,size_);
+          if(able_tracker_ugv)
+            NavigationClient->cancelAllGoals();
+          uavNavigation3DClient->cancelAllGoals();
+          resetFlags();
+        }
+
+        if (num_wp == size_){
+          printf("\n\tWell Done !!!\n");
+          printf("\n\tMission Finished: WPs achived\n");
+          printf("\n\tInitializing flags !!\n");
+          resetFlags();
+        }
+      }
+    } 
+    else {
       if(!ugv_ready && !uav_ready && able_tracker_ugv && able_tracker_uav)    
-	printf("\t\tUGV and UAV Platform NOT ready for execute mission\n");
+        printf("\t\tUGV and UAV Platform NOT ready for execute mission\n");
       else if(!ugv_ready && able_tracker_ugv)    
-	printf("\t\tUGV Platform NOT ready for execute mission\n");
+        printf("\t\tUGV Platform NOT ready for execute mission\n");
       else if(!uav_ready && able_tracker_uav)    
-	printf("\t\tUAV Platform NOT ready for execute mission\n");
-	
+        printf("\t\tUAV Platform NOT ready for execute mission\n");
+    
       ros::Duration(2.0).sleep();
     }
     ros::spinOnce();
@@ -435,13 +482,13 @@ void MissionInterface::resetFlags()
   is_uav_in_waypoint = false;
   start_mission = false;
   length_reached = false;
+  sent_new_uav_wp = sent_new_ugv_wp = false;
 }
-
-
 
 // Todo: let the user enter them with external files
 void MissionInterface::readWaypoints(const std::string &path_file)
 {
+  std:cout << "MissionInterface::readWaypoints : " << path_file << std::endl;
   YAML::Node file = YAML::LoadFile(path_file);
 
   trajectory.points.clear(); 
@@ -451,8 +498,7 @@ void MissionInterface::readWaypoints(const std::string &path_file)
   traj_marsupial_.transforms.resize(2);
   traj_marsupial_.velocities.resize(2);
   traj_marsupial_.accelerations.resize(2);
-
-  int size_ = (file["marsupial_ugv"]["size"].as<int>()) ; 
+  int size_ = (file["size"].as<int>()) ; 
   std::string ugv_pos_data, uav_pos_data, tether_data;
   double ugv_pos_x, ugv_pos_y, ugv_pos_z, ugv_rot_x, ugv_rot_y, ugv_rot_z, ugv_rot_w;
   double uav_pos_x, uav_pos_y, uav_pos_z, uav_rot_x, uav_rot_y, uav_rot_z, uav_rot_w;
@@ -575,13 +621,13 @@ bool MissionInterface::isInitialPose()
   }
   if(able_tracker_uav){
     try{
-      uav_tf_ = tfBuffer->lookupTransform(world_frame, uav_base_frame, ros::Time(0));
+      uav_tf_ = tfBuffer->lookupTransform(uav_odom_frame, uav_base_frame, ros::Time(0));
       ROS_INFO("Mission Interface: Got UAV Pose (base_frame: %s - odom_frame: %s).",
-	       uav_base_frame.c_str(),world_frame.c_str());
+	       uav_base_frame.c_str(),uav_odom_frame.c_str());
     }    
     catch (tf2::TransformException &ex){
       ROS_WARN("Mission Interface: Couldn't get UAV Pose (base_frame: %s - odom_frame: %s), so not possible to set UAV start point; tf exception: %s",
-	       world_frame.c_str(),uav_base_frame.c_str(),ex.what());
+	       uav_base_frame.c_str(),uav_odom_frame.c_str(),ex.what());
     }
     if ( fabs(init_uav_pose.position.x - uav_tf_.transform.translation.x) < dist_goal_uav && 
 	 fabs(init_uav_pose.position.y - uav_tf_.transform.translation.y) < dist_goal_uav &&
@@ -603,11 +649,13 @@ bool MissionInterface::isInitialPose()
 bool MissionInterface::UAVisOnTheGround()
 {
     geometry_msgs::TransformStamped uav_tf_;
+
+    if (!able_tracker_uav)
+      return false;
+
     try{
         uav_tf_ = tfBuffer->lookupTransform(world_frame, uav_base_frame, ros::Time(0));
-        ROS_INFO("Mission Interface: Got UAV Pose (base_frame: %s - odom_frame: %s).",
-		 uav_base_frame.c_str(),world_frame.c_str());
-        initial_pose  = uav_tf_.transform.translation;
+        // printf("\t\tMission Interface: Got UAV Pose (base_frame: %s - odom_frame: %s).", uav_base_frame.c_str(),world_frame.c_str());
     }    
     catch (tf2::TransformException &ex){
         ROS_WARN("Mission Interface: Couldn't get UAV Pose (world_frame: %s - base_frame: %s), so not possible to set UAV start point; tf exception: %s",
@@ -783,4 +831,12 @@ void MissionInterface::markerPoints()
     }	
     catenary_marker_pub_.publish(_cat_marker);
   }
+}
+
+void MissionInterface::cancelMission()
+{
+  NavigationClient->cancelAllGoals();
+  uavNavigation3DClient->cancelAllGoals();
+  takeOffClient->cancelAllGoals();
+  start_mission = able_tracker_ugv =  able_tracker_uav = false;
 }

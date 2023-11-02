@@ -1,0 +1,38 @@
+<launch>
+
+    <param name="use_sim_time" value="true"/>
+
+    <!-- <arg name="mission_file" default="teatro_wall_opt" />  -->
+    <arg name="mission_file" default="teatro_full" /> 
+    <arg name="map_name" default="teatro_wall"/> 
+    <arg name="mission_path" default="$(find marsupial_mission_interface)/cfg/optimized_path/optimized_path_$(arg mission_file).yaml"/>
+    <arg name="statistical_results_path" default="$(env HOME)/statistical_results_from_validation_experiments_marsupial/"/>
+    <arg name="interpolation_distance" default="0.5"/>
+    <arg name="rviz" default="true" /> 
+    <arg name="ugv_base_frame" default="arco/base_link" /> 
+    <arg name="uav_base_frame" default="base_link" /> 
+    <arg name="world_frame"     default="world" /> 
+
+
+    <node name="check_mission_node" pkg="marsupial_mission_interface" type="check_mission_node" output="screen"> # launch-prefix="gdb -ex run --args">
+        <rosparam command="load" file="$(env HOME)/marsupial_ws/src/marsupial_mission_interface/cfg/offset_maps_dll/offset_maps_dll_$(arg map_name).yaml"/>
+        <param name="mission_path" value="$(arg mission_path)"/> 
+        <param name="statistical_results_path" value="$(arg statistical_results_path)"/> 
+        <param name="map_name" value="$(arg map_name)"/> 
+        <param name="interpolation_distance" value="$(arg interpolation_distance)"/> 
+        <param name="ugv_base_frame" value="$(arg ugv_base_frame)"/> 
+        <param name="uav_base_frame" value="$(arg uav_base_frame)"/> 
+        <param name="world_frame" value="$(arg world_frame)"/> 
+        <param name="/$(arg map_name)_pos_final_1/pose/x" value="-6.65" />
+        <param name="/$(arg map_name)_pos_final_1/pose/y" value="4.39" />
+        <param name="/$(arg map_name)_pos_final_1/pose/z" value="3.05" />
+    </node>
+
+    <!-- <include file="$(find marsupial_optimizer)/launch/octomap_server.launch">
+        <arg name="map_file"  value="$(arg map_name)"/>    
+    </include> -->
+
+    <!-- <node pkg="rviz" name="rviz" type="rviz" args="-d $(find marsupial_mission_interface)/viz/check_mission.rviz" if="$(arg rviz)"/> -->
+
+
+</launch>

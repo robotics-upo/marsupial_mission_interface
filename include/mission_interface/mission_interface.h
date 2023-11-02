@@ -37,6 +37,7 @@
 #include <std_msgs/Int32.h>
 #include <std_msgs/Bool.h>
 #include <sensor_msgs/NavSatFix.h>
+#include <sensor_msgs/Joy.h>
 
 #include <yaml-cpp/yaml.h>
 #include <std_srvs/Trigger.h>
@@ -44,10 +45,13 @@
 #include "mission_interface/compute_catenary_3D.h"
 #include "marsupial_mission_interface/vector_float.h"
 
+#define STOP_ARCO_MISSION_BUTTON   	      1
+
 
 class MissionInterface
 {
   typedef actionlib::SimpleActionClient<upo_actions::Navigate3DAction> Navigate3DClient;
+  typedef actionlib::SimpleActionClient<upo_actions::NavigateAction> NavigateClient;
   typedef actionlib::SimpleActionClient<upo_actions::TakeOffAction> TakeOffClient;
 
 public:
@@ -58,7 +62,7 @@ public:
 
   std::unique_ptr<actionlib::SimpleClientGoalState> state;
   std::unique_ptr<Navigate3DClient> uavNavigation3DClient;
-  std::unique_ptr<Navigate3DClient> ugvNavigation3DClient;
+  std::unique_ptr<NavigateClient> NavigationClient; // For UGV
   std::unique_ptr<TakeOffClient> takeOffClient;
   std::unique_ptr<tf::TransformListener> tf_list_ptr;
 
@@ -78,13 +82,15 @@ public:
   bool isInitialPose();
   bool UAVisOnTheGround();
   void markerPoints();
-
+  void joyReceivedCB(const sensor_msgs::Joy::ConstPtr& joy);
   void interpolate(float dist);
+  void cancelMission();
+
 
   bisectionCat BisCat;
   
   ros::Subscriber ugv_state_mission_sub_, uav_state_mission_sub_, start_mission_sub_, gps_sub_;
-  ros::Subscriber load_trajectory_sub_, length_reached_sub_;
+  ros::Subscriber load_trajectory_sub_, length_reached_sub_, joy_sub_;
   geometry_msgs::Pose init_uav_pose, init_ugv_pose;
   geometry_msgs::Vector3 initial_pose;
   float takeoff_height;
@@ -94,23 +100,35 @@ public:
 
   trajectory_msgs::MultiDOFJointTrajectory globalTrajectory;
   std::vector<float> tether_length_vector;
-  upo_actions::Navigate3DGoal ugv_goal3D, uav_goal3D;
+  upo_actions::Navigate3DGoal uav_goal3D;
+  upo_actions::NavigateGoal ugv_goal3D;
   upo_actions::ExecutePathResult action_result;
     
   trajectory_msgs::MultiDOFJointTrajectory trajectory;
   ros::Publisher traj_uav_pub_, traj_ugv_pub_, catenary_length_pub_;
   ros::Publisher traj_lines_ugv_pub_;
-  ros::Publisher traj_lines_uav_pub_, catenary_marker_pub_;
+  ros::Publisher traj_lines_uav_pub_, catenary_marker_pub_, reset_length_pub_;
 
   std::string path_file, ros_node_name;
-  std::string ugv_base_frame, uav_base_frame, ugv_odom_frame, world_frame; 
-  double offset_map_dll_x ,offset_map_dll_y ,offset_map_dll_z;
+  std::string ugv_base_frame, uav_base_frame, ugv_odom_frame, uav_odom_frame, world_frame; 
   std::string map_name;
   bool debug;
   int num_wp;
-  bool ugv_ready, uav_ready, is_ugv_in_waypoint, is_uav_in_waypoint, start_mission;
+  bool ugv_ready, uav_ready, is_ugv_in_waypoint, is_uav_in_waypoint, start_mission, do_takeoff;
   bool able_tracker_uav, able_tracker_ugv; 
   std::unique_ptr<tf2_ros::TransformListener> tf2_list;
+  ros::Time time_count_ugv, time_count_uav;
+  double time_max;
+  double sent_new_uav_wp , sent_new_ugv_wp ;
+  bool used_length_reached; //variable created to test mission node with or without length_reached status
+
+  //Joystick Stuff
+  int stopArcoMissionButton;
+
+private:
+  double offset_map_dll_x ,offset_map_dll_y ,offset_map_dll_z;
+
+
 };
 
 #endif
