@@ -4,9 +4,12 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
-        - /TF1/Tree1
-        - /PC_map1
-      Splitter Ratio: 0.6320987939834595
+        - /Global Options1
+        - /Status1
+        - /PointCloud22
+        - /MarkerArray3
+        - /MarkerArray3/Status1
+      Splitter Ratio: 0.5
     Tree Height: 719
   - Class: rviz/Selection
     Name: Selection
@@ -25,7 +28,7 @@ Panels:
   - Class: rviz/Time
     Name: Time
     SyncMode: 0
-    SyncSource: PC_map
+    SyncSource: PointCloud2
 Preferences:
   PromptSaveOnExit: true
 Toolbars:
@@ -48,153 +51,16 @@ Visualization Manager:
         Y: 0
         Z: 0
       Plane: XY
-      Plane Cell Count: 70
+      Plane Cell Count: 10
       Reference Frame: <Fixed Frame>
       Value: true
-    - Class: rviz/TF
-      Enabled: true
-      Frame Timeout: 15
-      Frames:
-        All Enabled: false
-        arco/base_link:
-          Value: true
-        arco/front_left:
-          Value: false
-        arco/front_right:
-          Value: false
-        arco/imu:
-          Value: false
-        arco/odom:
-          Value: false
-        arco/os1_imu:
-          Value: false
-        arco/os1_lidar:
-          Value: false
-        arco/os1_sensor:
-          Value: false
-        arco/rear_left:
-          Value: false
-        arco/rear_right:
-          Value: false
-        base_link:
-          Value: true
-        camera_depth_frame:
-          Value: false
-        camera_depth_optical_frame:
-          Value: false
-        camera_link:
-          Value: false
-        camera_rgb_frame:
-          Value: false
-        camera_rgb_optical_frame:
-          Value: false
-        odom:
-          Value: false
-        os1_imu:
-          Value: false
-        os1_lidar:
-          Value: false
-        os1_sensor:
-          Value: false
-        world:
-          Value: false
-      Marker Alpha: 1
-      Marker Scale: 10
-      Name: TF
-      Show Arrows: true
-      Show Axes: true
-      Show Names: true
-      Tree:
-        world:
-          arco/odom:
-            arco/base_link:
-              arco/front_left:
-                {}
-              arco/front_right:
-                {}
-              arco/imu:
-                {}
-              arco/os1_sensor:
-                arco/os1_imu:
-                  {}
-                arco/os1_lidar:
-                  {}
-              arco/rear_left:
-                {}
-              arco/rear_right:
-                {}
-          odom:
-            base_link:
-              camera_link:
-                camera_depth_frame:
-                  camera_depth_optical_frame:
-                    {}
-                camera_rgb_frame:
-                  camera_rgb_optical_frame:
-                    {}
-              os1_sensor:
-                os1_imu:
-                  {}
-                os1_lidar:
-                  {}
-      Update Interval: 0
-      Value: true
-    - Alpha: 1
-      Class: rviz/Axes
-      Enabled: true
-      Length: 5
-      Name: Axes
-      Radius: 0.30000001192092896
-      Reference Frame: <Fixed Frame>
-      Show Trail: false
-      Value: true
-    - Class: rviz/MarkerArray
-      Enabled: false
-      Marker Topic: /check_mission_node/trajectory_ugv
-      Name: TrajectoryUGV_Points
-      Namespaces:
-        {}
-      Queue Size: 100
-      Value: false
-    - Class: rviz/MarkerArray
-      Enabled: true
-      Marker Topic: /check_mission_node/trajectory_lines_ugv
-      Name: TrajectoryUGV_Lines
-      Namespaces:
-        lines_uav: true
-      Queue Size: 100
-      Value: true
-    - Class: rviz/MarkerArray
-      Enabled: false
-      Marker Topic: /check_mission_node/trajectory_uav
-      Name: TrajectoryUAV_Points
-      Namespaces:
-        {}
-      Queue Size: 100
-      Value: false
-    - Class: rviz/MarkerArray
-      Enabled: true
-      Marker Topic: /check_mission_node/trajectory_lines_uav
-      Name: Trajectory_UAV_Lines
-      Namespaces:
-        lines_uav: true
-      Queue Size: 100
-      Value: true
-    - Class: rviz/MarkerArray
-      Enabled: false
-      Marker Topic: /check_mission_node/trajectory_catenary
-      Name: Marker_Catenary
-      Namespaces:
-        {}
-      Queue Size: 100
-      Value: false
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 50.125
+        Max Value: 9.225000381469727
         Min Value: 0.02500000037252903
         Value: true
-      Axis: X
+      Axis: Z
       Channel Name: intensity
       Class: rviz/PointCloud2
       Color: 255; 255; 255
@@ -204,41 +70,172 @@ Visualization Manager:
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Min Color: 0; 0; 0
-      Name: PC_map
+      Name: PointCloud2
       Position Transformer: XYZ
       Queue Size: 10
       Selectable: true
       Size (Pixels): 3
       Size (m): 0.03999999910593033
-      Style: Boxes
-      Topic: /dll_arco_node/map_point_cloud
+      Style: Flat Squares
+      Topic: /dll_drone_node/map_point_cloud
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
       Value: true
-    - Class: rviz/Marker
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/PointCloud2
+      Color: 255; 255; 255
+      Color Transformer: ""
+      Decay Time: 0
       Enabled: true
-      Marker Topic: /check_mission_node/lines_uav
-      Name: Real_Trajectory_UAV
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Min Color: 0; 0; 0
+      Name: PointCloud2
+      Position Transformer: ""
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.03999999910593033
+      Style: Flat Squares
+      Topic: /os1_cloud_node/points_non_dense
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: true
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /mission_interface/trajectory_catenary
+      Name: MarkerArray
+      Namespaces:
+        cat_marker: true
+      Queue Size: 100
+      Value: true
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /mission_interface/trajectory_lines_uav
+      Name: MarkerArray
       Namespaces:
         lines_uav: true
       Queue Size: 100
       Value: true
-    - Class: rviz/Marker
+    - Class: rviz/MarkerArray
       Enabled: true
-      Marker Topic: /check_mission_node/lines_ugv
-      Name: Real_Trajectory_UGV
+      Marker Topic: /mission_interface/trajectory_lines_uav
+      Name: MarkerArray
       Namespaces:
-        lines_ugv: true
+        lines_uav: true
       Queue Size: 100
       Value: true
-    - Class: rviz/Marker
+    - Class: rviz/MarkerArray
       Enabled: true
-      Marker Topic: /random_planner_node/goal_point
-      Name: Goal
+      Marker Topic: /mission_interface/trajectory_uav
+      Name: MarkerArray
       Namespaces:
-        goal_point: true
+        traj_uav: true
       Queue Size: 100
+      Value: true
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /mission_interface/trajectory_ugv
+      Name: MarkerArray
+      Namespaces:
+        traj_ugv: true
+      Queue Size: 100
+      Value: true
+    - Alpha: 1
+      Class: rviz/Axes
+      Enabled: true
+      Length: 1
+      Name: Axes
+      Radius: 0.10000000149011612
+      Reference Frame: <Fixed Frame>
+      Show Trail: false
+      Value: true
+    - Class: rviz/TF
+      Enabled: true
+      Filter (blacklist): ""
+      Filter (whitelist): ""
+      Frame Timeout: 15
+      Frames:
+        All Enabled: true
+        arco/base_link:
+          Value: true
+        arco/front_left:
+          Value: true
+        arco/front_right:
+          Value: true
+        arco/imu:
+          Value: true
+        arco/os1_imu:
+          Value: true
+        arco/os1_lidar:
+          Value: true
+        arco/os1_sensor:
+          Value: true
+        arco/rear_left:
+          Value: true
+        arco/rear_right:
+          Value: true
+        base_link:
+          Value: true
+        imu:
+          Value: true
+        odom:
+          Value: true
+        os1_imu:
+          Value: true
+        os1_lidar:
+          Value: true
+        os1_sensor:
+          Value: true
+        usb_cam:
+          Value: true
+        world:
+          Value: true
+      Marker Alpha: 1
+      Marker Scale: 1
+      Name: TF
+      Show Arrows: true
+      Show Axes: true
+      Show Names: true
+      Tree:
+        arco/base_link:
+          arco/front_left:
+            {}
+          arco/front_right:
+            {}
+          arco/imu:
+            {}
+          arco/os1_sensor:
+            arco/os1_imu:
+              {}
+            arco/os1_lidar:
+              {}
+          arco/rear_left:
+            {}
+          arco/rear_right:
+            {}
+        world:
+          odom:
+            base_link:
+              imu:
+                {}
+              os1_sensor:
+                os1_imu:
+                  {}
+                os1_lidar:
+                  {}
+              usb_cam:
+                {}
+      Update Interval: 0
       Value: true
   Enabled: true
   Global Options:
@@ -268,7 +265,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 13.562580108642578
+      Distance: 47.355899810791016
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -276,25 +273,25 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 8.430570602416992
-        Y: 15.736441612243652
-        Z: 1.9220821857452393
-      Focal Shape Fixed Size: false
+        X: 8.336326599121094
+        Y: 22.6250057220459
+        Z: 9.349688529968262
+      Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.09479765594005585
+      Pitch: 1.4497965574264526
       Target Frame: <Fixed Frame>
-      Yaw: 5.849130153656006
+      Yaw: 3.078571081161499
     Saved: ~
 Window Geometry:
   Displays:
-    collapsed: true
+    collapsed: false
   Height: 1016
-  Hide Left Dock: true
-  Hide Right Dock: true
-  QMainWindow State: 000000ff00000000fd0000000400000000000001970000035afc0200000008fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073000000003d0000035a000000c900fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261000000010000010f0000035afc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073000000003d0000035a000000a400fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000007440000003efc0100000002fb0000000800540069006d0065010000000000000744000003bc00fffffffb0000000800540069006d00650100000000000004500000000000000000000007440000035a00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  Hide Left Dock: false
+  Hide Right Dock: false
+  QMainWindow State: 000000ff00000000fd0000000400000000000001560000035afc0200000008fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003d0000035a000000c900fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261000000010000010f0000035afc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073010000003d0000035a000000a400fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000007460000003efc0100000002fb0000000800540069006d0065010000000000000746000003bc00fffffffb0000000800540069006d00650100000000000004500000000000000000000004d50000035a00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:
@@ -302,7 +299,7 @@ Window Geometry:
   Tool Properties:
     collapsed: false
   Views:
-    collapsed: true
-  Width: 1860
-  X: 60
+    collapsed: false
+  Width: 1862
+  X: 58
   Y: 27

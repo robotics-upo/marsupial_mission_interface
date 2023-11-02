@@ -207,12 +207,12 @@ void MissionInterface::configTopics()
   load_trajectory_sub_ = nh->subscribe("load_mission", 1, &MissionInterface::loadMissionCB, this);
   joy_sub_ = nh->subscribe<sensor_msgs::Joy>("/arco/joy", 5, &MissionInterface::joyReceivedCB,this);
   
-  traj_ugv_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_ugv", 100);
-  traj_uav_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_uav", 100);
+  traj_ugv_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_ugv", 100, true);
+  traj_uav_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_uav", 100, true);
   catenary_length_pub_ = nh->advertise<std_msgs::Float32>("/tie_controller/set_length", 1);
-  traj_lines_ugv_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_lines_ugv", 100);
-  traj_lines_uav_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_lines_uav", 100);
-  catenary_marker_pub_= nh->advertise<visualization_msgs::MarkerArray>("trajectory_catenary", 100);
+  traj_lines_ugv_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_lines_ugv", 100, true);
+  traj_lines_uav_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_lines_uav", 100, true);
+  catenary_marker_pub_= nh->advertise<visualization_msgs::MarkerArray>("trajectory_catenary", 100, true);
   reset_length_pub_= nh->advertise<std_msgs::Float32>("/tie_controller/reset_length_estimation", 100); 
 }
 
@@ -488,6 +488,7 @@ void MissionInterface::resetFlags()
 // Todo: let the user enter them with external files
 void MissionInterface::readWaypoints(const std::string &path_file)
 {
+  std:cout << "MissionInterface::readWaypoints : " << path_file << std::endl;
   YAML::Node file = YAML::LoadFile(path_file);
 
   trajectory.points.clear(); 
@@ -497,8 +498,7 @@ void MissionInterface::readWaypoints(const std::string &path_file)
   traj_marsupial_.transforms.resize(2);
   traj_marsupial_.velocities.resize(2);
   traj_marsupial_.accelerations.resize(2);
-
-  int size_ = (file["marsupial_ugv"]["size"].as<int>()) ; 
+  int size_ = (file["size"].as<int>()) ; 
   std::string ugv_pos_data, uav_pos_data, tether_data;
   double ugv_pos_x, ugv_pos_y, ugv_pos_z, ugv_rot_x, ugv_rot_y, ugv_rot_z, ugv_rot_w;
   double uav_pos_x, uav_pos_y, uav_pos_z, uav_rot_x, uav_rot_y, uav_rot_z, uav_rot_w;
@@ -831,4 +831,12 @@ void MissionInterface::markerPoints()
     }	
     catenary_marker_pub_.publish(_cat_marker);
   }
+}
+
+void MissionInterface::cancelMission()
+{
+  NavigationClient->cancelAllGoals();
+  uavNavigation3DClient->cancelAllGoals();
+  takeOffClient->cancelAllGoals();
+  start_mission = able_tracker_ugv =  able_tracker_uav = false;
 }

@@ -84,6 +84,8 @@ public:
   void markerPoints();
   void joyReceivedCB(const sensor_msgs::Joy::ConstPtr& joy);
   void interpolate(float dist);
+  void cancelMission();
+
 
   bisectionCat BisCat;
   
