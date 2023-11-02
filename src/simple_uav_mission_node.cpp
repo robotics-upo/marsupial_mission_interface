@@ -141,7 +141,7 @@ public:
         }
         printf("Mission started:\n");
 
-        while(ros::ok()){
+        while(ros::ok() && taskIndex < mission_.size()){
             
             // Get current task
             missionTask t = mission_[taskIndex];
@@ -276,6 +276,7 @@ public:
             taskIndex++;
             ros::spinOnce();
         }
+        printf("Mission finished!\n");
     }
 
     void loadMission(const std::string &path_file)
