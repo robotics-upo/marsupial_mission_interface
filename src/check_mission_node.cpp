@@ -242,6 +242,11 @@ void checkMission::readWaypoints(const std::string &path_file)
   std::string ugv_pos_data, uav_pos_data, tether_data;
   double ugv_pos_x, ugv_pos_y, ugv_pos_z, ugv_rot_x, ugv_rot_y, ugv_rot_z, ugv_rot_w;
   double uav_pos_x, uav_pos_y, uav_pos_z, uav_rot_x, uav_rot_y, uav_rot_z, uav_rot_w;
+  double ugv_pos_x_p, ugv_pos_y_p, ugv_pos_z_p;
+  double uav_pos_x_p, uav_pos_y_p, uav_pos_z_p;
+  double uav_length = 0.0;
+  double ugv_length = 0.0;
+
   printf("offset_map_dll=[%f %f %f]\n",offset_map_dll_x,offset_map_dll_y,offset_map_dll_z);
   for (int i = 0; i < size_; i++) {
     // It begin in 1 because first point is given as initial point.
@@ -293,6 +298,18 @@ void checkMission::readWaypoints(const std::string &path_file)
         traj_marsupial_.time_from_start = ros::Duration(0.5);
         trajectory.points.push_back(traj_marsupial_);
 
+        if (i>0) {
+          uav_length += sqrt(pow(uav_pos_x - uav_pos_x_p, 2.0) +
+                             pow(uav_pos_y - uav_pos_y_p, 2.0));
+          ugv_length += sqrt(pow(ugv_pos_x - ugv_pos_x_p, 2.0) +
+                             pow(ugv_pos_y - ugv_pos_y_p, 2.0));
+
+        }
+        uav_pos_x_p = uav_pos_x;
+        uav_pos_y_p = uav_pos_y;
+        ugv_pos_x_p = ugv_pos_x;
+        ugv_pos_y_p = ugv_pos_y;
+
 	    float length = 2.0;
         try {
         length = file["tether"][tether_data]["length"].as<double>();
@@ -307,6 +324,8 @@ void checkMission::readWaypoints(const std::string &path_file)
   }
   std::cout << "YAML FILE readed. YAML FILE NAME: " << path_file << std::endl;
   std::cout << "Number of points: " << trajectory.points.size() << std::endl;
+  std::cout << "Trajectory length: UAV = " << uav_length
+            << "\t UGV = " << ugv_length << std::endl;
 }
 
 void checkMission::interpolate(float dist) 
@@ -384,8 +403,8 @@ void checkMission::updateMarkers()
       // ROS_INFO("Check Mission: Got UAV Pose: %f %f %f (%s - %s).", uav_base_frame.c_str(),world_frame.c_str());
     }    
     catch (tf2::TransformException &ex){
-      ROS_WARN("Check Mission: Couldn't get UAV Pose (base_frame: %s - world_frame: %s), so not possible to set UAV start point; tf exception: %s",
-                uav_base_frame.c_str(),world_frame.c_str(),ex.what());
+      //ROS_WARN("Check Mission: Couldn't get UAV Pose (base_frame: %s - world_frame: %s), so not possible to set UAV start point; tf exception: %s",
+      //        uav_base_frame.c_str(),world_frame.c_str(),ex.what());
     }
 
   try{
@@ -393,8 +412,8 @@ void checkMission::updateMarkers()
       // ROS_INFO("Check Mission: Got UGV Pose: %f %f %f (%s - %s).", ugv_base_frame.c_str(),world_frame.c_str());
     }    
     catch (tf2::TransformException &ex){
-      ROS_WARN("Check Mission: Couldn't get UGV Pose(base_frame: %s - world_frame: %s), so not possible to set UGV start point; tf exception: %s",
-                ugv_base_frame.c_str(),world_frame.c_str(),ex.what());
+      //ROS_WARN("Check Mission: Couldn't get UGV Pose(base_frame: %s - world_frame: %s), so not possible to set UGV start point; tf exception: %s",
+      //        ugv_base_frame.c_str(),world_frame.c_str(),ex.what());
     }
   if (uav_take_off){
     printf("\tUAV take Off succeessful\n");

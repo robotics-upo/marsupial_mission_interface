@@ -60,8 +60,8 @@ class MissionReport:
         print("Global Frame:", self.global_frame_id)
 
         # Related to vehicles
-        self.ugv_speed = float(rospy.get_param('ugv_speed', default='0.25'))
-        self.uav_speed = float(rospy.get_param('uav_speed', default='0.25'))
+        self.ugv_speed = float(rospy.get_param('~ugv_speed', default='0.25'))
+        self.uav_speed = float(rospy.get_param('~uav_speed', default='0.25'))
     
     def ugvGoalCB(self, data):
         p = data.goal.global_goal.position
@@ -96,7 +96,8 @@ class MissionReport:
         self.ugv_time_vector.append(delta_t)
         self.ugv_speed = self.ugv_distance / delta_t
         self.ugv_velocities.append(self.ugv_speed)
-        print("Received UGV Reached Goal CB. Delta_T: ", delta_t , "Speed: ", self.ugv_speed )
+        print("Received UGV Reached Goal CB. Delta_T: ", delta_t ,
+              "Speed: ", self.ugv_speed )
 
     def uavReachedGoalCB(self,data):
         self.uav_reached_goal = data.result.arrived
@@ -105,7 +106,8 @@ class MissionReport:
         self.uav_time_vector.append(delta_t)
         self.uav_speed = self.uav_distance / delta_t
         self.uav_velocities.append(self.uav_speed)
-        print("Received UAV Reached Goal CB. Delta_T: ", delta_t , "Speed: ", self.uav_speed )
+        print("Received UAV Reached Goal CB. Delta_T: ", delta_t ,
+              "Speed: ", self.uav_speed )
 
     def lengthCB(self, data):
         self.curr_length = data.data
@@ -186,6 +188,15 @@ class MissionReport:
             self.ugv_time_vector = data[:,3]
             self.ugv_distances = data[:,4]
             self.ugv_velocities = data[:,5]
+        with open(self.tf_filename, 'r') as stats_file:
+            data = np.loadtxt(stats_file)
+            self.uav_xy_errors = data[:,0]
+            self.uav_z_errors = data[:,1]
+            self.ugv_xy_errors = data[:,2]
+            self.tether_errors = data[:,3]
+
+
+        
         
     def calculate_errors(self):
         self.ugv_time_errors = []
@@ -252,7 +263,7 @@ class MissionReport:
     def calculate_error(self, v, d, t, v_0):
         e_v = None
         e_t = -1.0
-        if (d > 0.15 and v > 0.05 and v < 1.0):
+        if (d > 0.15 and v > 0.05 and v < 0.5):
             e_v = v - v_0
             e_t = t - d/v_0
         return e_v, e_t

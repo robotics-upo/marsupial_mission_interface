@@ -1,7 +1,7 @@
 <launch>
 
     <param name="use_sim_time" value="true"/>
-    <arg name="need_map" default="true"/> 
+    <arg name="need_map" default="true"/>
     <arg name="rviz" value="$(arg need_map)" /> 
     <arg name="bag_file_tongo" default="$(env HOME)/theatre_bags/refinitiva_2023-03-06-12-19-25.bag" />
     <arg name="map_name" default="teatro_wall"/> 
@@ -9,10 +9,13 @@
     <arg name="interpolation_distance" default="0.5"/>
     <arg name="load_data" default="false"/>
 
+    <arg name="uav_speed" default="0.25"/>
+    <arg name="ugv_speed" default="0.2"/>
+
     <node name="get_data" pkg="marsupial_mission_interface" type="compute_errors.py" output="screen">
         <param name="tf_list" value="base_link arco/base_link"/> 
-        <param name="vel_ugv" value="0.3"/> 
-        <param name="vel_uav" value="0.2"/>
+        <param name="ugv_speed" value="$(arg ugv_speed)"/> 
+        <param name="uav_speed" value="$(arg uav_speed)"/>
         <param name="d_min_wp" value="0.3"/>
         <param name="get_data_from_file" value="$(arg load_data)"/>
     </node>
@@ -27,7 +30,7 @@
     </include>
 
     <arg name="start" default="20"/>
-    <node name="bag_player_tongo" pkg="rosbag" type="play" args="$(arg bag_file_tongo) --clock -s $(arg start)" if="$(arg need_map)">
+    <node name="bag_player_tongo" pkg="rosbag" type="play" args="$(arg bag_file_tongo) --clock -s $(arg start)" unless="$(arg load_data)">
 
     </node>
     <node pkg="rviz" name="rviz" type="rviz" args="-d $(find marsupial_mission_interface)/viz/check_mission.rviz" if="$(arg rviz)"/>
