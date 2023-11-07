@@ -126,7 +126,7 @@ public:
   int stopArcoMissionButton;
 
 private:
-  double offset_map_dll_x ,offset_map_dll_y ,offset_map_dll_z;
+  double offset_map_dll_x ,offset_map_dll_y ,offset_map_dll_z, offset_ugv_map_dll_x ,offset_ugv_map_dll_y ,offset_ugv_map_dll_z;
 
 
 };

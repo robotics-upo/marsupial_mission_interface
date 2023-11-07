@@ -1,0 +1,1464 @@
+size: 4
+marsupial_ugv:
+  poses0:
+    header: ugv0
+    seq: 0
+    frame_id: ugv
+    pose:
+      position:
+        x: 12.
+        y: 2.03002919055391
+        z: 2.5
+      orientation:
+        x: 0
+        y: 0
+        z: 1
+        w: 0
+  poses1:
+    header: ugv1
+    seq: 1
+    frame_id: ugv
+    pose:
+      position:
+        x: 2.074643212605783
+        y: 10.01412324296819
+        z: -0.2264606375727831
+      orientation:
+        x: 0
+        y: 0
+        z: 0
+        w: 1
+  poses2:
+    header: ugv2
+    seq: 2
+    frame_id: ugv
+    pose:
+      position:
+        x: 2.103789050349278
+        y: 9.943382346422412
+        z: -0.226283536720421
+      orientation:
+        x: 0
+        y: 0
+        z: 0.7068251967430115
+        w: 0.7073882818222046
+  poses3:
+    header: ugv3
+    seq: 3
+    frame_id: ugv
+    pose:
+      position:
+        x: 2.212161220036457
+        y: 9.937234683631877
+        z: -0.2252781691444411
+      orientation:
+        x: 0
+        y: 0
+        z: 0
+        w: 1
+size: 4
+marsupial_uav:
+  poses0:
+    header: uav0
+    seq: 0
+    frame_id: uav
+    pose:
+      position:
+        x: 12
+        y: 22
+        z: 2.5
+      orientation:
+        x: 0
+        y: 0
+        z: 1
+        w: 0
+  poses1:
+    header: uav1
+    seq: 1
+    frame_id: uav
+    pose:
+      position:
+        x: 8
+        y: 22
+        z: 2.5
+      orientation:
+        x: 0
+        y: 0
+        z: 1
+        w: 0
+  poses2:
+    header: uav2
+    seq: 2
+    frame_id: uav
+    pose:
+      position:
+        x: 8
+        y: 18
+        z: 3.0
+      orientation:
+        x: 0
+        y: 0
+        z: 1
+        w: 0
+  poses3:
+    header: uav3
+    seq: 3
+    frame_id: uav
+    pose:
+      position:
+        x: 12
+        y: 18
+        z: 3.5
+      orientation:
+        x: 0
+        y: 0
+        z: 1
+        w: 0
+size: 269
+tether:
+  length0:
+    header: tether0
+    seq: 0
+    frame_id: tether_length
+    length: 1.179494
+  length1:
+    header: tether1
+    seq: 1
+    frame_id: tether_length
+    length: 1.268611
+  length2:
+    header: tether2
+    seq: 2
+    frame_id: tether_length
+    length: 1.366969
+  length3:
+    header: tether3
+    seq: 3
+    frame_id: tether_length
+    length: 1.435388
+  length4:
+    header: tether4
+    seq: 4
+    frame_id: tether_length
+    length: 1.520926
+  length5:
+    header: tether5
+    seq: 5
+    frame_id: tether_length
+    length: 1.575164
+  length6:
+    header: tether6
+    seq: 6
+    frame_id: tether_length
+    length: 1.696709
+  length7:
+    header: tether7
+    seq: 7
+    frame_id: tether_length
+    length: 1.747952
+  length8:
+    header: tether8
+    seq: 8
+    frame_id: tether_length
+    length: 1.844002
+  length9:
+    header: tether9
+    seq: 9
+    frame_id: tether_length
+    length: 1.887794
+  length10:
+    header: tether10
+    seq: 10
+    frame_id: tether_length
+    length: 1.909386
+  length11:
+    header: tether11
+    seq: 11
+    frame_id: tether_length
+    length: 1.95762
+  length12:
+    header: tether12
+    seq: 12
+    frame_id: tether_length
+    length: 1.98223
+  length13:
+    header: tether13
+    seq: 13
+    frame_id: tether_length
+    length: 2.010444
+  length14:
+    header: tether14
+    seq: 14
+    frame_id: tether_length
+    length: 1.966796
+  length15:
+    header: tether0
+    seq: 0
+    frame_id: tether_length
+    length: 2.076691
+  length16:
+    header: tether1
+    seq: 1
+    frame_id: tether_length
+    length: 2.040473
+  length17:
+    header: tether2
+    seq: 2
+    frame_id: tether_length
+    length: 2.010333
+  length18:
+    header: tether3
+    seq: 3
+    frame_id: tether_length
+    length: 1.980192
+  length19:
+    header: tether4
+    seq: 4
+    frame_id: tether_length
+    length: 1.930726
+  length20:
+    header: tether5
+    seq: 5
+    frame_id: tether_length
+    length: 1.9114
+  length21:
+    header: tether6
+    seq: 6
+    frame_id: tether_length
+    length: 1.892074
+  length22:
+    header: tether7
+    seq: 7
+    frame_id: tether_length
+    length: 1.89177
+  length23:
+    header: tether8
+    seq: 8
+    frame_id: tether_length
+    length: 1.905493
+  length24:
+    header: tether9
+    seq: 9
+    frame_id: tether_length
+    length: 2.02577
+  length25:
+    header: tether10
+    seq: 10
+    frame_id: tether_length
+    length: 2.193931
+  length26:
+    header: tether11
+    seq: 11
+    frame_id: tether_length
+    length: 2.212549
+  length27:
+    header: tether12
+    seq: 12
+    frame_id: tether_length
+    length: 2.18222
+  length28:
+    header: tether13
+    seq: 13
+    frame_id: tether_length
+    length: 2.134151
+  length29:
+    header: tether14
+    seq: 14
+    frame_id: tether_length
+    length: 2.126873
+  length30:
+    header: tether15
+    seq: 15
+    frame_id: tether_length
+    length: 2.133789
+  length31:
+    header: tether16
+    seq: 16
+    frame_id: tether_length
+    length: 2.12705
+  length32:
+    header: tether17
+    seq: 17
+    frame_id: tether_length
+    length: 2.111653
+  length33:
+    header: tether18
+    seq: 18
+    frame_id: tether_length
+    length: 2.171694
+  length34:
+    header: tether19
+    seq: 19
+    frame_id: tether_length
+    length: 2.246834
+  length35:
+    header: tether20
+    seq: 20
+    frame_id: tether_length
+    length: 2.191775
+  length36:
+    header: tether21
+    seq: 21
+    frame_id: tether_length
+    length: 2.119364
+  length37:
+    header: tether22
+    seq: 22
+    frame_id: tether_length
+    length: 2.042936
+  length38:
+    header: tether23
+    seq: 23
+    frame_id: tether_length
+    length: 1.970988
+  length39:
+    header: tether24
+    seq: 24
+    frame_id: tether_length
+    length: 1.89949
+  length40:
+    header: tether25
+    seq: 25
+    frame_id: tether_length
+    length: 1.779273
+  length41:
+    header: tether26
+    seq: 26
+    frame_id: tether_length
+    length: 1.66166
+  length42:
+    header: tether27
+    seq: 27
+    frame_id: tether_length
+    length: 1.722713
+  length43:
+    header: tether28
+    seq: 28
+    frame_id: tether_length
+    length: 1.818716
+  length44:
+    header: tether29
+    seq: 29
+    frame_id: tether_length
+    length: 1.773021
+  length45:
+    header: tether30
+    seq: 30
+    frame_id: tether_length
+    length: 1.682411
+  length46:
+    header: tether31
+    seq: 31
+    frame_id: tether_length
+    length: 1.5949
+  length47:
+    header: tether32
+    seq: 32
+    frame_id: tether_length
+    length: 1.580256
+  length48:
+    header: tether33
+    seq: 33
+    frame_id: tether_length
+    length: 1.534491
+  length49:
+    header: tether34
+    seq: 34
+    frame_id: tether_length
+    length: 1.530829
+  length50:
+    header: tether35
+    seq: 35
+    frame_id: tether_length
+    length: 1.51283
+  length51:
+    header: tether36
+    seq: 36
+    frame_id: tether_length
+    length: 1.494018
+  length52:
+    header: tether37
+    seq: 37
+    frame_id: tether_length
+    length: 1.483794
+  length53:
+    header: tether38
+    seq: 38
+    frame_id: tether_length
+    length: 1.495706
+  length54:
+    header: tether39
+    seq: 39
+    frame_id: tether_length
+    length: 1.446794
+  length55:
+    header: tether40
+    seq: 40
+    frame_id: tether_length
+    length: 1.439778
+  length56:
+    header: tether41
+    seq: 41
+    frame_id: tether_length
+    length: 1.446795
+  length57:
+    header: tether42
+    seq: 42
+    frame_id: tether_length
+    length: 1.512616
+  length58:
+    header: tether43
+    seq: 43
+    frame_id: tether_length
+    length: 1.431866
+  length59:
+    header: tether44
+    seq: 44
+    frame_id: tether_length
+    length: 1.41778
+  length60:
+    header: tether45
+    seq: 45
+    frame_id: tether_length
+    length: 1.422044
+  length61:
+    header: tether46
+    seq: 46
+    frame_id: tether_length
+    length: 1.444515
+  length62:
+    header: tether0
+    seq: 0
+    frame_id: tether_length
+    length: 1.519118
+  length63:
+    header: tether1
+    seq: 1
+    frame_id: tether_length
+    length: 1.662987
+  length64:
+    header: tether2
+    seq: 2
+    frame_id: tether_length
+    length: 1.967281
+  length65:
+    header: tether3
+    seq: 3
+    frame_id: tether_length
+    length: 2.127706
+  length66:
+    header: tether0
+    seq: 0
+    frame_id: tether_length
+    length: 2.093562
+  length67:
+    header: tether1
+    seq: 1
+    frame_id: tether_length
+    length: 2.093867
+  length68:
+    header: tether2
+    seq: 2
+    frame_id: tether_length
+    length: 2.109356
+  length69:
+    header: tether3
+    seq: 3
+    frame_id: tether_length
+    length: 2.146852
+  length70:
+    header: tether4
+    seq: 4
+    frame_id: tether_length
+    length: 2.228367
+  length71:
+    header: tether5
+    seq: 5
+    frame_id: tether_length
+    length: 2.272386
+  length72:
+    header: tether6
+    seq: 6
+    frame_id: tether_length
+    length: 2.326988
+  length73:
+    header: tether7
+    seq: 7
+    frame_id: tether_length
+    length: 2.326993
+  length74:
+    header: tether8
+    seq: 8
+    frame_id: tether_length
+    length: 2.339349
+  length75:
+    header: tether9
+    seq: 9
+    frame_id: tether_length
+    length: 2.349925
+  length76:
+    header: tether10
+    seq: 10
+    frame_id: tether_length
+    length: 2.367432
+  length77:
+    header: tether11
+    seq: 11
+    frame_id: tether_length
+    length: 2.384057
+  length78:
+    header: tether12
+    seq: 12
+    frame_id: tether_length
+    length: 2.346361
+  length79:
+    header: tether13
+    seq: 13
+    frame_id: tether_length
+    length: 2.296268
+  length80:
+    header: tether14
+    seq: 14
+    frame_id: tether_length
+    length: 2.251909
+  length81:
+    header: tether15
+    seq: 15
+    frame_id: tether_length
+    length: 2.221736
+  length82:
+    header: tether16
+    seq: 16
+    frame_id: tether_length
+    length: 2.206318
+  length83:
+    header: tether17
+    seq: 17
+    frame_id: tether_length
+    length: 2.20596
+  length84:
+    header: tether18
+    seq: 18
+    frame_id: tether_length
+    length: 2.209569
+  length85:
+    header: tether19
+    seq: 19
+    frame_id: tether_length
+    length: 2.226147
+  length86:
+    header: tether20
+    seq: 20
+    frame_id: tether_length
+    length: 2.236545
+  length87:
+    header: tether21
+    seq: 21
+    frame_id: tether_length
+    length: 2.230609
+  length88:
+    header: tether22
+    seq: 22
+    frame_id: tether_length
+    length: 2.227496
+  length89:
+    header: tether23
+    seq: 23
+    frame_id: tether_length
+    length: 2.227496
+  length90:
+    header: tether24
+    seq: 24
+    frame_id: tether_length
+    length: 2.227496
+  length91:
+    header: tether25
+    seq: 25
+    frame_id: tether_length
+    length: 2.225228
+  length92:
+    header: tether26
+    seq: 26
+    frame_id: tether_length
+    length: 2.225795
+  length93:
+    header: tether27
+    seq: 27
+    frame_id: tether_length
+    length: 2.225795
+  length94:
+    header: tether28
+    seq: 28
+    frame_id: tether_length
+    length: 2.225795
+  length95:
+    header: tether29
+    seq: 29
+    frame_id: tether_length
+    length: 2.225795
+  length96:
+    header: tether30
+    seq: 30
+    frame_id: tether_length
+    length: 2.225795
+  length97:
+    header: tether31
+    seq: 31
+    frame_id: tether_length
+    length: 2.190053
+  length98:
+    header: tether32
+    seq: 32
+    frame_id: tether_length
+    length: 2.154311
+  length99:
+    header: tether33
+    seq: 33
+    frame_id: tether_length
+    length: 2.184591
+  length100:
+    header: tether34
+    seq: 34
+    frame_id: tether_length
+    length: 2.255098
+  length101:
+    header: tether35
+    seq: 35
+    frame_id: tether_length
+    length: 2.255097
+  length102:
+    header: tether36
+    seq: 36
+    frame_id: tether_length
+    length: 2.255097
+  length103:
+    header: tether37
+    seq: 37
+    frame_id: tether_length
+    length: 2.292852
+  length104:
+    header: tether38
+    seq: 38
+    frame_id: tether_length
+    length: 2.279044
+  length105:
+    header: tether39
+    seq: 39
+    frame_id: tether_length
+    length: 2.275725
+  length106:
+    header: tether40
+    seq: 40
+    frame_id: tether_length
+    length: 2.274616
+  length107:
+    header: tether41
+    seq: 41
+    frame_id: tether_length
+    length: 2.259248
+  length108:
+    header: tether42
+    seq: 42
+    frame_id: tether_length
+    length: 2.24388
+  length109:
+    header: tether43
+    seq: 43
+    frame_id: tether_length
+    length: 2.243881
+  length110:
+    header: tether44
+    seq: 44
+    frame_id: tether_length
+    length: 2.243881
+  length111:
+    header: tether45
+    seq: 45
+    frame_id: tether_length
+    length: 2.257905
+  length112:
+    header: tether46
+    seq: 46
+    frame_id: tether_length
+    length: 2.271285
+  length113:
+    header: tether47
+    seq: 47
+    frame_id: tether_length
+    length: 2.326823
+  length114:
+    header: tether48
+    seq: 48
+    frame_id: tether_length
+    length: 2.378972
+  length115:
+    header: tether49
+    seq: 49
+    frame_id: tether_length
+    length: 2.438524
+  length116:
+    header: tether50
+    seq: 50
+    frame_id: tether_length
+    length: 2.548514
+  length117:
+    header: tether51
+    seq: 51
+    frame_id: tether_length
+    length: 2.611944
+  length118:
+    header: tether52
+    seq: 52
+    frame_id: tether_length
+    length: 2.730155
+  length119:
+    header: tether53
+    seq: 53
+    frame_id: tether_length
+    length: 2.851484
+  length120:
+    header: tether54
+    seq: 54
+    frame_id: tether_length
+    length: 2.975551
+  length121:
+    header: tether55
+    seq: 55
+    frame_id: tether_length
+    length: 3.102027
+  length122:
+    header: tether56
+    seq: 56
+    frame_id: tether_length
+    length: 3.183982
+  length123:
+    header: tether57
+    seq: 57
+    frame_id: tether_length
+    length: 3.315025
+  length124:
+    header: tether0
+    seq: 0
+    frame_id: tether_length
+    length: 3.352814
+  length125:
+    header: tether1
+    seq: 1
+    frame_id: tether_length
+    length: 3.543075
+  length126:
+    header: tether2
+    seq: 2
+    frame_id: tether_length
+    length: 3.749735
+  length127:
+    header: tether3
+    seq: 3
+    frame_id: tether_length
+    length: 3.935978
+  length128:
+    header: tether4
+    seq: 4
+    frame_id: tether_length
+    length: 4.121976
+  length129:
+    header: tether0
+    seq: 0
+    frame_id: tether_length
+    length: 4.141035
+  length130:
+    header: tether1
+    seq: 1
+    frame_id: tether_length
+    length: 4.108116
+  length131:
+    header: tether2
+    seq: 2
+    frame_id: tether_length
+    length: 4.059189
+  length132:
+    header: tether3
+    seq: 3
+    frame_id: tether_length
+    length: 4.141948
+  length133:
+    header: tether4
+    seq: 4
+    frame_id: tether_length
+    length: 4.18678
+  length134:
+    header: tether5
+    seq: 5
+    frame_id: tether_length
+    length: 4.156472
+  length135:
+    header: tether6
+    seq: 6
+    frame_id: tether_length
+    length: 4.175669
+  length136:
+    header: tether7
+    seq: 7
+    frame_id: tether_length
+    length: 4.16226
+  length137:
+    header: tether8
+    seq: 8
+    frame_id: tether_length
+    length: 4.107832
+  length138:
+    header: tether9
+    seq: 9
+    frame_id: tether_length
+    length: 4.088637
+  length139:
+    header: tether10
+    seq: 10
+    frame_id: tether_length
+    length: 4.070333
+  length140:
+    header: tether11
+    seq: 11
+    frame_id: tether_length
+    length: 4.033599
+  length141:
+    header: tether12
+    seq: 12
+    frame_id: tether_length
+    length: 4.021876
+  length142:
+    header: tether13
+    seq: 13
+    frame_id: tether_length
+    length: 4.04142
+  length143:
+    header: tether14
+    seq: 14
+    frame_id: tether_length
+    length: 4.08639
+  length144:
+    header: tether15
+    seq: 15
+    frame_id: tether_length
+    length: 4.115891
+  length145:
+    header: tether16
+    seq: 16
+    frame_id: tether_length
+    length: 4.117873
+  length146:
+    header: tether17
+    seq: 17
+    frame_id: tether_length
+    length: 4.128116
+  length147:
+    header: tether18
+    seq: 18
+    frame_id: tether_length
+    length: 4.297651
+  length148:
+    header: tether19
+    seq: 19
+    frame_id: tether_length
+    length: 4.458929
+  length149:
+    header: tether20
+    seq: 20
+    frame_id: tether_length
+    length: 4.421829
+  length150:
+    header: tether21
+    seq: 21
+    frame_id: tether_length
+    length: 4.382979
+  length151:
+    header: tether22
+    seq: 22
+    frame_id: tether_length
+    length: 4.328303
+  length152:
+    header: tether23
+    seq: 23
+    frame_id: tether_length
+    length: 4.274937
+  length153:
+    header: tether24
+    seq: 24
+    frame_id: tether_length
+    length: 4.20827
+  length154:
+    header: tether25
+    seq: 25
+    frame_id: tether_length
+    length: 4.178131
+  length155:
+    header: tether26
+    seq: 26
+    frame_id: tether_length
+    length: 4.121428
+  length156:
+    header: tether27
+    seq: 27
+    frame_id: tether_length
+    length: 4.06246
+  length157:
+    header: tether28
+    seq: 28
+    frame_id: tether_length
+    length: 3.946003
+  length158:
+    header: tether29
+    seq: 29
+    frame_id: tether_length
+    length: 3.899134
+  length159:
+    header: tether30
+    seq: 30
+    frame_id: tether_length
+    length: 3.865637
+  length160:
+    header: tether31
+    seq: 31
+    frame_id: tether_length
+    length: 3.84549
+  length161:
+    header: tether32
+    seq: 32
+    frame_id: tether_length
+    length: 3.838281
+  length162:
+    header: tether33
+    seq: 33
+    frame_id: tether_length
+    length: 3.825068
+  length163:
+    header: tether34
+    seq: 34
+    frame_id: tether_length
+    length: 3.812552
+  length164:
+    header: tether35
+    seq: 35
+    frame_id: tether_length
+    length: 3.818349
+  length165:
+    header: tether36
+    seq: 36
+    frame_id: tether_length
+    length: 3.842248
+  length166:
+    header: tether37
+    seq: 37
+    frame_id: tether_length
+    length: 3.877736
+  length167:
+    header: tether38
+    seq: 38
+    frame_id: tether_length
+    length: 3.877731
+  length168:
+    header: tether39
+    seq: 39
+    frame_id: tether_length
+    length: 3.865658
+  length169:
+    header: tether40
+    seq: 40
+    frame_id: tether_length
+    length: 3.896875
+  length170:
+    header: tether41
+    seq: 41
+    frame_id: tether_length
+    length: 3.811695
+  length171:
+    header: tether42
+    seq: 42
+    frame_id: tether_length
+    length: 3.801755
+  length172:
+    header: tether43
+    seq: 43
+    frame_id: tether_length
+    length: 3.761793
+  length173:
+    header: tether44
+    seq: 44
+    frame_id: tether_length
+    length: 3.702768
+  length174:
+    header: tether45
+    seq: 45
+    frame_id: tether_length
+    length: 3.694108
+  length175:
+    header: tether46
+    seq: 46
+    frame_id: tether_length
+    length: 3.680979
+  length176:
+    header: tether47
+    seq: 47
+    frame_id: tether_length
+    length: 3.674226
+  length177:
+    header: tether48
+    seq: 48
+    frame_id: tether_length
+    length: 3.634803
+  length178:
+    header: tether49
+    seq: 49
+    frame_id: tether_length
+    length: 3.639649
+  length179:
+    header: tether50
+    seq: 50
+    frame_id: tether_length
+    length: 3.650949
+  length180:
+    header: tether51
+    seq: 51
+    frame_id: tether_length
+    length: 3.668649
+  length181:
+    header: tether52
+    seq: 52
+    frame_id: tether_length
+    length: 3.692652
+  length182:
+    header: tether53
+    seq: 53
+    frame_id: tether_length
+    length: 3.679313
+  length183:
+    header: tether0
+    seq: 0
+    frame_id: tether_length
+    length: 3.605673
+  length184:
+    header: tether1
+    seq: 1
+    frame_id: tether_length
+    length: 3.530021
+  length185:
+    header: tether2
+    seq: 2
+    frame_id: tether_length
+    length: 3.454804
+  length186:
+    header: tether3
+    seq: 3
+    frame_id: tether_length
+    length: 3.379587
+  length187:
+    header: tether4
+    seq: 4
+    frame_id: tether_length
+    length: 3.235296
+  length188:
+    header: tether5
+    seq: 5
+    frame_id: tether_length
+    length: 3.166222
+  length189:
+    header: tether6
+    seq: 6
+    frame_id: tether_length
+    length: 3.097148
+  length190:
+    header: tether7
+    seq: 7
+    frame_id: tether_length
+    length: 3.028074
+  length191:
+    header: tether8
+    seq: 8
+    frame_id: tether_length
+    length: 3.012395
+  length192:
+    header: tether9
+    seq: 9
+    frame_id: tether_length
+    length: 2.992657
+  length193:
+    header: tether10
+    seq: 10
+    frame_id: tether_length
+    length: 2.984196
+  length194:
+    header: tether11
+    seq: 11
+    frame_id: tether_length
+    length: 3.034458
+  length195:
+    header: tether12
+    seq: 12
+    frame_id: tether_length
+    length: 3.093498
+  length196:
+    header: tether13
+    seq: 13
+    frame_id: tether_length
+    length: 3.160438
+  length197:
+    header: tether14
+    seq: 14
+    frame_id: tether_length
+    length: 3.23551
+  length198:
+    header: tether15
+    seq: 15
+    frame_id: tether_length
+    length: 3.317827
+  length199:
+    header: tether16
+    seq: 16
+    frame_id: tether_length
+    length: 3.408025
+  length200:
+    header: tether17
+    seq: 17
+    frame_id: tether_length
+    length: 3.504132
+  length201:
+    header: tether18
+    seq: 18
+    frame_id: tether_length
+    length: 3.605319
+  length202:
+    header: tether19
+    seq: 19
+    frame_id: tether_length
+    length: 3.711464
+  length203:
+    header: tether20
+    seq: 20
+    frame_id: tether_length
+    length: 3.822595
+  length204:
+    header: tether21
+    seq: 21
+    frame_id: tether_length
+    length: 3.920224
+  length205:
+    header: tether0
+    seq: 0
+    frame_id: tether_length
+    length: 3.908912
+  length206:
+    header: tether1
+    seq: 1
+    frame_id: tether_length
+    length: 3.96458
+  length207:
+    header: tether2
+    seq: 2
+    frame_id: tether_length
+    length: 3.988417
+  length208:
+    header: tether3
+    seq: 3
+    frame_id: tether_length
+    length: 3.956587
+  length209:
+    header: tether4
+    seq: 4
+    frame_id: tether_length
+    length: 3.894151
+  length210:
+    header: tether5
+    seq: 5
+    frame_id: tether_length
+    length: 3.863546
+  length211:
+    header: tether6
+    seq: 6
+    frame_id: tether_length
+    length: 3.832941
+  length212:
+    header: tether7
+    seq: 7
+    frame_id: tether_length
+    length: 3.802336
+  length213:
+    header: tether8
+    seq: 8
+    frame_id: tether_length
+    length: 3.767571
+  length214:
+    header: tether9
+    seq: 9
+    frame_id: tether_length
+    length: 3.763411
+  length215:
+    header: tether10
+    seq: 10
+    frame_id: tether_length
+    length: 3.759251
+  length216:
+    header: tether11
+    seq: 11
+    frame_id: tether_length
+    length: 3.75509
+  length217:
+    header: tether12
+    seq: 12
+    frame_id: tether_length
+    length: 3.765594
+  length218:
+    header: tether13
+    seq: 13
+    frame_id: tether_length
+    length: 3.780258
+  length219:
+    header: tether14
+    seq: 14
+    frame_id: tether_length
+    length: 3.794922
+  length220:
+    header: tether15
+    seq: 15
+    frame_id: tether_length
+    length: 3.809585
+  length221:
+    header: tether16
+    seq: 16
+    frame_id: tether_length
+    length: 3.846997
+  length222:
+    header: tether17
+    seq: 17
+    frame_id: tether_length
+    length: 3.923304
+  length223:
+    header: tether18
+    seq: 18
+    frame_id: tether_length
+    length: 3.976862
+  length224:
+    header: tether19
+    seq: 19
+    frame_id: tether_length
+    length: 4.094485
+  length225:
+    header: tether20
+    seq: 20
+    frame_id: tether_length
+    length: 4.158549
+  length226:
+    header: tether21
+    seq: 21
+    frame_id: tether_length
+    length: 4.260559
+  length227:
+    header: tether22
+    seq: 22
+    frame_id: tether_length
+    length: 4.267906
+  length228:
+    header: tether23
+    seq: 23
+    frame_id: tether_length
+    length: 4.237309
+  length229:
+    header: tether24
+    seq: 24
+    frame_id: tether_length
+    length: 4.266331
+  length230:
+    header: tether25
+    seq: 25
+    frame_id: tether_length
+    length: 4.286699
+  length231:
+    header: tether26
+    seq: 26
+    frame_id: tether_length
+    length: 4.294525
+  length232:
+    header: tether27
+    seq: 27
+    frame_id: tether_length
+    length: 4.281982
+  length233:
+    header: tether28
+    seq: 28
+    frame_id: tether_length
+    length: 4.26944
+  length234:
+    header: tether29
+    seq: 29
+    frame_id: tether_length
+    length: 4.26947
+  length235:
+    header: tether30
+    seq: 30
+    frame_id: tether_length
+    length: 4.267858
+  length236:
+    header: tether31
+    seq: 31
+    frame_id: tether_length
+    length: 4.253674
+  length237:
+    header: tether0
+    seq: 0
+    frame_id: tether_length
+    length: 4.425545
+  length238:
+    header: tether1
+    seq: 1
+    frame_id: tether_length
+    length: 4.550673
+  length239:
+    header: tether2
+    seq: 2
+    frame_id: tether_length
+    length: 4.597281
+  length240:
+    header: tether3
+    seq: 3
+    frame_id: tether_length
+    length: 4.627808
+  length241:
+    header: tether4
+    seq: 4
+    frame_id: tether_length
+    length: 4.61434
+  length242:
+    header: tether5
+    seq: 5
+    frame_id: tether_length
+    length: 4.617053
+  length243:
+    header: tether6
+    seq: 6
+    frame_id: tether_length
+    length: 4.586967
+  length244:
+    header: tether7
+    seq: 7
+    frame_id: tether_length
+    length: 4.536443
+  length245:
+    header: tether8
+    seq: 8
+    frame_id: tether_length
+    length: 4.525716
+  length246:
+    header: tether9
+    seq: 9
+    frame_id: tether_length
+    length: 4.49362
+  length247:
+    header: tether10
+    seq: 10
+    frame_id: tether_length
+    length: 4.472252
+  length248:
+    header: tether11
+    seq: 11
+    frame_id: tether_length
+    length: 4.450883
+  length249:
+    header: tether12
+    seq: 12
+    frame_id: tether_length
+    length: 4.401255
+  length250:
+    header: tether13
+    seq: 13
+    frame_id: tether_length
+    length: 4.372995
+  length251:
+    header: tether14
+    seq: 14
+    frame_id: tether_length
+    length: 4.344735
+  length252:
+    header: tether15
+    seq: 15
+    frame_id: tether_length
+    length: 4.304517
+  length253:
+    header: tether16
+    seq: 16
+    frame_id: tether_length
+    length: 4.29256
+  length254:
+    header: tether17
+    seq: 17
+    frame_id: tether_length
+    length: 4.280602
+  length255:
+    header: tether18
+    seq: 18
+    frame_id: tether_length
+    length: 4.271991
+  length256:
+    header: tether19
+    seq: 19
+    frame_id: tether_length
+    length: 4.275337
+  length257:
+    header: tether20
+    seq: 20
+    frame_id: tether_length
+    length: 4.278683
+  length258:
+    header: tether21
+    seq: 21
+    frame_id: tether_length
+    length: 4.297636
+  length259:
+    header: tether22
+    seq: 22
+    frame_id: tether_length
+    length: 4.313242
+  length260:
+    header: tether23
+    seq: 23
+    frame_id: tether_length
+    length: 4.410872
+  length261:
+    header: tether24
+    seq: 24
+    frame_id: tether_length
+    length: 4.492897
+  length262:
+    header: tether25
+    seq: 25
+    frame_id: tether_length
+    length: 4.653654
+  length263:
+    header: tether26
+    seq: 26
+    frame_id: tether_length
+    length: 4.732388
+  length264:
+    header: tether27
+    seq: 27
+    frame_id: tether_length
+    length: 4.80012
+  length265:
+    header: tether28
+    seq: 28
+    frame_id: tether_length
+    length: 4.78912
+  length266:
+    header: tether29
+    seq: 29
+    frame_id: tether_length
+    length: 4.701599
+  length267:
+    header: tether30
+    seq: 30
+    frame_id: tether_length
+    length: 4.549762
+  length268:
+    header: tether31
+    seq: 31
+    frame_id: tether_length
+    length: 4.474446
+  size: 269
