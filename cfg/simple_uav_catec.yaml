@@ -1,0 +1,75 @@
+length: 8
+task0:
+  type: take-off
+  altitude: 1.0
+task1:
+  type: wp
+  position:
+    x: -4.516
+    y: -3.339
+    z:  1.5
+  orientation:
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+task2:
+  type: wp
+  position:
+    x: 0.0
+    y: 5.0
+    z: 1.675
+  orientation:
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+task3:
+  type: wp
+  position: 
+    x: 3.6454708803245173
+    y: 3.1701716125052815
+    z: 1.6218268200141552
+  orientation: 
+    x: 0.044430379957701764
+    y: 0.0055852737884068875
+    z: 0.5799205928003407
+    w: 0.8134413636517535
+task4:
+  type: wp
+  position:
+    x:  2.0
+    y: -2.437
+    z:  1.433
+  orientation:
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+task5:
+  type: wp
+  position:
+    x: -3.8
+    y: -4.958
+    z:  1.293
+  orientation:
+    x:  0.0
+    y:  0.0
+    z: -0.422
+    w:  0.9063
+task6:
+  type: wp
+  position:
+    x: -4.516
+    y: -3.339
+    z:  1.5
+  orientation:
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+task7:
+  type: land
+   
+  
+

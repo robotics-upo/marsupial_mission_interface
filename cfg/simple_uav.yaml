@@ -1,59 +1,41 @@
-length: 9
+length: 5
 task0:
   type: take-off
-  altitude: 2.0
+  altitude: 1.0
 task1:
-  type: set-home
+  type: wp
+  position:
+    x: 0
+    y: 3
+    z: 1.5
+  orientation:
+    x: 0
+    y: 0
+    z: 0
+    w: 1
 task2:
   type: wp
   position:
-    x: 53
-    y: 11
-    z: 7.0
+    x: 3
+    y: 3
+    z: 1.5
   orientation:
     x: 0
     y: 0
-    z: 1
-    w: 0
+    z: 0
+    w: 1
 task3:
   type: wp
   position:
-    x: 53
-    y: 11
-    z: 7.0
+    x: 0
+    y: 0
+    z: 1.5
   orientation:
     x: 0
     y: 0
-    z: 1
-    w: 0
+    z: 0
+    w: 1
 task4:
-  type: wait
-  seconds: 5.0
-task5:
-  type: wp
-  position:
-    x: 53
-    y: 11
-    z: 7.0
-  orientation:
-    x: 0
-    y: 0
-    z: 1
-    w: 0
-task6:
-  type: wp
-  position:
-    x: 53
-    y: 11
-    z: 7.0
-  orientation:
-    x: 0
-    y: 0
-    z: 1
-    w: 0
-task7:
-  type: home
-task8:
   type: land
    
   

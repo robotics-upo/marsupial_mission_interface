@@ -20,6 +20,9 @@ MissionInterface::MissionInterface(std::string node_name_)
   nh->param("offset_map_"+map_name+"/offset_map_dll_x", offset_map_dll_x, (double)0.0);
   nh->param("offset_map_"+map_name+"/offset_map_dll_y", offset_map_dll_y, (double)0.0);
   nh->param("offset_map_"+map_name+"/offset_map_dll_z", offset_map_dll_z, (double)0.0);
+  nh->param("offset_map_"+map_name+"/offset_ugv_map_dll_x", offset_ugv_map_dll_x, (double)0.0);
+  nh->param("offset_map_"+map_name+"/offset_ugv_map_dll_y", offset_ugv_map_dll_y, (double)0.0);
+  nh->param("offset_map_"+map_name+"/offset_ugv_map_dll_z", offset_ugv_map_dll_z, (double)0.0);
   nh->param("flying_height", flying_height, (double)0.3);
   nh->param("time_max", time_max, (double)1.5);
 
@@ -32,6 +35,10 @@ MissionInterface::MissionInterface(std::string node_name_)
 
   nh->param<int>("stop_arco_mission_button", stopArcoMissionButton, STOP_ARCO_MISSION_BUTTON);
 
+
+// offset_map_dll_x = 0.0; 
+// offset_map_dll_y = 0.0; 
+// offset_map_dll_z = 0.0; 
   ros_node_name = node_name_;
   ROS_INFO("Initialized Node : %s", ros_node_name.c_str());
 
@@ -41,7 +48,7 @@ MissionInterface::MissionInterface(std::string node_name_)
   sent_new_ugv_wp = sent_new_uav_wp = false;
 
   double sleep_time = 0.0;
-  nh->param<double>("sleep_time", sleep_time, 2.0);
+  nh->param<double>("sleep_time", sleep_time, 0.0);
   ROS_INFO("Sleep %f seconds", sleep_time);
   ros::Duration(sleep_time).sleep();
 
@@ -84,7 +91,7 @@ MissionInterface::MissionInterface(std::string node_name_)
       for(int i = 0; i < 3 ; i++){
         reset_length_pub_.publish(reset_msg_);
         ros::spinOnce();
-        ros::Duration(1.0).sleep();
+        ros::Duration(0.0).sleep();
       }
     }
 
@@ -207,12 +214,12 @@ void MissionInterface::configTopics()
   load_trajectory_sub_ = nh->subscribe("load_mission", 1, &MissionInterface::loadMissionCB, this);
   joy_sub_ = nh->subscribe<sensor_msgs::Joy>("/arco/joy", 5, &MissionInterface::joyReceivedCB,this);
   
-  traj_ugv_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_ugv", 100);
-  traj_uav_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_uav", 100);
+  traj_ugv_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_ugv", 100, true);
+  traj_uav_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_uav", 100, true);
   catenary_length_pub_ = nh->advertise<std_msgs::Float32>("/tie_controller/set_length", 1);
-  traj_lines_ugv_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_lines_ugv", 100);
-  traj_lines_uav_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_lines_uav", 100);
-  catenary_marker_pub_= nh->advertise<visualization_msgs::MarkerArray>("trajectory_catenary", 100);
+  traj_lines_ugv_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_lines_ugv", 100, true);
+  traj_lines_uav_pub_ = nh->advertise<visualization_msgs::MarkerArray>("trajectory_lines_uav", 100, true);
+  catenary_marker_pub_= nh->advertise<visualization_msgs::MarkerArray>("trajectory_catenary", 100, true);
   reset_length_pub_= nh->advertise<std_msgs::Float32>("/tie_controller/reset_length_estimation", 100); 
 }
 
@@ -337,7 +344,7 @@ void MissionInterface::executeMission()
         }
         std_msgs::Float32 catenary_msg;
         catenary_msg.data = tether_length_vector.at(num_wp);
-        ros::Duration(0.2).sleep();  //DONT forget delete
+        ros::Duration(0.0).sleep();  //DONT forget delete
 
         catenary_length_pub_.publish(catenary_msg);
 
@@ -413,7 +420,7 @@ void MissionInterface::executeMission()
         if (used_length_reached){
           ROS_INFO("Waiting for the cable system to get the commanded length");
           while (!length_reached && ros::ok()) {
-            ros::Duration(0.2).sleep();
+            ros::Duration(0.0).sleep();
             ros::spinOnce();
           }
         } else{
@@ -467,7 +474,7 @@ void MissionInterface::executeMission()
       else if(!uav_ready && able_tracker_uav)    
         printf("\t\tUAV Platform NOT ready for execute mission\n");
     
-      ros::Duration(2.0).sleep();
+      ros::Duration(0.5).sleep();
     }
     ros::spinOnce();
   }
@@ -485,11 +492,10 @@ void MissionInterface::resetFlags()
   sent_new_uav_wp = sent_new_ugv_wp = false;
 }
 
-
-
 // Todo: let the user enter them with external files
 void MissionInterface::readWaypoints(const std::string &path_file)
 {
+  std:cout << "MissionInterface::readWaypoints : " << path_file << std::endl;
   YAML::Node file = YAML::LoadFile(path_file);
 
   trajectory.points.clear(); 
@@ -499,8 +505,7 @@ void MissionInterface::readWaypoints(const std::string &path_file)
   traj_marsupial_.transforms.resize(2);
   traj_marsupial_.velocities.resize(2);
   traj_marsupial_.accelerations.resize(2);
-
-  int size_ = (file["marsupial_ugv"]["size"].as<int>()) ; 
+  int size_ = (file["size"].as<int>()) ; 
   std::string ugv_pos_data, uav_pos_data, tether_data;
   double ugv_pos_x, ugv_pos_y, ugv_pos_z, ugv_rot_x, ugv_rot_y, ugv_rot_z, ugv_rot_w;
   double uav_pos_x, uav_pos_y, uav_pos_z, uav_rot_x, uav_rot_y, uav_rot_z, uav_rot_w;
@@ -516,9 +521,9 @@ void MissionInterface::readWaypoints(const std::string &path_file)
 	init_uav_pose.orientation.w =
 	  file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["w"].as<double>();
 	if (i==0) {
-	    init_ugv_pose.position.x = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["x"].as<double>() + offset_map_dll_x;;
-	    init_ugv_pose.position.y = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["y"].as<double>() + offset_map_dll_y;;
-	    init_ugv_pose.position.z = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["z"].as<double>() + offset_map_dll_z;;
+	    init_ugv_pose.position.x = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["x"].as<double>() + offset_ugv_map_dll_x;;
+	    init_ugv_pose.position.y = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["y"].as<double>() + offset_ugv_map_dll_y;;
+	    init_ugv_pose.position.z = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["z"].as<double>() + offset_ugv_map_dll_z;;
 	    init_ugv_pose.orientation.x = file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["x"].as<double>();
 	    init_ugv_pose.orientation.y = file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["y"].as<double>();
 	    init_ugv_pose.orientation.z = file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["z"].as<double>();
@@ -536,9 +541,9 @@ void MissionInterface::readWaypoints(const std::string &path_file)
 	      file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["w"].as<double>();
 	}
            
-	ugv_pos_x = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["x"].as<double>() + offset_map_dll_x;;
-	ugv_pos_y = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["y"].as<double>() + offset_map_dll_y;;
-	ugv_pos_z = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["z"].as<double>() + offset_map_dll_z;;
+	ugv_pos_x = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["x"].as<double>() + offset_ugv_map_dll_x;;
+	ugv_pos_y = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["y"].as<double>() + offset_ugv_map_dll_y;;
+	ugv_pos_z = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["z"].as<double>() + offset_ugv_map_dll_z;;
 	ugv_rot_x = file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["x"].as<double>();
 	ugv_rot_y = file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["y"].as<double>();
 	ugv_rot_z = file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["z"].as<double>();
@@ -833,4 +838,12 @@ void MissionInterface::markerPoints()
     }	
     catenary_marker_pub_.publish(_cat_marker);
   }
+}
+
+void MissionInterface::cancelMission()
+{
+  NavigationClient->cancelAllGoals();
+  uavNavigation3DClient->cancelAllGoals();
+  takeOffClient->cancelAllGoals();
+  start_mission = able_tracker_ugv =  able_tracker_uav = false;
 }
