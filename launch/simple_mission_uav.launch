@@ -1,7 +1,7 @@
 <launch>
     <arg name="base_frame" default="base_link"/>
     <arg name="world_frame" default="map"/>
-    <arg name="mission_file" default="simple_uav"/>
+    <arg name="mission_file" default="simple_uav_catec"/>
     <arg name="mission_path" default="$(find marsupial_mission_interface)/cfg/$(arg mission_file).yaml"/>
 
     <node name="simple_uav_mission_node" pkg="marsupial_mission_interface" type="simple_uav_mission_node" output="screen" launch-prefix="">
