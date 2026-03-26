@@ -30,5 +30,18 @@
         <param name="time_max" value="$(arg time_max_get_WP)" />
         <param name="do_takeoff" value="$(arg do_takeoff)" />
     </node>
+    
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find marsupial_mission_interface)/viz/check_mission_forPicture.rviz">
+        <remap from="/initialpose" to="/dll_arco_node/initial_pose"/>
+        
+    </node>
+
+    <include file="$(find marsupial_launchers)/arco_launch/dll_arco.launch" if="$(arg able_tracker_ugv)">
+        <arg name="rviz" value="false"/>
+    </include>
+
+    <include file="$(find upo_path_tracker)/launch/new_arco_traj_tracker.launch" if="$(arg able_tracker_ugv)">
+        <arg name="rviz" value="false"/>
+    </include>
 
 </launch>
