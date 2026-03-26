@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.0.2)
 project(marsupial_mission_interface)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
+add_compile_options(-std=c++17)
 
 set(CMAKE_BUILD_TYPE Debug) #None, Debug, Release, RelWithDebInfo, MinSizeRel
 
