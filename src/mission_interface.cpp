@@ -20,9 +20,9 @@ MissionInterface::MissionInterface(std::string node_name_)
   nh->param("offset_map_"+map_name+"/offset_map_dll_x", offset_map_dll_x, (double)0.0);
   nh->param("offset_map_"+map_name+"/offset_map_dll_y", offset_map_dll_y, (double)0.0);
   nh->param("offset_map_"+map_name+"/offset_map_dll_z", offset_map_dll_z, (double)0.0);
-  nh->param("offset_map_"+map_name+"/offset_ugv_map_dll_x", offset_ugv_map_dll_x, (double)0.0);
-  nh->param("offset_map_"+map_name+"/offset_ugv_map_dll_y", offset_ugv_map_dll_y, (double)0.0);
-  nh->param("offset_map_"+map_name+"/offset_ugv_map_dll_z", offset_ugv_map_dll_z, (double)0.0);
+  nh->param("offset_map_"+map_name+"/offset_ugv_map_dll_x", offset_ugv_map_dll_x, offset_map_dll_x);
+  nh->param("offset_map_"+map_name+"/offset_ugv_map_dll_y", offset_ugv_map_dll_y, offset_map_dll_y);
+  nh->param("offset_map_"+map_name+"/offset_ugv_map_dll_z", offset_ugv_map_dll_z, offset_map_dll_z);
   nh->param("flying_height", flying_height, (double)0.3);
   nh->param("time_max", time_max, (double)1.5);
 
@@ -36,9 +36,6 @@ MissionInterface::MissionInterface(std::string node_name_)
   nh->param<int>("stop_arco_mission_button", stopArcoMissionButton, STOP_ARCO_MISSION_BUTTON);
 
 
-// offset_map_dll_x = 0.0; 
-// offset_map_dll_y = 0.0; 
-// offset_map_dll_z = 0.0; 
   ros_node_name = node_name_;
   ROS_INFO("Initialized Node : %s", ros_node_name.c_str());
 
@@ -194,6 +191,7 @@ void MissionInterface::configServices()
         ROS_INFO("%s Node: Initialazing UGV Navigation Client", ros_node_name.c_str());
         NavigationClient.reset(new NavigateClient("/Navigation", true));
         NavigationClient->waitForServer();
+        ROS_INFO("%s UAV Navigation Server found", ros_node_name.c_str());
     }
 }
 
@@ -521,9 +519,9 @@ void MissionInterface::readWaypoints(const std::string &path_file)
 	init_uav_pose.orientation.w =
 	  file["marsupial_uav"][uav_pos_data]["pose"]["orientation"]["w"].as<double>();
 	if (i==0) {
-	    init_ugv_pose.position.x = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["x"].as<double>() + offset_ugv_map_dll_x;;
-	    init_ugv_pose.position.y = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["y"].as<double>() + offset_ugv_map_dll_y;;
-	    init_ugv_pose.position.z = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["z"].as<double>() + offset_ugv_map_dll_z;;
+	    init_ugv_pose.position.x = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["x"].as<double>() + offset_ugv_map_dll_x;
+	    init_ugv_pose.position.y = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["y"].as<double>() + offset_ugv_map_dll_y;
+	    init_ugv_pose.position.z = file["marsupial_ugv"][ugv_pos_data]["pose"]["position"]["z"].as<double>() + offset_ugv_map_dll_z;
 	    init_ugv_pose.orientation.x = file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["x"].as<double>();
 	    init_ugv_pose.orientation.y = file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["y"].as<double>();
 	    init_ugv_pose.orientation.z = file["marsupial_ugv"][ugv_pos_data]["pose"]["orientation"]["z"].as<double>();
