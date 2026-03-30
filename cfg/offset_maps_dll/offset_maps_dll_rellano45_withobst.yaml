@@ -1,0 +1,11 @@
+offset_map_rellano45_withobst:
+  offset_map_dll_x: 17
+  offset_map_dll_y: 24.5
+  offset_map_dll_z: 0.8
+
+
+# Offset easy for the UGV (in the pool)
+#offset_map_rellano45_withobst:
+#  offset_map_dll_x: -5
+#  offset_map_dll_y: 21.5
+#  offset_map_dll_z: 0.8
