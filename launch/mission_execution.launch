@@ -1,5 +1,5 @@
 <launch>
-    <arg name="map_name" default="teatro" /> #teatro_wall
+    <arg name="map_name" default="rellano45_withobst" /> #teatro_wall
     <arg name="ugv_name" default="arco" /> 
     <arg name="mission_file" default="teatro_mission" /> #teatro_wall
     <arg name="able_tracker_ugv" default="true" /> 
@@ -9,7 +9,7 @@
     <arg name="ugv_odom_frame" default="$(arg ugv_name)/odom" /> 
     <arg name="uav_base_frame" default="base_link" /> 
     <arg name="uav_odom_frame" default="odom" /> 
-    <arg name="uav_takeoff_height" default="2.5" /> 
+    <arg name="uav_takeoff_height" default="1.0" /> 
     <arg name="interpolation_distance" default="3.0"/>
     <arg name="time_max_get_WP" default="300.0"/>
     <arg name="do_takeoff" default="true"/>
@@ -41,7 +41,7 @@
     </include>
 
     <include file="$(find upo_path_tracker)/launch/new_arco_traj_tracker.launch" if="$(arg able_tracker_ugv)">
-        <arg name="rviz" value="false"/>
+        <!-- <arg name="rviz" value="false"/> -->
     </include>
 
 </launch>
