@@ -1,5 +1,5 @@
 <launch>
-    <arg name="map_name" default="teatro" /> #teatro_wall
+    <arg name="map_name" default="rellano45_withobst" /> #teatro_wall
     <arg name="ugv_name" default="arco" /> 
     <arg name="mission_file" default="teatro_mission" /> #teatro_wall
     <arg name="able_tracker_ugv" default="true" /> 
