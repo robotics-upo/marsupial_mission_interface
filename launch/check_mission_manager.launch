@@ -11,7 +11,7 @@
             args="10 marsupial_mission_interface check_mission_markers.launch" >
     </node>
 
-    //To show MAP from DLL and not affect TFs
+    # To show MAP from DLL and not affect TFs
     <include file="$(find marsupial_launchers)/arco_launch/dll_arco.launch" if="$(arg need_map)">
         <arg name="map_path" value="$(env HOME)/marsupial_ws/src/marsupial_optimizer/maps/$(arg map).bt"/>    
     </include>

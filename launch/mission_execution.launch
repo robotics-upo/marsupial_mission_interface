@@ -9,7 +9,7 @@
     <arg name="ugv_odom_frame" default="$(arg ugv_name)/odom" /> 
     <arg name="uav_base_frame" default="base_link" /> 
     <arg name="uav_odom_frame" default="odom" /> 
-    <arg name="uav_takeoff_height" default="2.5" /> 
+    <arg name="uav_takeoff_height" default="1.0" /> 
     <arg name="interpolation_distance" default="3.0"/>
     <arg name="time_max_get_WP" default="300.0"/>
     <arg name="do_takeoff" default="true"/>
@@ -32,7 +32,7 @@
     </node>
     
     <node name="rviz" pkg="rviz" type="rviz" args="-d $(find marsupial_mission_interface)/viz/check_mission_forPicture.rviz">
-        <remap from="/initialpose" to="/dll_arco_node/initial_pose"/>
+        <!-- <remap from="/initialpose" to="/dll_arco_node/initial_pose"/> -->
         
     </node>
 
@@ -40,9 +40,9 @@
         <arg name="rviz" value="false"/>
     </include>
 
-    <include file="$(find upo_path_tracker)/launch/new_arco_traj_tracker.launch" if="$(arg able_tracker_ugv)">
+    <!-- <include file="$(find upo_path_tracker)/launch/new_arco_traj_tracker.launch" if="$(arg able_tracker_ugv)">
         
-    </include>
+    </include> -->
 
     <node name="target_tf" pkg="tf2_ros" type="static_transform_publisher" args="0 0 0 3.1416 0 0 world target"/>   
 

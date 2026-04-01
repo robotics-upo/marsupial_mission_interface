@@ -3,9 +3,9 @@
     <param name="use_sim_time" value="true"/>
 
     <!-- <arg name="mission_file" default="teatro_wall_opt" />  -->
-    <arg name="mission_file" default="teatro_full" /> 
+    <arg name="mission_file" default="01_marsupial_from_glass_chimney" /> 
     <arg name="map_name" default="teatro_wall"/> 
-    <arg name="mission_path" default="$(find marsupial_mission_interface)/cfg/optimized_path/optimized_path_$(arg mission_file).yaml"/>
+    <arg name="mission_path" default="$(find marsupial_mission_interface)/cfg/optimized_path/$(arg mission_file)/path.yaml"/>
     <arg name="statistical_results_path" default="$(env HOME)/statistical_results_from_validation_experiments_marsupial/"/>
     <arg name="interpolation_distance" default="0.5"/>
     <arg name="rviz" default="true" /> 
@@ -21,7 +21,7 @@
         <param name="map_name" value="$(arg map_name)"/> 
         <param name="interpolation_distance" value="$(arg interpolation_distance)"/> 
         <param name="ugv_base_frame" value="$(arg ugv_base_frame)"/> 
-        <param name="uav_base_frame" value="$(arg uav_base_frame)"/> 
+        <param name="uav_base_frame" value="$(arg uavm_base_frame)"/> 
         <param name="world_frame" value="$(arg world_frame)"/> 
         <param name="/$(arg map_name)_pos_final_1/pose/x" value="-6.65" />
         <param name="/$(arg map_name)_pos_final_1/pose/y" value="4.39" />
