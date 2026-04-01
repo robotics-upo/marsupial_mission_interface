@@ -1336,13 +1336,13 @@ tether:
     seq: 9
     frame_id: tether_length
     time: 4.340554865212853
-    length: 5.97015
+    length: 6.00015
   length10:
     header: tether10
     seq: 10
     frame_id: tether_length
     time: 4.822737069936212
-    length: 5.977698
+    length: 5.957698
   length11:
     header: tether11
     seq: 11
@@ -1390,7 +1390,7 @@ tether:
     seq: 18
     frame_id: tether_length
     time: 8.680194707723077
-    length: 7.889833
+    length: 7.859833
   length19:
     header: tether19
     seq: 19
@@ -1402,7 +1402,7 @@ tether:
     seq: 20
     frame_id: tether_length
     time: 9.644559117169793
-    length: 7.925837
+    length: 7.955837
   length21:
     header: tether21
     seq: 21
@@ -1480,7 +1480,7 @@ tether:
     seq: 33
     frame_id: tether_length
     time: 15.91292777857345
-    length: 10.4097
+    length: 10.4297
   length34:
     header: tether34
     seq: 34
