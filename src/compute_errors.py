@@ -38,15 +38,21 @@ class MissionReport:
         self.uav_velocities = []
         self.ugv_distances = []
         self.uav_distances = []
+        self.ugv_ate = []
+        self.uav_ate = []
         self.ugv_goal = None
         self.uav_goal = None
         self.uav_pos = None
         self.ugv_pos = None
+        self.init_ugv_pos = None
+        self.init_uav_pos = None
         self.uav_xy_errors = []
         self.uav_z_errors = []
         self.ugv_xy_errors = []
         self.tether_errors = []
         self.curr_length = None
+        self.uav_reached_goal = True
+        self.ugv_reached_goal = True
         # Parameters
 
         # Frames: the first is the UAV, second UGV
@@ -62,50 +68,69 @@ class MissionReport:
         # Related to vehicles
         self.ugv_speed = float(rospy.get_param('~ugv_speed', default='0.25'))
         self.uav_speed = float(rospy.get_param('~uav_speed', default='0.25'))
+
+        print("UAV speed: ", self.uav_speed, "\tUGV Speed: ", self.ugv_speed)
     
     def ugvGoalCB(self, data):
+        self.ugv_reached_goal = False
         p = data.goal.global_goal.position
-        if self.ugv_goal is None:
-            self.ugv_prev_goal = self.ugv_pos
-        else:
-            self.ugv_prev_goal = self.ugv_goal
+        self.ugv_prev_goal = self.ugv_pos
         self.ugv_goal = np.array([p.x, p.y, p.z])
         self.ugv_distance = np.linalg.norm(self.ugv_goal - self.ugv_prev_goal)
-        self.ugv_distances.append(self.ugv_distance)
+        #self.ugv_distances.append(self.ugv_distance)
         print ("UGV New goal: ", self.ugv_goal, "Distance: ", self.ugv_distance)
         self.ugv_s = float(data.header.stamp.secs) + data.header.stamp.nsecs * 1e-9
+        self.init_ugv_pos = self.ugv_pos
 
     def uavGoalCB(self, data):
+        nsec = data.header.stamp.nsecs
+        sec = data.header.stamp.secs
+        self.uav_s = float(sec) + 1e-9*nsec
+        self.init_uav_pos = self.uav_pos
+        self.uav_reached_goal = False
         p = data.goal.global_goal.pose.position
-        if self.uav_goal is None:
-            self.uav_prev_goal = self.uav_pos
-        else:
-            self.uav_prev_goal = self.uav_goal
+        self.uav_prev_goal = self.uav_pos
         self.uav_goal = np.array([p.x, p.y, p.z])
-        self.uav_distance = np.linalg.norm(self.uav_goal - self.uav_prev_goal)
-        self.uav_distances.append(self.uav_distance)
+        self.uav_distance = np.linalg.norm(self.uav_goal - self.init_uav_pos)
+        
         print ("UAV New goal: ", self.uav_goal, "Distance: ", self.uav_distance)
-        self.uav_s = rospy.get_time() # To handle sync error, we get the rospy time
+        
 
     def ugvReachedGoalCB(self, data):
         self.ugv_reached_goal = data.result.arrived
         nsec = data.header.stamp.nsecs
         sec = data.header.stamp.secs
+        self.ugv_distance = np.linalg.norm(self.ugv_pos - self.init_ugv_pos)
+        self.ugv_distances.append(self.ugv_distance)
+        
         ugv_f = float(sec) + nsec*1e-09
         delta_t = ugv_f - self.ugv_s
         self.ugv_time_vector.append(delta_t)
         self.ugv_speed = self.ugv_distance / delta_t
         self.ugv_velocities.append(self.ugv_speed)
+
+        self.ugv_ate.append(self.get2Ddist(self.ugv_pos, self.ugv_goal)-0.25)
+        
         print("Received UGV Reached Goal CB. Delta_T: ", delta_t ,
               "Speed: ", self.ugv_speed )
 
     def uavReachedGoalCB(self,data):
+        nsec = data.header.stamp.nsecs
+        sec = data.header.stamp.secs
+        uav_f = float(sec) + 1e-9*nsec
         self.uav_reached_goal = data.result.arrived
-        uav_f = rospy.get_time()
+        self.uav_z_errors.append(self.uav_pos[2] - self.uav_goal[2])
+        self.uav_distance = self.get2Ddist(self.uav_pos, self.init_uav_pos)
+        self.uav_distances.append(self.uav_distance)
+        
         delta_t = uav_f - self.uav_s
         self.uav_time_vector.append(delta_t)
         self.uav_speed = self.uav_distance / delta_t
         self.uav_velocities.append(self.uav_speed)
+        self.uav_ate.append(self.get2Ddist(self.uav_pos, self.uav_goal)-0.25)
+        
+        
+
         print("Received UAV Reached Goal CB. Delta_T: ", delta_t ,
               "Speed: ", self.uav_speed )
 
@@ -121,24 +146,30 @@ class MissionReport:
             or self.ugv_pos is None):
             return
         # Get the tether related errors
-        self.tether_errors.append(self.curr_length - self.length_ref)
+        if self.uav_reached_goal and self.ugv_reached_goal:
+            return
 
-        exy = self.calculate_xy_error(self.uav_goal, self.uav_prev_goal, self.uav_pos)
+        self.tether_errors.append(self.curr_length - self.length_ref + 0.5)
+
+        exy = self.calculate_xy_error(self.uav_goal, self.init_uav_pos, self.uav_pos)
         self.uav_xy_errors.append(exy)
-        self.uav_z_errors.append(self.uav_pos[2] - self.uav_goal[2])
+        
 
-        exy = self.calculate_xy_error(self.ugv_goal, self.ugv_prev_goal, self.ugv_pos)
+        exy = self.calculate_xy_error(self.ugv_goal, self.init_ugv_pos, self.ugv_pos)
         self.ugv_xy_errors.append(exy)
         
     def calculate_xy_error(self, next_wp, last_wp, pos):
         delta_wp = next_wp - last_wp
-        if np.linalg.norm(delta_wp) > 0.2:
-            u_wp = delta_wp / np.linalg.norm(delta_wp)
-            r = pos - last_wp
-            exy = sqrt(np.dot(r,r) - np.dot(u_wp, r) ** 2)
-        else:
-            exy = 0
+        delta_wp[2] = 0.0
+        u_wp = delta_wp / np.linalg.norm(delta_wp)
+        r = pos - last_wp
+        exy = sqrt(np.dot(r,r) - np.dot(u_wp, r) ** 2)
         return exy
+    
+    def get2Ddist(self, pos1, pos2):
+        p1 = pos1[:-1]
+        p2 = pos2[:-1]
+        return np.linalg.norm(p1 - p2)             
 
     def update_pos(self):
         t = rospy.Time.now()
@@ -161,10 +192,12 @@ class MissionReport:
     def export_stats(self):
         stats_file = open(self.stats_filename, 'w')
         l = min(len(self.uav_time_vector), len(self.ugv_time_vector))
+        stats_file.write("\% uav_time\tuav_dist\tuav_vel \tuav_z\tugv_time\tugv_dist\tugv_vel\n")
         for i in range(l):
-            stats_file.write("%f %f %f %f %f %f\n"%( self.uav_time_vector[i],
+            stats_file.write("%f\t%f\t%f\t%f\t%f\t%f\t%f\n"%( self.uav_time_vector[i],
                                                      self.uav_distances[i],
                                                      self.uav_velocities[i],
+                                                     self.uav_z_errors[i],
                                                      self.ugv_time_vector[i],
                                                      self.ugv_distances[i],
                                                      self.ugv_velocities[i]))
@@ -172,9 +205,9 @@ class MissionReport:
 
     def export_length_stats(self):
         tf_file = open(self.tf_filename, "w")
+        tf_file.write("# uav_xy_e\tugv_xy_e\ttether_e\n")
         for i in range(len(self.tether_errors)):
-            tf_file.write("%f %f %f %f \n"%( self.uav_xy_errors[i],
-                                                self.uav_z_errors[i],
+            tf_file.write("%f\t%f\t%f\t\n"%( self.uav_xy_errors[i],
                                                 self.ugv_xy_errors[i],
                                                 self.tether_errors[i]))
         tf_file.close()
@@ -208,11 +241,13 @@ class MissionReport:
             vel = self.uav_velocities[i]
             dis = self.uav_distances[i]
             t = self.uav_time_vector[i]
+            print (vel,dis, t)
             error_vel, error_time = self.calculate_error(vel,dis, t, self.uav_speed)
             if (error_vel is not None):
                 self.uav_time_errors.append(error_time)
                 self.uav_vel_errors.append(error_vel)
-            # Get errors UAV
+        for i in range(len(self.ugv_time_vector)):
+            # Get errors UGV
             v = self.ugv_velocities[i]
             d = self.ugv_distances[i]
             t = self.ugv_time_vector[i]
@@ -227,38 +262,45 @@ class MissionReport:
         print ("UGV Error velocities: ", self.ugv_vel_errors)
 
         print ("\n\n\n")
-        stats_time_uav = self.get_vector_stats(self.uav_time_errors)
+        stats_time_uav = self.get_vector_stats(self.uav_time_errors[:-1])
         print ("UAV time error (min/meanRMSE/max)",  stats_time_uav)
-        stats_vel_uav = self.get_vector_stats(self.uav_vel_errors)
+        stats_vel_uav = self.get_vector_stats(self.uav_vel_errors[:-1])
         print ("UAV velocity error (min/mean/RMSE/max)",  stats_vel_uav)
 
-        print ("\n\n\n")
-        stats_time_ugv = self.get_vector_stats(self.ugv_time_errors)
+        print ("\n")
+        stats_time_ugv = self.get_vector_stats(self.ugv_time_errors[:-1])
         print ("UGV time error (min/mean/RMSE/max)",  stats_time_ugv)
-        stats_vel_ugv = self.get_vector_stats(self.ugv_vel_errors)
+        stats_vel_ugv = self.get_vector_stats(self.ugv_vel_errors[:-1])
         print ("UGV velocity error (min/mean/RMSE/max)",  stats_vel_ugv)
 
-        print ("\n\n\n")
-        stats_length = self.get_vector_stats(self.tether_errors)
-        print ("Tether time error (min/mean/RMSE/max)",  stats_length)
+        print ("\n")
+        stats_length = self.get_vector_stats(self.tether_errors[:-1])
+        print ("Tether length error (min/mean/RMSE/max)",  stats_length)
 
         print ("\n")
-        stats_ugv_xy = self.get_vector_stats(self.ugv_xy_errors)
+        stats_ugv_xy = self.get_vector_stats(self.ugv_xy_errors[:-1])
         print ("UGV xy error (min/mean/RMSE/max)",  stats_ugv_xy)
 
         print ("\n")
-        stats_uav_xy = self.get_vector_stats(self.uav_xy_errors)
+        stats_uav_xy = self.get_vector_stats(self.uav_xy_errors[:-1])
         print ("UAV xy error (min/mean/RMSE/max)",  stats_uav_xy)
-        stats_uav_z = self.get_vector_stats(self.uav_z_errors)
+        stats_uav_z = self.get_vector_stats(self.uav_z_errors[:-1])
         print ("UAV z error (min/mean/RMSE/max)",  stats_uav_z)
+
+        stats_uav_ate = self.get_vector_stats(self.uav_ate[:-1])
+        print("UAV ATE:", stats_uav_ate )
+        stats_ugv_ate = self.get_vector_stats(self.ugv_ate[:-1])
+        print("UGV ATE:", stats_ugv_ate )
+        
 
     def get_vector_stats(self, vec):
         min = np.amin(np.abs(vec))
         max = np.amax(np.abs(vec))
         mean = np.abs(vec).mean()
         rmse = sqrt(np.square(vec).mean())
+        std = np.std(vec)
 
-        return min, mean, rmse,  max
+        return min, mean, rmse,  max, std
 
     def calculate_error(self, v, d, t, v_0):
         e_v = None
@@ -296,15 +338,17 @@ if __name__ == '__main__':
         mission_report.calculate_errors()
     else:
         # Getting the data from ROS
-        while not rospy.is_shutdown():
-            mission_report.update_pos()
-            mission_report.update_errors()
-            try:
+        try:
+            
+            while not rospy.is_shutdown():
+                mission_report.update_pos()
+                mission_report.update_errors()
                 rate.sleep()
-            except (rospy.exceptions.ROSInterruptException):
+        except (rospy.exceptions.ROSInterruptException):
                 print("Closing mission report\n\n")
-                mission_report.print_stats()
-                mission_report.export_stats()
-                mission_report.export_length_stats()
-                mission_report.calculate_errors()
+                
+        mission_report.print_stats()
+        mission_report.export_stats()
+        mission_report.export_length_stats()
+        mission_report.calculate_errors()
 
