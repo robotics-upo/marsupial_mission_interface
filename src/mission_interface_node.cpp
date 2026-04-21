@@ -11,7 +11,7 @@ int main(int argc, char **argv)
     // tf2_ros::TransformListener tfListener(tfBuffer);
     MissionInterface mission(node_name);
 
-	ros::Rate loop_rate(5);
+	ros::Rate loop_rate(20);
 
     while(ros::ok()){
 

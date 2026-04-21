@@ -271,8 +271,8 @@ void MissionInterface::executeMission()
   int size_ = trajectory.points.size();
     
   if(!start_mission){
-    printf("\tMarsupial Mission NOT Initialized. Check star mission topic\n");
-    ros::Duration(2.0).sleep();
+    ROS_INFO_ONCE("\tMarsupial Mission NOT Initialized. Check star mission topic");
+    ros::Duration(1.0).sleep();
     resetFlags();
   }
 
@@ -372,7 +372,6 @@ void MissionInterface::executeMission()
         is_uav_in_waypoint = !able_tracker_uav;
         length_reached = false;
 
-        // TODO: wait also for the UGV client
         if ( (!able_tracker_ugv || NavigationClient->getState() == actionlib::SimpleClientGoalState::SUCCEEDED) && 
                (!able_tracker_uav || uavNavigation3DClient->getState() == actionlib::SimpleClientGoalState::SUCCEEDED) )
           {
@@ -472,7 +471,7 @@ void MissionInterface::executeMission()
       else if(!uav_ready && able_tracker_uav)    
         printf("\t\tUAV Platform NOT ready for execute mission\n");
     
-      ros::Duration(0.5).sleep();
+      ros::Duration(0.1).sleep();
     }
     ros::spinOnce();
   }
